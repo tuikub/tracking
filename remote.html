@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็คพื้นที่ห่างไกล All-in-One (2568-2569)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f1f5f9; }
+        .badge-island { @apply bg-cyan-100 text-cyan-800 border border-cyan-200 px-2 py-0.5 rounded text-xs font-medium; }
+        .badge-remote { @apply bg-rose-100 text-rose-800 border border-rose-200 px-2 py-0.5 rounded text-xs font-medium; }
+        .badge-south { @apply bg-indigo-100 text-indigo-800 border border-indigo-200 px-2 py-0.5 rounded text-xs font-medium; }
+        
+        .col-price { @apply text-center font-bold text-sm; }
+        .price-plus { @apply text-red-600; }
+        .price-normal { @apply text-emerald-600 bg-emerald-50 px-2 py-1 rounded; }
+        
+        /* Custom Scrollbar for table */
+        .custom-scroll::-webkit-scrollbar { height: 8px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="p-4 md:p-6 lg:p-8 min-h-screen">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 text-white relative">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <i data-lucide="map" class="w-24 h-24"></i>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3">
+                            <i data-lucide="truck" class="w-8 h-8"></i>
+                            ตรวจสอบพื้นที่ห่างไกล
+                        </h1>
+                        <p class="text-slate-300 mt-2 text-sm md:text-base">
+                            เช็คค่าส่งเพิ่ม Flash, J&T, Kerry, DHL, Best, Sabuy, SPX, EMS <br>
+                            <span class="text-yellow-400 font-medium text-xs md:text-sm">อัปเดตข้อมูล: เพิ่ม ตาก, น่าน, ระยอง, ระนอง, สงขลา ครบ 100%</span>
+                        </p>
+                    </div>
+                    <!-- ปุ่ม Link ไป Drive -->
+                    <a href="https://drive.google.com/drive/folders/1o6KhjsfJzZnBroG0lvMNvKjUYkqF-QXg?usp=drive_link" target="_blank" 
+                       class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                        <i data-lucide="external-link" class="w-4 h-4"></i> ดูไฟล์ประกาศต้นฉบับ
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="p-6 bg-white border-b border-slate-100">
+                <div class="relative max-w-xl mx-auto">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+                    <input type="text" id="searchInput" 
+                        class="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-sm"
+                        placeholder="ค้นหา รหัสไปรษณีย์, จังหวัด หรือชื่ออำเภอ..."
+                        onkeyup="filterTable()">
+                </div>
+                <div class="flex justify-center gap-4 mt-4 text-xs text-slate-500 flex-wrap">
+                    <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-rose-500"></span> พื้นที่ห่างไกล/ดอย</div>
+                    <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-cyan-500"></span> พื้นที่ท่องเที่ยว/เกาะ</div>
+                    <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-indigo-500"></span> 3 จว. ชายแดนใต้</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative min-h-[300px]">
+            <div class="overflow-x-auto custom-scroll">
+                <table class="min-w-full divide-y divide-slate-200" id="rateTable">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left font-bold sticky left-0 bg-slate-50 border-r border-slate-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] z-10 w-24">รหัส</th>
+                            <th class="px-6 py-4 text-left font-bold min-w-[200px]">พื้นที่ / จังหวัด</th>
+                            <th class="px-6 py-4 text-center font-bold text-red-600 bg-red-50/50 min-w-[100px]">Flash</th>
+                            <th class="px-6 py-4 text-center font-bold text-red-600 bg-red-50/50 min-w-[100px]">J&T</th>
+                            <th class="px-6 py-4 text-center font-bold text-orange-600 bg-orange-50/50 min-w-[100px]">Kerry/DHL</th>
+                            <th class="px-6 py-4 text-center font-bold text-purple-600 bg-purple-50/50 min-w-[100px]">Best</th>
+                            <th class="px-6 py-4 text-center font-bold text-blue-600 bg-blue-50/50 min-w-[100px]">Sabuy/SPX</th>
+                            <th class="px-6 py-4 text-center font-bold text-green-700 bg-green-50/50 min-w-[100px]">EMS (ปณ)</th>
+                            <th class="px-6 py-4 text-center font-bold text-slate-600 bg-slate-100 min-w-[120px]">ระยะเวลา<br>(ประมาณ)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-100 text-sm" id="tableBody">
+                        <!-- ภาคเหนือ (เชียงใหม่) -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">50240</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.กัลยาณิวัฒนา</div><div class="text-slate-500 text-xs">จ.เชียงใหม่</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">50250</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.เวียงแหง</div><div class="text-slate-500 text-xs">จ.เชียงใหม่</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">50260</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.อมก๋อย</div><div class="text-slate-500 text-xs">จ.เชียงใหม่</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">50270</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.ดอยเต่า</div><div class="text-slate-500 text-xs">จ.เชียงใหม่</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">50310</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.แม่แจ่ม</div><div class="text-slate-500 text-xs">จ.เชียงใหม่</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                         <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">50350</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.แม่ออน</div><div class="text-slate-500 text-xs">จ.เชียงใหม่</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+
+                        <!-- ภาคเหนือ (แม่ฮ่องสอน) -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">58xxx</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">ทุกอำเภอ</div><div class="text-slate-500 text-xs">จ.แม่ฮ่องสอน (ทั้งจังหวัด)</div><span class="badge-remote mt-1 inline-block">ห่างไกล (ทั้งจังหวัด)</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+
+                        <!-- ภาคเหนือ (เชียงราย/น่าน/เพชรบูรณ์) -->
+                         <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">57180</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.เวียงแก่น</div><div class="text-slate-500 text-xs">จ.เชียงราย</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">57310</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.แม่ฟ้าหลวง</div><div class="text-slate-500 text-xs">จ.เชียงราย</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">55220</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.บ่อเกลือ</div><div class="text-slate-500 text-xs">จ.น่าน</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">55130</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.ทุ่งช้าง</div><div class="text-slate-500 text-xs">จ.น่าน</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">55160</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.สองแคว</div><div class="text-slate-500 text-xs">จ.น่าน</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">51160</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.น้ำหนาว</div><div class="text-slate-500 text-xs">จ.เพชรบูรณ์</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+
+                        <!-- ภาคตะวันตก (กาญจนบุรี/ตาก) -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">63160</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.อุ้มผาง</div><div class="text-slate-500 text-xs">จ.ตาก</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">63150</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.พบพระ</div><div class="text-slate-500 text-xs">จ.ตาก</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">63140</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.แม่ระมาด</div><div class="text-slate-500 text-xs">จ.ตาก</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">63110</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.ท่าสองยาง</div><div class="text-slate-500 text-xs">จ.ตาก</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">63000</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">ต.แม่ท้อ/ท้อ</div><div class="text-slate-500 text-xs">จ.ตาก (อ.เมือง)</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ดอย</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">71180</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.ทองผาภูมิ</div><div class="text-slate-500 text-xs">จ.กาญจนบุรี</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">71240</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.สังขละบุรี</div><div class="text-slate-500 text-xs">จ.กาญจนบุรี</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">71220</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.ศรีสวัสดิ์</div><div class="text-slate-500 text-xs">จ.กาญจนบุรี</div><span class="badge-remote mt-1 inline-block">ห่างไกล/ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+
+                         <!-- ภาคตะวันออก (เกาะ) -->
+                         <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">20120</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะสีชัง</div><div class="text-slate-500 text-xs">จ.ชลบุรี</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">20250</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะล้าน</div><div class="text-slate-500 text-xs">จ.ชลบุรี</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                         <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">21130</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะเสม็ด</div><div class="text-slate-500 text-xs">จ.ระยอง</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">23120</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะกูด</div><div class="text-slate-500 text-xs">จ.ตราด</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">23170</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะช้าง</div><div class="text-slate-500 text-xs">จ.ตราด</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+
+                        <!-- ภาคใต้ (เกาะท่องเที่ยว) -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">81150</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะลันตา</div><div class="text-slate-500 text-xs">จ.กระบี่</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">81000</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะพีพี</div><div class="text-slate-500 text-xs">จ.กระบี่ (อ.เมือง)</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                         <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">82160</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะยาว</div><div class="text-slate-500 text-xs">จ.พังงา</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                         <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">84280</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะพะงัน</div><div class="text-slate-500 text-xs">จ.สุราษฎร์ธานี</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                         <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">84360</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะเต่า</div><div class="text-slate-500 text-xs">จ.สุราษฎร์ธานี</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">84140</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะสมุย</div><div class="text-slate-500 text-xs">จ.สุราษฎร์ธานี</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">85000</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะพยาม</div><div class="text-slate-500 text-xs">จ.ระนอง</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">91000</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะหลีเป๊ะ</div><div class="text-slate-500 text-xs">จ.สตูล</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">92120</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">เกาะลิบง</div><div class="text-slate-500 text-xs">จ.ตรัง</div><span class="badge-island mt-1 inline-block">เกาะ/ท่องเที่ยว</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+20</td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+
+                        <!-- ชายแดนใต้ -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">90160</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.นาทวี</div><div class="text-slate-500 text-xs">จ.สงขลา</div><span class="badge-south mt-1 inline-block">3 จว. ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">90210</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.สะบ้าย้อย</div><div class="text-slate-500 text-xs">จ.สงขลา</div><span class="badge-south mt-1 inline-block">3 จว. ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">90220</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.เทพา</div><div class="text-slate-500 text-xs">จ.สงขลา</div><span class="badge-south mt-1 inline-block">3 จว. ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">90310</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">อ.จะนะ</div><div class="text-slate-500 text-xs">จ.สงขลา</div><span class="badge-south mt-1 inline-block">3 จว. ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">94xxx</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">ทุกอำเภอ</div><div class="text-slate-500 text-xs">จ.ปัตตานี</div><span class="badge-south mt-1 inline-block">3 จว. ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">95xxx</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">ทุกอำเภอ</div><div class="text-slate-500 text-xs">จ.ยะลา</div><span class="badge-south mt-1 inline-block">3 จว. ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 font-bold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-200">96xxx</td>
+                            <td class="px-6 py-4"><div class="font-medium text-slate-900">ทุกอำเภอ</div><div class="text-slate-500 text-xs">จ.นราธิวาส</div><span class="badge-south mt-1 inline-block">3 จว. ชายแดน</span></td>
+                            <td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price price-plus">+50</td><td class="col-price"><span class="price-normal">ปกติ</span></td><td class="col-price text-slate-500 font-medium">3-5 วัน</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                
+                <!-- Not Found Message (Hidden by default) -->
+                <div id="noResult" class="hidden flex flex-col items-center justify-center py-12 text-center px-4">
+                    <div class="bg-slate-100 p-4 rounded-full mb-4">
+                        <i data-lucide="folder-search" class="w-8 h-8 text-slate-400"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-700">ไม่พบข้อมูลที่คุณค้นหา</h3>
+                    <p class="text-slate-500 mt-2 max-w-sm">
+                        รหัสไปรษณีย์นี้อาจไม่ได้อยู่ในพื้นที่ห่างไกล หรือยังไม่อัปเดตในระบบ
+                    </p>
+                    <a href="https://drive.google.com/drive/folders/1o6KhjsfJzZnBroG0lvMNvKjUYkqF-QXg?usp=drive_link" target="_blank"
+                        class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
+                        <i data-lucide="external-link" class="w-5 h-5"></i>
+                        ตรวจสอบจากไฟล์ต้นฉบับ (Google Drive)
+                    </a>
+                </div>
+
+            </div>
+            
+            <!-- Footer Warning -->
+            <div class="bg-yellow-50 p-4 border-t border-yellow-100 flex gap-3 items-start flex-col md:flex-row justify-between">
+                <div class="flex gap-3 items-start">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
+                    <div class="text-sm text-yellow-800">
+                        <strong>หมายเหตุ:</strong> ข้อมูลนี้เป็นการรวบรวมจากประกาศของ Flash, J&T, Sabuy, SPX, Best และไปรษณีย์ไทย (EMS)
+                    </div>
+                </div>
+                <div class="mt-2 md:mt-0">
+                    <a href="https://drive.google.com/drive/folders/1o6KhjsfJzZnBroG0lvMNvKjUYkqF-QXg?usp=drive_link" target="_blank" class="text-xs text-indigo-600 hover:underline flex items-center gap-1 font-medium">
+                        <i data-lucide="database" class="w-3 h-3"></i> แหล่งข้อมูลต้นฉบับ
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function filterTable() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("rateTable");
+            const tr = table.getElementsByTagName("tr");
+            const noResultDiv = document.getElementById("noResult");
+            let visibleCount = 0;
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (let i = 1; i < tr.length; i++) { // Start at 1 to skip header
+                const tdCode = tr[i].getElementsByTagName("td")[0]; // Zip Code
+                const tdArea = tr[i].getElementsByTagName("td")[1]; // Area Name
+                
+                if (tdCode || tdArea) {
+                    const txtValueCode = tdCode.textContent || tdCode.innerText;
+                    const txtValueArea = tdArea.textContent || tdArea.innerText;
+                    
+                    if (txtValueCode.toUpperCase().indexOf(filter) > -1 || txtValueArea.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        visibleCount++;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+            
+            // Show/Hide No Result Message
+            if (visibleCount === 0) {
+                document.querySelector("thead").style.display = "none";
+                noResultDiv.classList.remove("hidden");
+            } else {
+                document.querySelector("thead").style.display = "table-header-group";
+                noResultDiv.classList.add("hidden");
+            }
+        }
+    </script>
+</body>
+</html>
