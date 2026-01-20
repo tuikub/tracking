@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์รวมบริการขนส่ง - Paypoint Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f1f5f9; }
+        .menu-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
+
+    <div class="text-center mb-10 max-w-2xl w-full">
+        
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">ศูนย์บริการลูกค้า</h1>
+        <p class="text-slate-500 mb-6">เลือกเมนูบริการที่คุณต้องการใช้งาน</p>
+
+        <a href="https://lin.ee/Lr1qLQx" target="_blank" 
+           class="inline-flex items-center gap-2 bg-[#06C755] hover:bg-[#05b34c] text-white px-8 py-3 rounded-full font-bold shadow-md transition-all hover:scale-105 active:scale-95">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+            ติดต่อแอดมิน
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl w-full">
+
+        <a href="tracking.html" class="menu-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:border-blue-500 hover:bg-blue-50 group">
+            <div class="bg-blue-100 p-4 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <i data-lucide="search" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-700 group-hover:text-blue-700">เช็คพัสดุ</h3>
+                <p class="text-sm text-slate-400">ติดตามสถานะทุกขนส่ง</p>
+            </div>
+        </a>
+
+        <a href="remote.html" class="menu-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:border-rose-500 hover:bg-rose-50 group">
+            <div class="bg-rose-100 p-4 rounded-xl text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                <i data-lucide="map-pin" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-700 group-hover:text-rose-700">เช็คพื้นที่ห่างไกล</h3>
+                <p class="text-sm text-slate-400">ตรวจสอบรหัสไปรษณีย์</p>
+            </div>
+        </a>
+
+        <a href="warranty.html" class="menu-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:border-yellow-500 hover:bg-yellow-50 group">
+            <div class="bg-yellow-100 p-4 rounded-xl text-yellow-600 group-hover:bg-yellow-600 group-hover:text-white transition-colors">
+                <i data-lucide="shield-alert" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-700 group-hover:text-yellow-700">ประกันสินค้า</h3>
+                <p class="text-sm text-slate-400">เงื่อนไขการเคลม Flash</p>
+            </div>
+        </a>
+
+        <a href="faq.html" class="menu-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:border-indigo-500 hover:bg-indigo-50 group">
+            <div class="bg-indigo-100 p-4 rounded-xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                <i data-lucide="help-circle" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-700 group-hover:text-indigo-700">คำถามพบบ่อย</h3>
+                <p class="text-sm text-slate-400">ราคา, ตัดรอบ, ของห้ามส่ง</p>
+            </div>
+        </a>
+
+        <a href="franchise.html" class="menu-card bg-gradient-to-r from-red-600 to-red-700 p-6 rounded-2xl shadow-lg border border-red-500 flex items-center gap-4 md:col-span-2 lg:col-span-2 hover:shadow-red-200 hover:scale-[1.02]">
+            <div class="bg-white/20 p-4 rounded-xl text-white">
+                <i data-lucide="store" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white">สนใจแฟรนไชส์ / ร่วมธุรกิจ</h3>
+                <p class="text-sm text-red-100">สมัครเป็นเจ้าของกิจการขนส่ง Paypoint</p>
+            </div>
+            <div class="ml-auto bg-white text-red-600 px-4 py-2 rounded-full text-sm font-bold">
+                สมัครเลย
+            </div>
+        </a>
+
+    </div>
+
+    <footer class="mt-12 text-slate-400 text-sm">
+        © บริการข้อมูลโดย: @pratya chartmontree by paypoint
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
