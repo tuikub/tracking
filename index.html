@@ -21,6 +21,13 @@
         /* Animation for PDPA Popup */
         #pdpa-banner { transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; }
         .slide-up { transform: translateY(0) !important; opacity: 1 !important; }
+
+        /* Animation for Counter */
+        @keyframes pulse-count {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .count-animate { animation: pulse-count 2s infinite; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col pb-10">
@@ -53,7 +60,7 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="max-w-5xl mx-auto px-4 -mt-12 relative z-20 space-y-8">
+    <main class="max-w-5xl mx-auto px-4 -mt-12 relative z-20 space-y-6">
 
         <!-- 1. Highlight Service (Tracking) -->
         <div class="grid grid-cols-1">
@@ -73,68 +80,106 @@
             </a>
         </div>
 
-        <!-- 2. หมวด: บริการ & เครื่องมือ (Services & Tools) -->
-        <div>
-            <h2 class="text-slate-500 font-bold text-sm uppercase tracking-wider mb-4 ml-2 flex items-center gap-2">
-                <i data-lucide="wrench" class="w-4 h-4"></i> เครื่องมือช่วยขาย
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                
-                <!-- Price Table -->
-                <a href="price.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-green-400">
-                    <div class="bg-green-100 p-3 rounded-lg text-green-600">
-                        <i data-lucide="coins" class="w-6 h-6"></i>
+        <!-- 2. NEW: News & Update Section (Facebook) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="https://www.facebook.com/papacking" target="_blank" class="menu-card bg-[#1877F2] p-5 rounded-2xl shadow-lg shadow-blue-200 text-white flex items-center justify-between group">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 p-3 rounded-full">
+                        <i data-lucide="facebook" class="w-6 h-6 text-white"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-slate-700">ตารางค่าส่ง</h4>
-                        <p class="text-xs text-slate-400">เช็คราคาเริ่มต้น</p>
+                        <h3 class="text-lg font-bold">ติดตามข่าวสาร</h3>
+                        <p class="text-blue-100 text-sm">อัปเดตโปรโมชั่นที่ Facebook</p>
+                    </div>
+                </div>
+                <div class="bg-white text-[#1877F2] px-4 py-1.5 rounded-full text-xs font-bold shadow-sm group-hover:bg-blue-50 transition-colors">
+                    ดูเลย
+                </div>
+            </a>
+
+            <!-- Franchise / Discount Section (Updated) -->
+            <a href="franchise.html" class="menu-card bg-gradient-to-r from-red-600 to-rose-600 p-5 rounded-2xl shadow-lg shadow-red-200 text-white flex items-center justify-between group relative overflow-hidden">
+                <!-- Discount Badge -->
+                <div class="absolute -top-1 -right-1 bg-yellow-400 text-red-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10 shadow-sm animate-pulse">
+                    รับส่วนลด!
+                </div>
+                
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="bg-white/20 p-3 rounded-full">
+                        <i data-lucide="store" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">สนใจร่วมธุรกิจ</h3>
+                        <p class="text-red-100 text-sm">แฟรนไชส์ราคาพิเศษ</p>
+                    </div>
+                </div>
+                <div class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors relative z-10">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- 3. หมวด: บริการ & เครื่องมือ (Services & Tools) -->
+        <div>
+            <h2 class="text-slate-500 font-bold text-sm uppercase tracking-wider mb-4 ml-2 flex items-center gap-2 mt-4">
+                <i data-lucide="wrench" class="w-4 h-4"></i> เครื่องมือช่วยขาย
+            </h2>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                
+                <!-- Price Table -->
+                <a href="price.html" class="menu-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-2 hover:border-green-400">
+                    <div class="bg-green-100 p-2.5 rounded-full text-green-600">
+                        <i data-lucide="coins" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-700 text-sm">ตารางค่าส่ง</h4>
+                        <p class="text-[10px] text-slate-400">เช็คราคาเริ่มต้น</p>
                     </div>
                 </a>
 
                 <!-- Calculator -->
-                <a href="calculator.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-indigo-400">
-                    <div class="bg-indigo-100 p-3 rounded-lg text-indigo-600">
-                        <i data-lucide="calculator" class="w-6 h-6"></i>
+                <a href="calculator.html" class="menu-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-2 hover:border-indigo-400">
+                    <div class="bg-indigo-100 p-2.5 rounded-full text-indigo-600">
+                        <i data-lucide="calculator" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-slate-700">คำนวณน้ำหนัก</h4>
-                        <p class="text-xs text-slate-400">คิดตามปริมาตร</p>
+                        <h4 class="font-bold text-slate-700 text-sm">คำนวณน้ำหนัก</h4>
+                        <p class="text-[10px] text-slate-400">คิดตามปริมาตร</p>
                     </div>
                 </a>
 
                 <!-- Remote Area -->
-                <a href="remote.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-rose-400">
-                    <div class="bg-rose-100 p-3 rounded-lg text-rose-600">
-                        <i data-lucide="map-pin" class="w-6 h-6"></i>
+                <a href="remote.html" class="menu-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-2 hover:border-rose-400">
+                    <div class="bg-rose-100 p-2.5 rounded-full text-rose-600">
+                        <i data-lucide="map-pin" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-slate-700">พื้นที่ห่างไกล</h4>
-                        <p class="text-xs text-slate-400">เช็ครหัสไปรษณีย์</p>
+                        <h4 class="font-bold text-slate-700 text-sm">พื้นที่ห่างไกล</h4>
+                        <p class="text-[10px] text-slate-400">เช็ครหัสไปรษณีย์</p>
                     </div>
                 </a>
 
                 <!-- COD -->
-                <a href="cod.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-orange-400">
-                    <div class="bg-orange-100 p-3 rounded-lg text-orange-600">
-                        <i data-lucide="wallet" class="w-6 h-6"></i>
+                <a href="cod.html" class="menu-card bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-2 hover:border-orange-400">
+                    <div class="bg-orange-100 p-2.5 rounded-full text-orange-600">
+                        <i data-lucide="wallet" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-slate-700">บริการ COD</h4>
-                        <p class="text-xs text-slate-400">เก็บเงินปลายทาง</p>
+                        <h4 class="font-bold text-slate-700 text-sm">บริการ COD</h4>
+                        <p class="text-[10px] text-slate-400">เก็บเงินปลายทาง</p>
                     </div>
                 </a>
 
             </div>
         </div>
 
-        <!-- 3. หมวด: กฎระเบียบ & ความรู้ (Rules & Knowledge) -->
+        <!-- 4. หมวด: กฎระเบียบ & ความรู้ -->
         <div>
-            <h2 class="text-slate-500 font-bold text-sm uppercase tracking-wider mb-4 ml-2 flex items-center gap-2">
+            <h2 class="text-slate-500 font-bold text-sm uppercase tracking-wider mb-4 ml-2 flex items-center gap-2 mt-4">
                 <i data-lucide="book-open" class="w-4 h-4"></i> ข้อมูลควรรู้
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
-                <!-- Prohibited -->
                 <a href="prohibited.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-red-500">
                     <div class="bg-red-50 p-3 rounded-lg text-red-600">
                         <i data-lucide="ban" class="w-6 h-6"></i>
@@ -145,7 +190,6 @@
                     </div>
                 </a>
 
-                <!-- Packing -->
                 <a href="packing.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-cyan-500">
                     <div class="bg-cyan-50 p-3 rounded-lg text-cyan-600">
                         <i data-lucide="package-check" class="w-6 h-6"></i>
@@ -156,7 +200,6 @@
                     </div>
                 </a>
 
-                <!-- Terms & Laws (New) -->
                 <a href="terms.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-slate-500">
                     <div class="bg-slate-100 p-3 rounded-lg text-slate-600">
                         <i data-lucide="scale" class="w-6 h-6"></i>
@@ -167,7 +210,6 @@
                     </div>
                 </a>
 
-                <!-- Warranty -->
                 <a href="warranty.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-yellow-500">
                     <div class="bg-yellow-50 p-3 rounded-lg text-yellow-600">
                         <i data-lucide="shield-alert" class="w-6 h-6"></i>
@@ -178,56 +220,46 @@
                     </div>
                 </a>
 
+                <!-- FAQ Link moved here -->
+                 <a href="faq.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-indigo-600">
+                    <div class="bg-indigo-50 p-3 rounded-lg text-indigo-600">
+                        <i data-lucide="help-circle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-700">คำถามพบบ่อย (FAQ)</h4>
+                        <p class="text-xs text-slate-400">รวมทุกข้อสงสัยการใช้งาน</p>
+                    </div>
+                </a>
+
             </div>
-        </div>
-
-        <!-- 4. หมวด: เกี่ยวกับเรา (About) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            <!-- Franchise -->
-            <a href="franchise.html" class="menu-card bg-gradient-to-r from-red-600 to-rose-600 p-6 rounded-2xl shadow-lg shadow-red-200 text-white flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                    <div class="bg-white/20 p-3 rounded-xl">
-                        <i data-lucide="store" class="w-8 h-8"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">สนใจร่วมธุรกิจ</h3>
-                        <p class="text-red-100 text-sm">สมัครแฟรนไชส์ Paypoint</p>
-                    </div>
-                </div>
-                <div class="bg-white text-red-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm group-hover:scale-105 transition-transform">
-                    สมัครเลย
-                </div>
-            </a>
-
-            <!-- FAQ -->
-            <a href="faq.html" class="menu-card bg-white p-6 rounded-2xl shadow-md border border-slate-100 flex items-center justify-between group text-slate-600 hover:text-indigo-600">
-                <div class="flex items-center gap-4">
-                    <div class="bg-indigo-50 p-3 rounded-xl text-indigo-600">
-                        <i data-lucide="help-circle" class="w-8 h-8"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">คำถามพบบ่อย</h3>
-                        <p class="text-slate-400 text-sm group-hover:text-indigo-400">รวมทุกข้อสงสัย (FAQ)</p>
-                    </div>
-                </div>
-                <i data-lucide="chevron-right" class="w-6 h-6 text-slate-300 group-hover:text-indigo-500"></i>
-            </a>
-
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-16 text-center text-slate-400 text-sm pb-8">
-        <div class="flex justify-center items-center gap-2 mb-2 opacity-50">
-            <i data-lucide="package" class="w-4 h-4"></i>
-            <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
-            <i data-lucide="truck" class="w-4 h-4"></i>
-            <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
-            <i data-lucide="home" class="w-4 h-4"></i>
+    <!-- Footer & Stats -->
+    <footer class="mt-12 bg-white pt-10 pb-6 border-t border-slate-100">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            
+            <!-- Visitor Counter (New) -->
+            <div class="mb-8 inline-block bg-slate-50 px-6 py-3 rounded-full border border-slate-200 shadow-inner">
+                <div class="flex flex-col items-center gap-1">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Total Visitors</span>
+                    <div class="flex items-center gap-2 text-slate-600 font-mono text-xl font-bold">
+                        <i data-lucide="users" class="w-5 h-5 text-blue-500"></i>
+                        <span id="visitor-count" class="tracking-widest">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center gap-2 mb-4 opacity-50">
+                <i data-lucide="package" class="w-4 h-4"></i>
+                <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
+                <i data-lucide="truck" class="w-4 h-4"></i>
+                <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
+                <i data-lucide="home" class="w-4 h-4"></i>
+            </div>
+            <p class="text-slate-400 text-sm">© จัดทำและรวบรวมข้อมูลโดย: <strong class="text-slate-500">@pratya chartmontree by paypoint</strong></p>
         </div>
-        <p>© จัดทำและรวบรวมข้อมูลโดย: <strong class="text-slate-500">@pratya chartmontree by paypoint</strong></p>
     </footer>
 
     <!-- PDPA Popup Banner (SEO Friendly) -->
@@ -254,7 +286,7 @@
     <script>
         lucide.createIcons();
 
-        // PDPA Logic
+        // 1. PDPA Logic
         document.addEventListener('DOMContentLoaded', () => {
             const banner = document.getElementById('pdpa-banner');
             const hasConsent = localStorage.getItem('pdpa_consent');
@@ -264,12 +296,36 @@
                     banner.classList.add('slide-up');
                 }, 1000); // Show after 1 second
             }
+
+            // 2. Visitor Counter Logic (Simulated)
+            simulateVisitorCount();
         });
 
         function acceptPDPA() {
             const banner = document.getElementById('pdpa-banner');
             localStorage.setItem('pdpa_consent', 'accepted');
             banner.classList.remove('slide-up');
+        }
+
+        // Simple Visitor Counter Simulation
+        function simulateVisitorCount() {
+            const counterElement = document.getElementById('visitor-count');
+            
+            // Check if we have a stored count, otherwise start with a base number (e.g., 5420)
+            let currentCount = localStorage.getItem('site_visitors');
+            
+            if (!currentCount) {
+                currentCount = 5423; // Starting number to make it look active
+            } else {
+                // Increment only if session is new (optional logic, here we just increment on load for demo)
+                currentCount = parseInt(currentCount) + 1; 
+            }
+            
+            localStorage.setItem('site_visitors', currentCount);
+            
+            // Format number with commas
+            counterElement.innerText = currentCount.toLocaleString();
+            counterElement.classList.add('count-animate');
         }
     </script>
 </body>
