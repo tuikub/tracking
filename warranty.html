@@ -1,0 +1,301 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สรุปเงื่อนไขการรับประกัน Flash Express</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
+        .gradient-header { background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .accordion-content { transition: max-height 0.3s ease-out; max-height: 0; overflow: hidden; }
+        .accordion-content.active { max-height: 1000px; }
+        
+        /* Highlight search match */
+        .highlight-match { animation: pulse 2s infinite; border-color: #f59e0b; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="gradient-header text-slate-900 sticky top-0 z-50 shadow-md">
+        <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">เงื่อนไขการรับประกัน</h1>
+                    <p class="text-xs text-yellow-900/70">ฉบับเข้าใจง่าย (Flash Express)</p>
+                </div>
+            </div>
+            <a href="#" onclick="window.close()" class="text-sm font-semibold bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full transition-colors">
+                ปิดหน้าต่าง
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto p-4 space-y-6 pb-20">
+
+        <div class="sticky top-[72px] z-40 -mx-2 px-2 pb-2">
+            <div class="bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-sm border border-slate-200">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+                    <input type="text" id="pageSearch" 
+                        class="block w-full pl-10 pr-10 py-3 border-none rounded-xl leading-5 bg-transparent placeholder-slate-400 focus:outline-none focus:ring-0 text-slate-800" 
+                        placeholder="พิมพ์ค้นหา... (เช่น เคลม, ผลไม้, ของแตก, 2000)" 
+                        onkeyup="searchPage()"
+                        autocomplete="off">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer hidden" id="clearSearchBtn" onclick="clearSearch()">
+                        <i data-lucide="x-circle" class="w-5 h-5 text-slate-300 hover:text-slate-500 transition-colors"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-yellow-100 overflow-hidden searchable-item">
+            <div class="bg-yellow-50 p-4 flex items-start gap-4">
+                <div class="bg-yellow-100 p-3 rounded-full text-yellow-600 flex-shrink-0">
+                    <i data-lucide="coins" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg text-yellow-800">วงเงินชดเชย (สำคัญ!)</h2>
+                    <p class="text-sm text-yellow-700 mt-1">กรณีพัสดุเสียหาย/สูญหาย โดยไม่ได้ซื้อประกันเพิ่ม</p>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div class="text-center sm:text-left">
+                        <p class="text-slate-500 text-sm">ชดเชยตามมูลค่าจริง</p>
+                        <p class="font-bold text-2xl text-slate-800">สูงสุด 2,000 บาท</p>
+                        <p class="text-xs text-slate-400">ต่อ 1 หมายเลขพัสดุ</p>
+                    </div>
+                    <div class="hidden sm:block w-px h-12 bg-slate-200"></div>
+                    <div class="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                        <ul class="space-y-1">
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> ของหาย (จ่ายตามจริง)</li>
+                            <li class="flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-orange-500"></i> ของเสียหาย (ต้องแพ็คถูกต้อง)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-4 text-xs text-red-500 flex items-start gap-2">
+                    <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                    หากสินค้ามูลค่าสูงกว่า 2,000 บาท แนะนำให้ซื้อประกันความคุ้มครองเพิ่ม (คุ้มครองสูงสุด 50,000 บาท)
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 card-hover searchable-item">
+            <h3 class="font-bold text-lg flex items-center gap-2 mb-4 text-indigo-700">
+                <i data-lucide="video" class="w-5 h-5"></i> สิ่งที่ "ผู้รับ" ต้องทำ (เพื่อเคลมได้)
+            </h3>
+            <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                    <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">1</span>
+                    <p class="text-sm">ต้อง <strong>ถ่ายวิดีโอขณะแกะกล่อง</strong> ทุกครั้ง (สำคัญที่สุด! ไม่มีวิดีโอ = เคลมยาก)</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
+                    <p class="text-sm">ถ่ายรูปใบปะหน้าให้ชัดเจน และสภาพกล่องภายนอก 4 มุม</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
+                    <p class="text-sm">แจ้งเรื่องภายใน <strong>7 วัน</strong> หลังจากได้รับของ (เกินกำหนดหมดสิทธิ์)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden searchable-item">
+            <button onclick="toggleAccordion('fruit')" class="w-full p-5 flex items-center justify-between bg-green-50 hover:bg-green-100 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="bg-green-200 p-2 rounded-lg text-green-800"><i data-lucide="apple" class="w-5 h-5"></i></div>
+                    <div class="text-left">
+                        <h3 class="font-bold text-green-900">เงื่อนไขส่งผลไม้/ของสด</h3>
+                        <p class="text-xs text-green-700">ต้องใช้กล่องผลไม้ Flash เท่านั้น</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-down" class="w-5 h-5 text-green-700 transition-transform" id="icon-fruit"></i>
+            </button>
+            <div id="fruit" class="accordion-content bg-white px-5">
+                <div class="py-4 space-y-3 text-sm text-slate-600">
+                    <p>✅ <strong>รับประกันกรณีเน่าเสีย:</strong> เฉพาะเมื่อส่งล่าช้าเกิน <strong>120 ชั่วโมง (5 วัน)</strong> เท่านั้น</p>
+                    <p>📦 <strong>บรรจุภัณฑ์:</strong> ต้องใช้กล่องผลไม้ของ Flash เท่านั้น (กล่องเจาะรูแข็งแรง) หากใช้กล่องอื่นไม่รับเคลม</p>
+                    <p>❌ <strong>ไม่รับเคลม:</strong> ผลไม้สุกงอมเกินไป, ผลไม้แปรรูป (ปอกเปลือกแล้ว), หรือเน่าเสียโดยที่ขนส่งจัดส่งตรงเวลา</p>
+                    <div class="bg-green-50 p-3 rounded-lg border border-green-100 text-xs mt-2">
+                        <strong>Tip:</strong> ห้ามวางผลไม้ซ้อนกันจนช้ำ และควรห่อตาข่ายโฟมรายลูก
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden searchable-item">
+            <button onclick="toggleAccordion('cod')" class="w-full p-5 flex items-center justify-between bg-blue-50 hover:bg-blue-100 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-200 p-2 rounded-lg text-blue-800"><i data-lucide="truck" class="w-5 h-5"></i></div>
+                    <div class="text-left">
+                        <h3 class="font-bold text-blue-900">เก็บเงินปลายทาง (COD) ใหม่</h3>
+                        <p class="text-xs text-blue-700">ผู้รับเปิดดูของก่อนจ่ายได้</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-down" class="w-5 h-5 text-blue-700 transition-transform" id="icon-cod"></i>
+            </button>
+            <div id="cod" class="accordion-content bg-white px-5">
+                <div class="py-4 space-y-3 text-sm text-slate-600">
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>สิทธิ์ผู้รับ:</strong> สามารถขอเปิดกล่องพัสดุต่อหน้าพนักงานเพื่อตรวจสอบสินค้า "ก่อน" จ่ายเงินได้</li>
+                        <li><strong>การคืนสินค้า:</strong> หากเปิดแล้วพบว่า (1) ไม่ได้สั่ง (2) ไม่ตรงปก (3) ชำรุด สามารถ "ปฏิเสธการรับ" ได้ทันที ไม่ต้องจ่ายเงิน</li>
+                        <li><strong>ขอคืนเงินทีหลัง:</strong> หากรับของมาแล้ว พบปัญหา ยื่นเรื่องขอคืนเงินผ่านแอป Flash ภายใน 5 วัน (เงินจะยังไม่โอนให้ผู้ส่งทันที)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden searchable-item">
+            <button onclick="toggleAccordion('ban')" class="w-full p-5 flex items-center justify-between bg-red-50 hover:bg-red-100 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="bg-red-200 p-2 rounded-lg text-red-800"><i data-lucide="ban" class="w-5 h-5"></i></div>
+                    <div class="text-left">
+                        <h3 class="font-bold text-red-900">ของห้ามส่ง (เด็ดขาด)</h3>
+                        <p class="text-xs text-red-700">ฝ่าฝืนไม่มีการชดเชยทุกกรณี</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-down" class="w-5 h-5 text-red-700 transition-transform" id="icon-ban"></i>
+            </button>
+            <div id="ban" class="accordion-content bg-white px-5">
+                <div class="py-4 text-sm text-slate-600">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="flex items-center gap-2"><i data-lucide="x" class="w-4 h-4 text-red-500"></i> สิ่งผิดกฎหมาย/ยาเสพติด</div>
+                        <div class="flex items-center gap-2"><i data-lucide="x" class="w-4 h-4 text-red-500"></i> อาวุธ/ระเบิด/พลุ</div>
+                        <div class="flex items-center gap-2"><i data-lucide="x" class="w-4 h-4 text-red-500"></i> เงินสด/ทองคำ/เช็ค</div>
+                        <div class="flex items-center gap-2"><i data-lucide="x" class="w-4 h-4 text-red-500"></i> สิ่งมีชีวิต/สัตว์</div>
+                        <div class="flex items-center gap-2"><i data-lucide="x" class="w-4 h-4 text-red-500"></i> บุหรี่ไฟฟ้า/น้ำกระท่อม</div>
+                    </div>
+                    <p class="mt-3 text-xs text-red-600">*หากตรวจพบ บริษัทมีสิทธิ์ระงับการส่งและส่งดำเนินคดีตามกฎหมาย</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center pt-6 pb-4 border-t border-slate-200 mt-8" id="footerLink">
+            <a href="https://www.flashexpress.co.th/pact/company-agreement/" target="_blank" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-yellow-600 transition-colors mb-3">
+                อ่านข้อกำหนดฉบับเต็มอย่างเป็นทางการ <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+            <p class="text-xs text-slate-400 font-medium">
+                © จัดทำข้อมูลโดย: @pratya chartmontree by paypoint
+            </p>
+        </div>
+        
+        <div id="noResult" class="hidden text-center py-10">
+            <div class="bg-slate-100 p-4 rounded-full inline-block mb-3">
+                <i data-lucide="search-x" class="w-8 h-8 text-slate-400"></i>
+            </div>
+            <p class="text-slate-500">ไม่พบหัวข้อที่คุณค้นหา</p>
+            <button onclick="clearSearch()" class="mt-2 text-yellow-600 font-medium hover:underline text-sm">แสดงทั้งหมด</button>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function searchPage() {
+            const input = document.getElementById('pageSearch');
+            const filter = input.value.toLowerCase();
+            const items = document.getElementsByClassName('searchable-item');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const noResult = document.getElementById('noResult');
+            const footerLink = document.getElementById('footerLink');
+            
+            let hasVisible = false;
+
+            // Show/Hide Clear Button
+            if (filter.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+                let text = item.textContent || item.innerText;
+                
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    item.style.display = "";
+                    hasVisible = true;
+                    
+                    // Auto open accordions if searching
+                    if (filter.length > 0) {
+                        let content = item.querySelector('.accordion-content');
+                        let icon = item.querySelector('[id^="icon-"]');
+                        if (content && !content.classList.contains('active')) {
+                            content.classList.add('active');
+                            if(icon) icon.style.transform = 'rotate(180deg)';
+                        }
+                        item.classList.add('highlight-match');
+                        // Remove highlight animation after 2s
+                        setTimeout(() => {
+                            item.classList.remove('highlight-match');
+                        }, 2000);
+                    }
+                } else {
+                    item.style.display = "none";
+                }
+            }
+
+            // Show/Hide No Result
+            if (!hasVisible && filter.length > 0) {
+                noResult.classList.remove('hidden');
+                footerLink.style.display = "none";
+            } else {
+                noResult.classList.add('hidden');
+                footerLink.style.display = "";
+            }
+            
+            // If search is cleared, reset accordions to closed (optional, keeps UI clean)
+            if (filter.length === 0) {
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+                    let content = item.querySelector('.accordion-content');
+                    let icon = item.querySelector('[id^="icon-"]');
+                    if (content) {
+                        content.classList.remove('active');
+                        if(icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('pageSearch');
+            input.value = '';
+            searchPage();
+            input.focus();
+        }
+    </script>
+</body>
+</html>
+
+```
