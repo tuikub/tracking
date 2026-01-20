@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สิ่งของห้ามส่งและไม่รับประกัน - Paypoint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
+        .tab-active { border-bottom: 3px solid; font-weight: bold; }
+        .item-card { transition: all 0.2s; }
+        .item-card:hover { transform: translateY(-2px); shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="text-slate-700 pb-10">
+
+    <!-- Navbar -->
+    <div class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="https://tuikub.github.io/tracking/index.html" class="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                <span class="font-medium">กลับเมนูหลัก</span>
+            </a>
+            <h1 class="font-bold text-lg">เงื่อนไขการส่ง</h1>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="bg-slate-800 text-white py-10 px-4 text-center">
+        <div class="max-w-2xl mx-auto">
+            <!-- โลโก้ใหม่ -->
+            <img src="https://raw.githubusercontent.com/tuikub/tracking/refs/heads/main/paypoint.png" 
+                 alt="Paypoint Logo" 
+                 class="w-24 h-24 mx-auto mb-4 object-contain bg-white rounded-full p-1 shadow-lg">
+            
+            <h2 class="text-2xl md:text-3xl font-bold mb-2">ตรวจสอบสิ่งของก่อนส่ง</h2>
+            <p class="text-slate-300">เพื่อความปลอดภัยและสิทธิ์ในการเคลมสินค้าของท่าน</p>
+            
+            <!-- Search -->
+            <div class="relative mt-6 max-w-lg mx-auto">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+                </div>
+                <input type="text" id="searchInput" onkeyup="filterItems()" 
+                       class="block w-full pl-10 pr-4 py-3 rounded-full text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                       placeholder="ค้นหาชื่อสิ่งของ... (เช่น แบตเตอรี่, แก้ว, ผลไม้)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Container -->
+    <div class="max-w-3xl mx-auto px-4 -mt-6 relative z-10">
+        
+        <!-- Tabs -->
+        <div class="flex bg-white rounded-t-xl overflow-hidden border-b border-slate-200 shadow-sm">
+            <button onclick="switchTab('prohibited')" id="tab-prohibited" class="flex-1 py-4 text-center border-b-4 border-red-600 text-red-700 bg-red-50 font-bold transition-colors">
+                <i data-lucide="ban" class="w-4 h-4 inline-block mr-1"></i> ห้ามส่งเด็ดขาด
+            </button>
+            <button onclick="switchTab('non-insured')" id="tab-non-insured" class="flex-1 py-4 text-center border-b-4 border-transparent text-slate-500 hover:text-yellow-700 hover:bg-yellow-50 font-medium transition-colors">
+                <i data-lucide="shield-off" class="w-4 h-4 inline-block mr-1"></i> ไม่รับประกัน
+            </button>
+        </div>
+
+        <!-- Section 1: ห้ามส่ง (Prohibited) -->
+        <div id="content-prohibited" class="bg-white rounded-b-xl shadow-md p-6 min-h-[400px]">
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r">
+                <div class="flex items-start">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-600 mr-2 mt-0.5"></i>
+                    <div>
+                        <h3 class="font-bold text-red-800">ผิดกฎหมายและอันตราย</h3>
+                        <p class="text-sm text-red-700">หากฝ่าฝืน บริษัทจะระงับการส่งและดำเนินคดีตามกฎหมายทันที</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="list-prohibited">
+                <!-- Items will be generated here -->
+            </div>
+        </div>
+
+        <!-- Section 2: ไม่รับประกัน (Non-Insured) -->
+        <div id="content-non-insured" class="bg-white rounded-b-xl shadow-md p-6 min-h-[400px] hidden">
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 rounded-r">
+                <div class="flex items-start">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600 mr-2 mt-0.5"></i>
+                    <div>
+                        <h3 class="font-bold text-yellow-800">ส่งได้ แต่หากเสียหาย "ไม่รับเคลม"</h3>
+                        <p class="text-sm text-yellow-700">ลูกค้าต้องยอมรับความเสี่ยงและแพ็คสินค้าให้แน่นหนาที่สุด</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="list-non-insured">
+                <!-- Items will be generated here -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Credit -->
+    <div class="text-center mt-10 text-slate-400 text-sm">
+        © ข้อมูลรวบรวมโดย: @pratya chartmontree by paypoint
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Data Arrays
+        const prohibitedItems = [
+            { icon: 'bomb', title: 'วัตถุอันตราย', desc: 'ระเบิด, พลุ, ดอกไม้ไฟ, แก๊สกระป๋อง, น้ำมันเชื้อเพลิง' },
+            { icon: 'skull', title: 'ยาเสพติด/สิ่งผิดกฎหมาย', desc: 'ยาบ้า, กัญชา (บางขนส่ง), อุปกรณ์การพนัน, บุหรี่หนีภาษี' },
+            { icon: 'crosshair', title: 'อาวุธและสิ่งเทียมอาวุธ', desc: 'ปืน (ทุกชนิด), กระสุน, มีดดาบ, สนับมือ' },
+            { icon: 'battery-charging', title: 'แบตเตอรี่ (บางประเภท)', desc: 'แบตเตอรี่รถยนต์ที่มีน้ำกรด, Power Bank (ความจุเกินกำหนด)' },
+            { icon: 'banknote', title: 'เงินสดและของมีค่า', desc: 'ธนบัตร, เหรียญ, ทองคำ, อัญมณี, เช็คเงินสด, บัตรเครดิต' },
+            { icon: 'cat', title: 'สิ่งมีชีวิต', desc: 'สัตว์ทุกชนิด, แมลง, ปลาสวยงาม' },
+            { icon: 'trash-2', title: 'ซากสัตว์/ศพ', desc: 'ชิ้นส่วนมนุษย์, เถ้ากระดูก, ซากสัตว์' },
+            { icon: 'mail-warning', title: 'เอกสารสำคัญทางราชการ', desc: 'บัตรประชาชน (ตัวจริง), พาสปอร์ต (ตัวจริง), โฉนดที่ดิน' }
+        ];
+
+        const nonInsuredItems = [
+            { icon: 'wine', title: 'เครื่องแก้ว/เซรามิก', desc: 'แก้ว, กระจก, ขวดไวน์, จานชาม, โคมไฟ, หลอดไฟ' },
+            { icon: 'monitor', title: 'เครื่องใช้ไฟฟ้า (มือสอง)', desc: 'ทีวีจอแตกง่าย, คอมพิวเตอร์ประกอบเอง (มักไม่รับเคลมภายใน)' },
+            { icon: 'music', title: 'เครื่องดนตรี', desc: 'กีตาร์, ไวโอลิน, เปียโนไฟฟ้า (เสียหายง่ายจากการสั่นสะเทือน)' },
+            { icon: 'apple', title: 'อาหาร/ผลไม้/ของสด', desc: 'ผลไม้สุกง่าย, ขนมปัง, อาหารปรุงสุก (เน่าเสียไม่รับเคลม)' },
+            { icon: 'file-text', title: 'กระดาษ/ภาพวาด', desc: 'รูปวาดงานศิลปะ, โปสเตอร์, ตั๋วคอนเสิร์ต (หากยับหรือเปียกน้ำ)' },
+            { icon: 'car', title: 'อะไหล่รถยนต์ (ตัวถัง)', desc: 'กันชน, ฝากระโปรงรถ, สเกิร์ต (บุบง่าย)' },
+            { icon: 'package-open', title: 'ของเหลวทุกชนิด', desc: 'น้ำหอม, น้ำยาซักผ้า, แชมพู (หากหกใส่ของอื่น ต้องรับผิดชอบ)' }
+        ];
+
+        // Function to Render Items
+        function renderItems(items, containerId, colorClass) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `item-card border border-slate-100 rounded-lg p-4 flex items-start gap-3 hover:bg-slate-50`;
+                div.innerHTML = `
+                    <div class="bg-${colorClass}-100 p-2 rounded-full text-${colorClass}-600 mt-1 flex-shrink-0">
+                        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">${item.title}</h4>
+                        <p class="text-sm text-slate-500">${item.desc}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        // Initial Render
+        renderItems(prohibitedItems, 'list-prohibited', 'red');
+        renderItems(nonInsuredItems, 'list-non-insured', 'yellow');
+
+        // Tab Switcher
+        function switchTab(tabName) {
+            const contentProhibited = document.getElementById('content-prohibited');
+            const contentNonInsured = document.getElementById('content-non-insured');
+            const btnProhibited = document.getElementById('tab-prohibited');
+            const btnNonInsured = document.getElementById('tab-non-insured');
+
+            if (tabName === 'prohibited') {
+                contentProhibited.classList.remove('hidden');
+                contentNonInsured.classList.add('hidden');
+                
+                // Style Active
+                btnProhibited.className = "flex-1 py-4 text-center border-b-4 border-red-600 text-red-700 bg-red-50 font-bold transition-colors";
+                // Style Inactive
+                btnNonInsured.className = "flex-1 py-4 text-center border-b-4 border-transparent text-slate-500 hover:text-yellow-700 hover:bg-yellow-50 font-medium transition-colors";
+            } else {
+                contentProhibited.classList.add('hidden');
+                contentNonInsured.classList.remove('hidden');
+
+                // Style Active
+                btnNonInsured.className = "flex-1 py-4 text-center border-b-4 border-yellow-500 text-yellow-800 bg-yellow-50 font-bold transition-colors";
+                // Style Inactive
+                btnProhibited.className = "flex-1 py-4 text-center border-b-4 border-transparent text-slate-500 hover:text-red-700 hover:bg-red-50 font-medium transition-colors";
+            }
+        }
+
+        // Search Function
+        function filterItems() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const activeTab = document.getElementById('content-prohibited').classList.contains('hidden') ? 'non-insured' : 'prohibited';
+            
+            const targetList = activeTab === 'prohibited' ? prohibitedItems : nonInsuredItems;
+            const containerId = activeTab === 'prohibited' ? 'list-prohibited' : 'list-non-insured';
+            const colorClass = activeTab === 'prohibited' ? 'red' : 'yellow';
+
+            const filtered = targetList.filter(item => 
+                item.title.toLowerCase().includes(input) || 
+                item.desc.toLowerCase().includes(input)
+            );
+
+            renderItems(filtered, containerId, colorClass);
+        }
+    </script>
+</body>
+</html>
