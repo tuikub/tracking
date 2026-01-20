@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำนวณน้ำหนักตามปริมาตร - Paypoint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f1f5f9; }
+        .input-box { @apply w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-center text-lg font-bold text-slate-700; }
+        .result-card { transition: all 0.3s; }
+        .result-card.show { animation: popIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body class="text-slate-700 pb-10">
+
+    <!-- Navbar -->
+    <div class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="https://tuikub.github.io/tracking/" class="flex items-center gap-2 text-slate-600 hover:text-indigo-600 transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                <span class="font-medium">กลับเมนูหลัก</span>
+            </a>
+            <!-- ปุ่มเล็ก สมัครรับส่วนลด -->
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfLzcfxzr15pbp-Ctbo_ynY9ksB65lDOKHYsM8amc3COnPB7A/viewform?usp=header" target="_blank" class="flex items-center gap-1 bg-red-100 hover:bg-red-200 text-red-700 text-xs px-3 py-1.5 rounded-full font-bold transition-all border border-red-200">
+                <i data-lucide="gift" class="w-3 h-3"></i>
+                รับส่วนลด
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-md mx-auto px-4 py-8">
+        
+        <!-- Intro & Logo -->
+        <div class="text-center mb-8">
+            <!-- โลโก้ Paypoint -->
+            <img src="https://tuikub.github.io/tracking//paypoint.png" alt="Paypoint Logo" class="w-24 h-24 mx-auto mb-4 rounded-full border-4 border-white shadow-lg object-contain bg-white">
+            
+            <h2 class="text-2xl font-bold text-slate-800">เช็คน้ำหนักกล่อง</h2>
+            <p class="text-slate-500 text-sm mt-1">เปรียบเทียบน้ำหนักจริง vs น้ำหนักตามปริมาตร</p>
+        </div>
+
+        <!-- Form -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
+            
+            <!-- Dimensions -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-600 mb-3 flex items-center gap-2">
+                    <i data-lucide="ruler" class="w-4 h-4"></i> ขนาดกล่อง (เซนติเมตร)
+                </label>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <input type="number" id="width" placeholder="กว้าง" class="input-box">
+                        <span class="text-xs text-slate-400 block text-center mt-1">กว้าง</span>
+                    </div>
+                    <div>
+                        <input type="number" id="length" placeholder="ยาว" class="input-box">
+                        <span class="text-xs text-slate-400 block text-center mt-1">ยาว</span>
+                    </div>
+                    <div>
+                        <input type="number" id="height" placeholder="สูง" class="input-box">
+                        <span class="text-xs text-slate-400 block text-center mt-1">สูง</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actual Weight -->
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-slate-600 mb-3 flex items-center gap-2">
+                    <i data-lucide="scale" class="w-4 h-4"></i> น้ำหนักชั่งจริง (กิโลกรัม)
+                </label>
+                <div class="relative">
+                    <input type="number" id="actualWeight" placeholder="0.0" class="input-box pr-10">
+                    <span class="absolute right-4 top-3.5 text-slate-400 font-bold">Kg</span>
+                </div>
+            </div>
+
+            <!-- Calculate Button -->
+            <button onclick="calculateWeight()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i data-lucide="calculator" class="w-5 h-5"></i> คำนวณเลย
+            </button>
+
+        </div>
+
+        <!-- Result Area (Hidden initially) -->
+        <div id="resultArea" class="hidden mt-6">
+            
+            <!-- Winner Box -->
+            <div class="bg-slate-800 text-white p-6 rounded-2xl shadow-xl result-card show relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="check-circle" class="w-24 h-24"></i></div>
+                <p class="text-slate-300 text-sm mb-1">น้ำหนักที่ใช้คิดค่าส่งคือ:</p>
+                <h3 class="text-4xl font-bold text-green-400 mb-1 flex items-baseline gap-2">
+                    <span id="finalWeight">0</span> <span class="text-lg text-white">kg.</span>
+                </h3>
+                <p id="reasonText" class="text-xs bg-white/20 inline-block px-2 py-1 rounded text-white/90">
+                    <!-- Reason text here -->
+                </p>
+            </div>
+
+            <!-- Detail Comparison -->
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center">
+                    <p class="text-xs text-slate-500">น้ำหนักชั่งจริง</p>
+                    <p class="font-bold text-lg text-slate-700"><span id="displayActual">0</span> kg</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-8 h-8 bg-indigo-100 rounded-bl-xl flex items-center justify-center text-indigo-600">
+                        <i data-lucide="box" class="w-4 h-4"></i>
+                    </div>
+                    <p class="text-xs text-slate-500">น้ำหนักปริมาตร</p>
+                    <p class="font-bold text-lg text-indigo-600"><span id="displayVolumetric">0</span> kg</p>
+                    <p class="text-[10px] text-slate-400 mt-1">(กxยxส) ÷ 5000</p>
+                </div>
+            </div>
+
+            <!-- Note -->
+            <div class="mt-6 text-xs text-slate-500 text-center">
+                *สูตรคำนวณมาตรฐานสากล: กว้าง x ยาว x สูง (ซม.) ÷ 5,000 <br>
+                ขนส่งจะเลือกคิดราคาจากค่าที่ <strong>"มากกว่า"</strong> เสมอ
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function calculateWeight() {
+            // Get inputs
+            const w = parseFloat(document.getElementById('width').value) || 0;
+            const l = parseFloat(document.getElementById('length').value) || 0;
+            const h = parseFloat(document.getElementById('height').value) || 0;
+            const actual = parseFloat(document.getElementById('actualWeight').value) || 0;
+
+            if (w === 0 || l === 0 || h === 0) {
+                alert("กรุณากรอกขนาด กว้าง, ยาว, สูง ให้ครบถ้วน");
+                return;
+            }
+
+            // Calculate Volumetric Weight (Standard Formula / 5000)
+            const volumetric = (w * l * h) / 5000;
+            
+            // Determine Chargeable Weight
+            const final = Math.max(actual, volumetric);
+            const isVolumetric = volumetric > actual;
+
+            // Update UI
+            document.getElementById('displayActual').innerText = actual.toFixed(2);
+            document.getElementById('displayVolumetric').innerText = volumetric.toFixed(2);
+            document.getElementById('finalWeight').innerText = final.toFixed(2);
+
+            const reasonText = document.getElementById('reasonText');
+            if (isVolumetric) {
+                reasonText.innerText = "คิดตามปริมาตร (เพราะกล่องใหญ่กว่าน้ำหนักจริง)";
+                reasonText.className = "text-xs bg-orange-500/30 text-orange-200 inline-block px-2 py-1 rounded";
+            } else {
+                reasonText.innerText = "คิดตามน้ำหนักจริง (เพราะหนักกว่าปริมาตรกล่อง)";
+                reasonText.className = "text-xs bg-green-500/30 text-green-200 inline-block px-2 py-1 rounded";
+            }
+
+            // Show result
+            const resultArea = document.getElementById('resultArea');
+            resultArea.classList.remove('hidden');
+            
+            // Scroll to result
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
