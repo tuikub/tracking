@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์ข้อมูลพัสดุ & คำถามที่พบบ่อย (FAQ)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
+        /* Header & Credit */
+        .header { text-align: center; margin-bottom: 30px; }
+        h1 { color: #1e3a8a; margin-bottom: 5px; font-size: 28px; }
+        .creator-credit { color: #64748b; font-size: 14px; margin-bottom: 25px; font-weight: 600; }
+        
+        /* Search Box */
+        .search-box { position: relative; max-width: 100%; margin-bottom: 30px; }
+        .search-box input { width: 100%; padding: 16px 20px 16px 50px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; transition: all 0.3s; box-sizing: border-box; }
+        .search-box input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; color: #94a3b8; }
+
+        /* Categories Tags */
+        .category-header { font-size: 18px; font-weight: bold; margin-top: 30px; margin-bottom: 15px; color: #334155; border-left: 5px solid #2563eb; padding-left: 10px; }
+        
+        /* FAQ Items */
+        .faq-item { border-bottom: 1px solid #f1f5f9; margin-bottom: 8px; }
+        details { background-color: #fff; border-radius: 8px; overflow: hidden; transition: 0.2s; }
+        details:hover { background-color: #f8fafc; }
+        summary { padding: 18px; cursor: pointer; font-weight: 600; font-size: 16px; list-style: none; display: flex; justify-content: space-between; align-items: center; color: #1e293b; }
+        summary::after { content: '+'; font-size: 20px; color: #cbd5e1; transition: transform 0.2s; }
+        details[open] summary::after { transform: rotate(45deg); color: #2563eb; }
+        details[open] summary { color: #2563eb; background-color: #eff6ff; }
+        .answer { padding: 20px; color: #475569; line-height: 1.7; background-color: #fff; font-size: 15px; }
+
+        /* Footer */
+        .footer { text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 13px; }
+
+        /* Highlight Logic */
+        .highlight { background-color: #fef08a; padding: 0 2px; }
+        ul { margin: 0; padding-left: 20px; }
+        li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>ศูนย์ข้อมูลพัสดุครบวงจร (FAQ)</h1>
+        <div class="creator-credit">รวบรวมข้อมูลเชิงความรู้โดย: @pratya chartmontree by paypoint</div>
+        
+        <div class="search-box">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="searchInput" onkeyup="searchFAQ()" placeholder="พิมพ์ค้นหาได้เลย... เช่น ตัดรอบ, ผลไม้, ห้ามส่ง, เคลม...">
+        </div>
+    </div>
+
+    <div id="faqList">
+
+        <div class="category-header">1. ข้อมูลร้านและเวลาทำการ</div>
+        
+        <div class="faq-item"><details><summary>ร้านเปิด-ปิด กี่โมง / วันหยุดร้าน?</summary>
+            <div class="answer">เวลาทำการและวันหยุด <strong>ขึ้นอยู่กับแต่ละสาขา</strong> ที่ท่านเข้าใช้บริการ กรุณาตรวจสอบป้ายหน้าร้านหรือสอบถามเจ้าหน้าที่สาขานั้นๆ โดยตรงครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ร้านอยู่ที่ไหน / ขอพิกัดร้าน?</summary>
+            <div class="answer">พิกัดที่ตั้ง <strong>ขึ้นอยู่กับสาขา</strong> ที่ท่านสะดวกไปส่งครับ เนื่องจากเรามีจุดให้บริการหลายแห่งทั่วประเทศ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ตัดรอบกี่โมง (ส่งวันนี้ทันรอบไหม)?</summary>
+            <div class="answer">ทางร้านตัดรอบส่งเวลา <strong>16.00 น.</strong> ของทุกวันครับ <br>หากลูกค้ามาส่งก่อน 16.00 น. พัสดุจะออกจากร้านภายในวันนั้นเลยครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ที่ร้านมีขนส่งเจ้าไหนบ้าง?</summary>
+            <div class="answer">เรารวบรวมขนส่งชั้นนำไว้บริการ ได้แก่ Flash Express, Kerry (KEX), J&T Express, ไปรษณีย์ไทย (EMS), DHL และอื่นๆ (ขึ้นอยู่กับพื้นที่) ครบจบในที่เดียวครับ</div>
+        </details></div>
+
+        <div class="category-header">2. ค่าส่งและบริการเก็บเงินปลายทาง (COD)</div>
+
+        <div class="faq-item"><details><summary>ค่าส่งเริ่มต้นกี่บาท คิดราคายังไง?</summary>
+            <div class="answer">ค่าส่งคำนวณจาก <strong>ขนาด (กว้าง+ยาว+สูง) และ น้ำหนัก</strong> เริ่มต้นตามโปรโมชั่นของแต่ละขนส่งครับ แนะนำให้นำของมาวัดขนาดที่ร้านเพื่อราคาที่แม่นยำที่สุดครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>มีบริการเก็บเงินปลายทาง (COD) ไหม?</summary>
+            <div class="answer">มีครับ รองรับ COD ทุกขนส่งหลัก ค่าธรรมเนียมอยู่ที่ประมาณ 3% (ขึ้นอยู่กับเงื่อนไขแต่ละขนส่ง)</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>สมัคร COD ใช้อะไรบ้าง / เงินเข้าวันไหน?</summary>
+            <div class="answer"><strong>เอกสาร:</strong> ใช้บัตรประชาชน + หน้าสมุดบัญชีธนาคาร (ชื่อตรงกัน) <br><strong>เงินเข้า:</strong> หลังจากลูกค้าปลายทางรับของแล้ว เงินจะโอนเข้าบัญชีภายใน 1-3 วันทำการ (ไม่รวมเสาร์-อาทิตย์) ครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ออกใบกำกับภาษี/ใบเสร็จรับเงิน ได้ไหม?</summary>
+            <div class="answer">ได้ครับ แจ้งเจ้าหน้าที่หน้าร้านตอนส่งพัสดุได้เลยครับ</div>
+        </details></div>
+
+        <div class="category-header">3. การติดตามพัสดุ (Tracking)</div>
+
+        <div class="faq-item"><details><summary>ส่งของแล้วเช็คเลขพัสดุได้ตอนไหน?</summary>
+            <div class="answer">ลูกค้าจะได้รับใบเสร็จที่มีเลขพัสดุทันทีที่ส่ง แต่สถานะในระบบออนไลน์จะเริ่มอัปเดตหลังจากรถขนส่งมารับของและสแกนเข้าคลังใหญ่ (ช่วงเย็น-ค่ำของวันที่ส่ง) ครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ของถึงผู้รับกี่วัน?</summary>
+            <div class="answer"><strong>กทม./ปริมณฑล:</strong> 1-2 วัน <br><strong>ต่างจังหวัด:</strong> 2-3 วัน <br><strong>พื้นที่ห่างไกล/เกาะ/ดอย:</strong> 3-4 วันครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>พัสดุตกค้าง / สถานะไม่อัปเดต ทำยังไง?</summary>
+            <div class="answer">เบื้องต้นแนะนำให้โทรติดต่อ Call Center ขนส่งโดยตรง หรือแจ้งเลขพัสดุให้แอดมินช่วยตรวจสอบสถานะล่าสุดให้ครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ขอเบอร์ Call Center ขนส่งต่างๆ หน่อย</summary>
+            <div class="answer">
+                <ul>
+                    <li><strong>Kerry (KEX):</strong> 1217</li>
+                    <li><strong>Flash Express:</strong> 1436</li>
+                    <li><strong>J&T Express:</strong> 1470</li>
+                    <li><strong>ไปรษณีย์ไทย:</strong> 1545</li>
+                    <li><strong>DHL:</strong> 02-345-5000</li>
+                </ul>
+            </div>
+        </details></div>
+
+        <div class="category-header">4. เงื่อนไขการส่งและของต้องห้าม</div>
+
+        <div class="faq-item"><details><summary>สิ่งของต้องห้ามส่งเด็ดขาด มีอะไรบ้าง?</summary>
+            <div class="answer">
+                <span style="color:red;">❌ ห้ามส่ง:</span> ยาเสพติด, อาวุธปืน/ระเบิด, สิ่งผิดกฎหมาย, วัตถุไวไฟ, สเปรย์อัดแก๊ส, แบตเตอรี่ (Power Bank), สิ่งมีชีวิต, ซากสัตว์, เงินสด, และทองคำ
+            </div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ส่งผลไม้ (ทุเรียน, มะม่วง) ได้ไหม?</summary>
+            <div class="answer"><strong>ส่งได้ครับ</strong> แต่ต้องใช้ <em>กล่องผลไม้เจาะรู</em> เพื่อระบายอากาศ และต้องห่อโฟม/กระดาษหนังสือพิมพ์กันช้ำให้แน่นหนา (หากผลไม้เน่าเสีย ขนส่งจะไม่รับเคลมทุกกรณีครับ)</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ส่งอาหารแห้ง / น้ำพริก / ของเหลว ได้ไหม?</summary>
+            <div class="answer">ส่งได้ครับ แต่ต้อง <strong>ปิดฝาให้สนิทและพันเทปที่ฝา</strong> เพื่อกันหกเลอะเทอะ และห่อบับเบิ้ลหนาๆ ครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ส่งอาหารแช่แข็ง (Cold Chain) ได้ไหม?</summary>
+            <div class="answer">ขึ้นอยู่กับสาขาครับ บางสาขามีบริการตู้แช่ หรือบริการส่งแบบควบคุมอุณหภูมิ โปรดสอบถามหน้าร้านโดยตรงครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ส่งของชิ้นใหญ่ (ตู้เย็น, มอเตอร์ไซค์) ได้ไหม?</summary>
+            <div class="answer">รับส่งครับ (ผ่านบริการ Bulky ของขนส่ง) แต่อาจใช้เวลาจัดส่งนานกว่าพัสดุปกติ 1-2 วัน และต้องแพ็คกันกระแทกอย่างดีครับ</div>
+        </details></div>
+
+        <div class="category-header">5. การแพ็คสินค้าและการเคลม</div>
+
+        <div class="faq-item"><details><summary>ที่ร้านมีกล่อง/อุปกรณ์แพ็คขายไหม?</summary>
+            <div class="answer">มีครับ ทางร้านจำหน่ายกล่องพัสดุทุกไซส์ ซองพลาสติก เทปกาว และบับเบิ้ลกันกระแทก พร้อมให้บริการแพ็คครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>สินค้าเสียหาย/สูญหาย เคลมยังไง?</summary>
+            <div class="answer">
+                ต้องยื่นเรื่องภายใน 3 วันหลังรับของ โดยใช้หลักฐานสำคัญคือ:
+                <br>1. <strong>คลิปวิดีโอตอนแกะกล่อง (สำคัญมาก)</strong>
+                <br>2. รูปถ่ายสภาพกล่องภายนอกให้เห็นใบปะหน้า
+                <br>3. รูปสินค้าที่เสียหาย
+                <br><em>*หากไม่มีคลิปตอนแกะกล่อง ขนส่งส่วนใหญ่จะปฏิเสธการเคลมครับ</em>
+            </div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>วงเงินรับผิดชอบหากพัสดุเสียหาย?</summary>
+            <div class="answer">หากไม่ได้ซื้อประกันเพิ่ม ขนส่งจะรับผิดชอบตามมูลค่าจริง <strong>แต่ไม่เกิน 2,000 บาท</strong> (เงื่อนไขเป็นไปตามแต่ละบริษัทขนส่งกำหนด)</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ซื้อประกันพัสดุเพิ่มได้ไหม?</summary>
+            <div class="answer">ได้ครับ หากส่งของมูลค่าสูง แนะนำให้แจ้งเจ้าหน้าที่เพื่อซื้อประกันเพิ่ม ค่าเบี้ยประกันเริ่มต้นเพียงหลักสิบ คุ้มครองครอบคลุมกว่าครับ</div>
+        </details></div>
+
+        <div class="category-header">6. คำถามอื่นๆ</div>
+
+        <div class="faq-item"><details><summary>ปริ้นท์ใบปะหน้า Shopee / Lazada / TikTok มาแปะเองได้ไหม?</summary>
+            <div class="answer">ได้ครับ ทางร้านรับบริการ Drop-off (ฝากส่ง) สำหรับร้านค้าออนไลน์ครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>ส่งพื้นที่ห่างไกล/เกาะ/3 จังหวัดชายแดน บวกเพิ่มไหม?</summary>
+            <div class="answer">พื้นที่ห่างไกล (Remote Area) จะมีค่าธรรมเนียมบวกเพิ่มตามกำหนดของขนส่งครับ (ประมาณ 50 บาท) ระบบจะแจ้งยอดให้ทราบตอนคีย์ข้อมูลครับ</div>
+        </details></div>
+
+        <div class="faq-item"><details><summary>เปลี่ยนที่อยู่ผู้รับ หลังจากส่งไปแล้วได้ไหม?</summary>
+            <div class="answer">ทำได้ยากครับ และอาจมีค่าใช้จ่ายเพิ่มเติม แนะนำให้ลูกค้ารีบติดต่อ Call Center ของขนส่งนั้นๆ โดยตรงเพื่อระงับการส่งและแก้ไขข้อมูลให้เร็วที่สุดครับ</div>
+        </details></div>
+
+    </div>
+
+    <div class="footer">
+        © จัดทำข้อมูลโดย: @pratya chartmontree by paypoint
+    </div>
+</div>
+
+<script>
+    function searchFAQ() {
+        var input = document.getElementById('searchInput');
+        var filter = input.value.toUpperCase();
+        var faqList = document.getElementById('faqList');
+        var items = faqList.getElementsByClassName('faq-item');
+        var headers = faqList.getElementsByClassName('category-header');
+
+        // ซ่อนหัวข้อหมวดหมู่ไว้ก่อนตอนค้นหา เพื่อไม่ให้รก
+        if(filter.length > 0){
+            for(var h = 0; h < headers.length; h++){
+                headers[h].style.display = "none";
+            }
+        } else {
+            for(var h = 0; h < headers.length; h++){
+                headers[h].style.display = "";
+            }
+        }
+
+        // วนลูปเช็คคำถาม
+        for (var i = 0; i < items.length; i++) {
+            var details = items[i].getElementsByTagName("details")[0];
+            var summary = items[i].getElementsByTagName("summary")[0];
+            var answer = items[i].getElementsByClassName("answer")[0];
+            var textValue = summary.textContent + " " + answer.textContent;
+
+            if (textValue.toUpperCase().indexOf(filter) > -1) {
+                items[i].style.display = "";
+                if (filter.length > 0) {
+                    details.setAttribute("open", ""); // ค้นเจอแล้วกางออกเลย
+                } else {
+                    details.removeAttribute("open"); // ลบคำค้นแล้วหุบกลับ
+                }
+            } else {
+                items[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
