@@ -80,8 +80,9 @@
             </a>
         </div>
 
-        <!-- 2. NEW: News & Update Section (Facebook) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 2. News & Update Section (Facebook Only) -->
+        <!-- Adjusted grid to be single column full width since franchise card is moved -->
+        <div class="grid grid-cols-1">
             <a href="https://www.facebook.com/papacking" target="_blank" class="menu-card bg-[#1877F2] p-5 rounded-2xl shadow-lg shadow-blue-200 text-white flex items-center justify-between group">
                 <div class="flex items-center gap-4">
                     <div class="bg-white/20 p-3 rounded-full">
@@ -94,27 +95,6 @@
                 </div>
                 <div class="bg-white text-[#1877F2] px-4 py-1.5 rounded-full text-xs font-bold shadow-sm group-hover:bg-blue-50 transition-colors">
                     ดูเลย
-                </div>
-            </a>
-
-            <!-- Franchise / Discount Section (Updated) -->
-            <a href="franchise.html" class="menu-card bg-gradient-to-r from-red-600 to-rose-600 p-5 rounded-2xl shadow-lg shadow-red-200 text-white flex items-center justify-between group relative overflow-hidden">
-                <!-- Discount Badge -->
-                <div class="absolute -top-1 -right-1 bg-yellow-400 text-red-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10 shadow-sm animate-pulse">
-                    รับส่วนลด!
-                </div>
-                
-                <div class="flex items-center gap-4 relative z-10">
-                    <div class="bg-white/20 p-3 rounded-full">
-                        <i data-lucide="store" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold">สนใจร่วมธุรกิจ</h3>
-                        <p class="text-red-100 text-sm">แฟรนไชส์ราคาพิเศษ</p>
-                    </div>
-                </div>
-                <div class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors relative z-10">
-                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </div>
             </a>
         </div>
@@ -220,7 +200,6 @@
                     </div>
                 </a>
 
-                <!-- FAQ Link moved here -->
                  <a href="faq.html" class="menu-card bg-white p-5 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 hover:border-indigo-600">
                     <div class="bg-indigo-50 p-3 rounded-lg text-indigo-600">
                         <i data-lucide="help-circle" class="w-6 h-6"></i>
@@ -240,8 +219,8 @@
     <footer class="mt-12 bg-white pt-10 pb-6 border-t border-slate-100">
         <div class="max-w-4xl mx-auto px-4 text-center">
             
-            <!-- Visitor Counter (New) -->
-            <div class="mb-8 inline-block bg-slate-50 px-6 py-3 rounded-full border border-slate-200 shadow-inner">
+            <!-- Visitor Counter -->
+            <div class="mb-6 inline-block bg-slate-50 px-6 py-3 rounded-full border border-slate-200 shadow-inner">
                 <div class="flex flex-col items-center gap-1">
                     <span class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Total Visitors</span>
                     <div class="flex items-center gap-2 text-slate-600 font-mono text-xl font-bold">
@@ -249,6 +228,14 @@
                         <span id="visitor-count" class="tracking-widest">---</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Moved Franchise/Discount Link Here -->
+            <div class="mb-8">
+                <a href="franchise.html" class="inline-flex items-center gap-1 text-[10px] text-slate-300 hover:text-slate-500 hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200 rounded-full px-3 py-1">
+                    <i data-lucide="tag" class="w-3 h-3"></i>
+                    <span>สมาชิกรับส่วนลด</span>
+                </a>
             </div>
 
             <div class="flex justify-center items-center gap-2 mb-4 opacity-50">
