@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บริการติดตามพัสดุรวม - All-in-One Tracking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f3f4f6; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .courier-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .courier-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div id="tracking-widget-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                <span class="inline-block align-middle mr-2">
+                    <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </span>
+                ติดตามสถานะพัสดุ
+            </h1>
+            <p class="text-sm text-gray-500 font-semibold mb-4">รวบรวมข้อมูลโดย: @pratya chartmontree by paypoint</p>
+            <p class="text-gray-600 text-lg mb-6">รวมลิงก์เช็คพัสดุ เบอร์โทร และไลน์ติดต่อ ครบจบในที่เดียว</p>
+            
+            <div class="relative max-w-lg mx-auto">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" id="searchInput" onkeyup="filterCouriers()" 
+                       class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition duration-150 ease-in-out" 
+                       placeholder="ค้นหาชื่อขนส่ง (เช่น Kerry, Flash, DHL)...">
+            </div>
+        </div>
+
+        <div id="courierGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="post sabuy ems promptspeed ไปรษณีย์">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <span class="text-xs font-semibold bg-gray-100 text-gray-600 py-1 px-2 rounded">ไทย</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">POST SABUY / EMS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: JMxxxxxxxxxTH</p>
+                    
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:1545" class="hover:text-red-600 font-medium">1545</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@ThailandPost" target="_blank" class="hover:text-green-600">@ThailandPost</a>
+                        </div>
+                        <div class="flex items-start text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 mt-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>จ-ศ 08.00-18.00<br>ส-อา 09.00-14.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://tracking.promptspeed.co.th/" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="kex kerry express เคอรี่">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">KEX EXPRESS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: SXFxxxxxxxxxxxx</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:1217" class="hover:text-orange-600 font-medium">1217</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@kexthailand" target="_blank" class="hover:text-green-600">@kexthailand</a>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ทุกวัน 08.30 - 20.30 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://th.kex-express.com/th/track/" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="flash express แฟลช">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">FLASH EXPRESS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ระบุเลขพัสดุ Flash</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:1436" class="hover:text-yellow-600 font-medium">1436</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <span>ติดต่อผ่านแอป</span>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ทุกวัน 08.00 - 20.00 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://www.flashexpress.co.th/fle/tracking" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="j&t express home เจแอนด์ที">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-red-50 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">J&T HOME</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: 8632XXXXXXXXXXX</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:1470" class="hover:text-red-600 font-medium">1470</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@jtexpressth" target="_blank" class="hover:text-green-600">@jtexpressth</a>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ทุกวัน 24 ชั่วโมง</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://jtexpress.co.th/service/track" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="dhl eco express ดีเอชแอล">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-yellow-200 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">DHL EXPRESS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: DSxxxxxxxxxxxxxx</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:023455000" class="hover:text-red-800 font-medium">02-345-5000</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@dhlexpressth" target="_blank" class="hover:text-green-600">@dhlexpressth</a>
+                        </div>
+                        <div class="flex items-start text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 mt-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>จ-ศ 08.00-20.00<br>เสาร์ 08.00-16.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://www.dhl.com/th-th/home.html?utm_source=Web&utm_medium=Banner&utm_campaign=status+tracking" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-red-800 text-sm font-bold rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="sabuy dee สบายดี">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">SABUY DEE</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: SDxxxxxxxxxxxxxx</p>
+                    
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <span>ติดต่อสาขาต้นทาง</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <span>ติดต่อสาขาต้นทาง</span>
+                        </div>
+                         <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ตามเวลาทำการสาขา</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://ecommerceportal.dhl.com/track/pages/customer/trackItNowPublic.xhtml?locale=th_TH" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+             <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="rtt express อาร์ทีที">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">RTT EXPRESS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: SS...RTT</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:020266969" class="hover:text-indigo-600 font-medium">02-026-6969</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <span>@rttexpress</span>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>จ-ส 08.30 – 17.30 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://www.rttgroups.com/?utm_source=Web&utm_medium=Banner&utm_campaign=status+tracking" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="spx express shopee ช้อปปี้">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-orange-50 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">SPX EXPRESS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตรวจสอบสถานะ SPX</p>
+                    
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:020178399" class="hover:text-orange-600 font-medium">02-017-8399</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <span>ติดต่อผ่านแอป</span>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ทุกวัน 08.00 - 20.00 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://spx.co.th/" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="best express เบสท์">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-pink-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">BEST EXPRESS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: BExxxxxxxxxxxxxx</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:021088000" class="hover:text-pink-600 font-medium">02-108-8000</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@bestexpress_th" target="_blank" class="hover:text-green-600">@bestexpress_th</a>
+                        </div>
+                        <div class="flex items-start text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 mt-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>จ-ศ 09.00-18.00<br>ส-อา 09.00-17.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://www.best-inc.co.th/track?utm_source=Web&utm_medium=Banner&utm_campaign=status+tracking" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="makesend express เมคเซนด์">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-blue-50 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">MAKESEND</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ขนส่งภายในวัน (Same Day)</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:020266648" class="hover:text-blue-600 font-medium">02-026-6648</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@MAKESEND" target="_blank" class="hover:text-green-600">@MAKESEND</a>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ทุกวัน 08.00 - 22.00 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://www.makesend.asia/tracking/?utm_source=Web&utm_medium=Banner&utm_campaign=status+tracking" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="lex lazada drop off ลาซาด้า">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">LEX / LAZADA</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ติดตามพัสดุ LEX & Drop Off</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:020180000" class="hover:text-purple-600 font-medium">02-018-0000</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <span>ติดต่อผ่านแอป</span>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>จ-ส 08.00 - 20.00 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://lex.th/" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="drop off by kex kerry เคอรี่">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-gray-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">DROP OFF (KEX)</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">จุดบริการ KEX Drop Off</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:1217" class="hover:text-gray-600 font-medium">1217</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@kexthailand" target="_blank" class="hover:text-green-600">@kexthailand</a>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ทุกวัน 08.30 - 20.30 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://th.kerryexpress.com/th/track/" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="ninja van นินจา แวน">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-red-800" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2-1-2-1-2 1 2 1zm0-3.5L6 5l6-2.5L18 5l-6 2.5zM2 17l10 5 10-5V7L12 12 2 7v10z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">NINJA VAN</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ตัวอย่าง: NINJAxxxxxx</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:1469" class="hover:text-red-800 font-medium">1469</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@ninjavan.th" target="_blank" class="hover:text-green-600">@ninjavan.th</a>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>ทุกวัน 09.00 - 20.00 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://www.ninjavan.co/th-th/tracking" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-red-800 hover:bg-red-900 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+            <div class="courier-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col" data-name="nim express นิ่ม เอ็กซ์เพรส">
+                <div class="p-6 flex-grow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">NIM EXPRESS</h3>
+                    <p class="text-xs text-gray-500 mb-3 font-mono bg-gray-50 p-2 rounded border border-dashed border-gray-300">ขนส่งสินค้าควบคุมอุณหภูมิ</p>
+
+                    <div class="space-y-1 mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="tel:020963333" class="hover:text-blue-800 font-medium">02-096-3333</a>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.86 2 10.63c0 2.76 1.51 5.23 3.86 6.82-.12.87-.77 3.01-.88 3.45-.07.28.1.53.38.38 1.58-.87 4.18-2.38 4.67-2.69.64.12 1.31.18 1.97.18 5.52 0 10-3.86 10-8.63S17.52 2 12 2z"/></svg>
+                            <a href="https://line.me/R/ti/p/@nimexpress" target="_blank" class="hover:text-green-600">@nimexpress</a>
+                        </div>
+                        <div class="flex items-center text-xs text-gray-500">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>จ-ส 08.00 - 17.00 น.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <a href="https://www.nimexpress.com/web/p/tracking" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 bg-blue-800 hover:bg-blue-900 text-white text-sm font-medium rounded-lg transition-colors">
+                        เช็คพัสดุ
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-10 text-center text-gray-400 text-sm">
+            <p class="mb-2">บริการนี้เป็นเพียงจุดรวมลิงก์เพื่อความสะดวก ข้อมูลการติดตามพัสดุอ้างอิงจากเว็บไซต์ของผู้ให้บริการโดยตรง</p>
+            <p class="font-semibold text-gray-500">© จัดทำข้อมูลโดย: @pratya chartmontree by paypoint</p>
+        </div>
+    </div>
+
+    <script>
+        function filterCouriers() {
+            var input = document.getElementById('searchInput');
+            var filter = input.value.toLowerCase();
+            var grid = document.getElementById('courierGrid');
+            var cards = grid.getElementsByClassName('courier-card');
+
+            for (var i = 0; i < cards.length; i++) {
+                var dataName = cards[i].getAttribute('data-name');
+                if (dataName.toLowerCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
