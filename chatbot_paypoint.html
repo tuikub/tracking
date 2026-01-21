@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot PAYPOINT Tracking</title>
+    <!-- Tailwind CSS & Font Awesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ตั้งค่าฟอนต์หลัก */
+        .font-sans { font-family: 'Sarabun', sans-serif; }
+        .font-header { font-family: 'Prompt', sans-serif; }
+
+        /* Widget Container */
+        #chatbot-widget-container { 
+            font-family: 'Sarabun', sans-serif; 
+            z-index: 99999; 
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 16px;
+        }
+
+        /* ป้องกันการเลือกข้อความใน Chatbot */
+        #chat-window {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Scrollbar ซ่อน */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        
+        /* Animations */
+        .chat-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .chat-hidden { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; visibility: hidden; }
+        .chat-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; visibility: visible; }
+        
+        /* Typing Dots Animation */
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* Watermark */
+        .chat-watermark {
+            font-size: 10px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ส่วน Widget Chatbot -->
+    <div id="chatbot-widget-container">
+        
+        <!-- หน้าต่างแชท (Chat Window) -->
+        <div id="chat-window" class="chat-hidden chat-transition bg-white w-[350px] h-[520px] max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+            
+            <!-- Header (Theme: Paypoint Red) -->
+            <!-- ใช้ Gradient สีแดง-ส้ม ตามเอกลักษณ์ Paypoint -->
+            <div class="bg-gradient-to-r from-red-600 to-orange-500 p-4 flex items-center justify-between text-white shadow-md z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold relative border border-white/30">
+                        <i class="fa-solid fa-headset text-lg"></i>
+                        <!-- จุดสถานะ Online -->
+                        <div id="status-dot" class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div>
+                        <h1 class="font-header font-bold text-lg leading-tight">น้องบริการลูกค้า</h1>
+                        <p id="model-status" class="text-[11px] text-orange-100 opacity-90">PAYPOINT Support</p>
+                    </div>
+                </div>
+                <!-- ปุ่มปิด/ตั้งค่า -->
+                <div class="flex gap-1">
+                    <button onclick="toggleSettings()" class="text-white/70 hover:text-white p-2 rounded-full transition" title="ตั้งค่า">
+                        <i class="fa-solid fa-sliders text-xs"></i>
+                    </button>
+                    <button onclick="toggleChat()" class="text-white/80 hover:text-white p-2 rounded-full transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- พื้นที่แชท (Chat Area) -->
+            <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 scrollbar-hide text-sm relative">
+                <!-- ข้อความต้อนรับ -->
+                <div class="flex items-start gap-2">
+                    <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xs font-bold shrink-0 shadow-sm">AI</div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-gray-800 leading-relaxed">
+                        สวัสดีค่ะ! 🙏<br>
+                        น้อง AI ยินดีให้บริการค่ะ สอบถามเรื่องเช็คพัสดุ ค่าส่ง หรือการแพ็คของ ถามมาสั้นๆ ได้เลยนะคะ
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="hidden px-4 pb-2">
+                <div class="flex items-center space-x-1 bg-white px-3 py-2 rounded-xl w-fit shadow-sm border border-gray-100">
+                    <div class="w-1.5 h-1.5 bg-red-500 rounded-full typing-dot"></div>
+                    <div class="w-1.5 h-1.5 bg-red-500 rounded-full typing-dot"></div>
+                    <div class="w-1.5 h-1.5 bg-red-500 rounded-full typing-dot"></div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 bg-white border-t border-gray-100">
+                <form id="chat-form" class="flex gap-2 items-center relative">
+                    <input type="text" id="user-input" 
+                        class="flex-1 bg-gray-100 border-0 text-gray-900 text-sm rounded-full focus:ring-2 focus:ring-red-500 block w-full px-4 py-3 outline-none transition placeholder-gray-400" 
+                        placeholder="พิมพ์คำถามค่ะ..." autocomplete="off">
+                    <button type="submit" 
+                        class="bg-red-600 hover:bg-red-700 text-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition transform hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </form>
+                <div class="chat-watermark">PAYPOINT Tracking Support AI</div>
+            </div>
+
+            <!-- Settings Panel -->
+            <div id="settings-panel" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col p-6 animate-fade-in font-sans">
+                <h3 class="font-header font-bold text-gray-700 mb-6 flex items-center gap-2 text-lg">
+                    <i class="fa-solid fa-gear text-red-500"></i> ตั้งค่าระบบ
+                </h3>
+                
+                <div class="space-y-4 flex-1 overflow-y-auto">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-500 uppercase">Google Sheet ID</label>
+                        <input type="text" id="sheet-id-input" class="w-full border rounded-lg p-2 text-xs mt-1 bg-gray-50 focus:ring-1 focus:ring-red-500 outline-none">
+                    </div>
+                    <hr class="border-gray-100">
+                    <div>
+                        <label class="text-xs font-semibold text-blue-600 uppercase">Primary: Gemini API Key</label>
+                        <input type="password" id="gemini-key-input" class="w-full border border-blue-100 rounded-lg p-2 text-xs mt-1 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-purple-600 uppercase">Fallback: Together.ai Key</label>
+                        <input type="password" id="together-key-input" class="w-full border border-purple-100 rounded-lg p-2 text-xs mt-1 focus:ring-1 focus:ring-purple-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                    <button onclick="toggleSettings()" class="flex-1 py-2.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition font-medium">ยกเลิก</button>
+                    <button onclick="saveSettings()" class="flex-1 py-2.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 shadow-md transition font-medium">บันทึก</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ปุ่มเปิด/ปิด Chatbot -->
+        <button onclick="toggleChat()" id="chat-toggle-btn" 
+            class="bg-gradient-to-br from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative z-50 ring-4 ring-white/30">
+            <i class="fa-solid fa-comment-dots text-3xl absolute transition-all duration-300 transform group-hover:rotate-12 scale-100 opacity-100" id="icon-closed"></i>
+            <i class="fa-solid fa-chevron-down text-2xl absolute transition-all duration-300 transform rotate-180 scale-0 opacity-0" id="icon-opened"></i>
+            
+            <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-orange-500 border-2 border-white"></span>
+            </span>
+        </button>
+    </div>
+
+    <!-- Script การทำงาน -->
+    <script>
+        // --- Configuration ---
+        // 1. Google Sheet ID
+        let sheetId = localStorage.getItem('chat_sheet_id') || '1-G8YWdpXq8YsXNNK9d5vhUcVrEOlCvKucHrd5Bmimcc';
+        
+        // 2. Gemini API Key
+        let geminiKey = localStorage.getItem('chat_gemini_key') || 'AIzaSyCBr6LjhCCkJVwkAJTqEIMuIekkjl3X6r4';
+        
+        // 3. Together AI Key - Corrected from previous error
+        let togetherKey = localStorage.getItem('chat_together_key') || 'f1ab2db1ed0da368ff5d3001a70855fac21f2b161a12021e44c1e3e75f05e575'; 
+
+        let KNOWLEDGE_BASE = "";
+        let isKnowledgeLoaded = false;
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sheetInput = document.getElementById('sheet-id-input');
+            const geminiInput = document.getElementById('gemini-key-input');
+            const togetherInput = document.getElementById('together-key-input');
+            
+            if(sheetInput) sheetInput.value = sheetId;
+            if(geminiInput) geminiInput.value = geminiKey;
+            if(togetherInput) togetherInput.value = togetherKey;
+
+            if(sheetId) fetchSheetData();
+        });
+
+        // --- Fetch Knowledge Base ---
+        async function fetchSheetData() {
+            try {
+                // Fetch as CSV
+                const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("ไม่สามารถเข้าถึงไฟล์ Google Sheet ได้ (ตรวจสอบสิทธิ์ Publish)");
+                const csvText = await response.text();
+                parseCSVtoKnowledge(csvText);
+                
+                document.getElementById('status-dot').className = "absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full";
+                console.log("Knowledge Base Loaded Successfully");
+            } catch (error) {
+                console.error("Sheet Error:", error);
+                document.getElementById('status-dot').className = "absolute bottom-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full";
+                addMessage('system', '⚠️ ระบบขัดข้อง: ไม่สามารถดึงข้อมูลจาก Google Sheet ได้ กรุณาตรวจสอบ ID หรือการแชร์ไฟล์ค่ะ');
+            }
+        }
+
+        function parseCSVtoKnowledge(csv) {
+            const rows = csv.split('\n').map(row => row.split(','));
+            let textData = "# ข้อมูลร้านรับส่งพัสดุ PAYPOINT (Knowledge Base)\n";
+            
+            rows.forEach((cols, index) => {
+                if(index === 0) return; // Skip Header
+                if(cols.length >= 2) {
+                    const q = cols[0] ? cols[0].replace(/^"|"$/g, '').trim() : '';
+                    const a = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : '';
+                    const url = cols[2] ? cols[2].replace(/^"|"$/g, '').trim() : '';
+                    
+                    if(q && a) {
+                        textData += `- Q: "${q}"\n  A: "${a}" ${url ? '(Link: '+url+')' : ''}\n`;
+                    }
+                }
+            });
+            KNOWLEDGE_BASE = textData;
+        }
+
+        // --- AI Logic (Gemini -> Fallback Together) ---
+        async function getAIResponse(userMessage) {
+            if (!geminiKey && !togetherKey) return "กรุณาตั้งค่า API Key ในเมนูตั้งค่าก่อนค่ะ";
+
+            // 1. Try Gemini
+            if (geminiKey) {
+                document.getElementById('model-status').innerText = "กำลังพิมพ์... (Gemini)";
+                try {
+                    return await callGemini(userMessage);
+                } catch (error) {
+                    console.warn("Gemini Error, Switching to Fallback...", error);
+                    if (togetherKey) {
+                        // Silent Fallback
+                    } else {
+                        document.getElementById('model-status').innerText = "Gemini Error";
+                        return "ขออภัยค่ะ ระบบขัดข้องชั่วคราว (Gemini Limit)";
+                    }
+                }
+            }
+
+            // 2. Fallback to Together AI
+            if (togetherKey) {
+                document.getElementById('model-status').innerText = "กำลังพิมพ์... (Backup AI)";
+                try {
+                    return await callTogetherAI(userMessage);
+                } catch (error) {
+                    console.error("Together AI Error:", error);
+                    document.getElementById('model-status').innerText = "System Error";
+                    return "ขออภัยค่ะ ระบบขัดข้องทั้ง 2 ช่องทาง กรุณาลองใหม่ภายหลังนะคะ";
+                }
+            }
+            return "ไม่พบ API Key ที่ใช้งานได้ค่ะ";
+        }
+
+        async function callGemini(message) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+            
+            // System Prompt: เน้นความเป็นผู้หญิง สั้น กระชับ สุภาพ **และห้ามทวนคำถาม**
+            const prompt = `
+            Context: ${KNOWLEDGE_BASE}
+            User Question: ${message}
+            Role: คุณคือ "น้อง AI" พนักงานสาวสวยของศูนย์บริการ PAYPOINT (ร้านไปรษณีย์)
+            Instruction: 
+            1. ตอบคำถามโดยอ้างอิงข้อมูลใน Context เท่านั้น
+            2. ตอบให้ "สั้น กระชับ เข้าใจง่าย" ตัดน้ำและคำเยิ่นเย้อออก
+            3. **ห้ามทวนคำถามเดิมของลูกค้า** ให้เริ่มตอบคำตอบได้เลยทันที
+            4. ใช้ภาษาพูดที่สุภาพ เป็นกันเอง ลงท้ายด้วย "ค่ะ/นะคะ"
+            5. ถ้าไม่มีข้อมูลใน Context ให้ตอบว่า "ขออภัยค่ะ ไม่ทราบข้อมูลส่วนนี้ รบกวนติดต่อแอดมินโดยตรงนะคะ"
+            6. ห้ามแต่งเรื่องเองเด็ดขาด`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+            
+            document.getElementById('model-status').innerText = "ตอบโดย น้อง AI";
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        async function callTogetherAI(message) {
+            const url = "https://api.together.xyz/v1/chat/completions";
+            
+            const promptSystem = `
+            You are "Nong AI", a helpful female staff at PAYPOINT parcel service.
+            Context: ${KNOWLEDGE_BASE}
+            Instructions:
+            - Answer in THAI language only.
+            - Be SHORT, CONCISE, and POLITE (use "ค่ะ", "นะคะ").
+            - **Do NOT repeat the user's question.** Start answering immediately.
+            - Answer based ONLY on the provided Context.
+            - If answer is unknown, say "ขออภัยค่ะ ไม่ทราบข้อมูลส่วนนี้ รบกวนติดต่อแอดมินโดยตรงนะคะ".
+            `;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${togetherKey}`, 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({
+                    model: "meta-llama/Llama-3.2-3B-Instruct-Turbo",
+                    messages: [
+                        { role: "system", content: promptSystem },
+                        { role: "user", content: message }
+                    ],
+                    max_tokens: 256,
+                    temperature: 0.5
+                })
+            });
+
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+            
+            document.getElementById('model-status').innerText = "ตอบโดย Backup AI";
+            return data.choices[0].message.content;
+        }
+
+        // --- UI Functions ---
+        const chatWindow = document.getElementById('chat-window');
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const loading = document.getElementById('loading');
+        const settingsPanel = document.getElementById('settings-panel');
+        const iconClosed = document.getElementById('icon-closed');
+        const iconOpened = document.getElementById('icon-opened');
+
+        function toggleChat() {
+            const isHidden = chatWindow.classList.contains('chat-hidden');
+            if (isHidden) {
+                chatWindow.classList.remove('chat-hidden');
+                chatWindow.classList.add('chat-visible');
+                iconClosed.classList.add('scale-0', 'opacity-0');
+                iconOpened.classList.remove('scale-0', 'opacity-0', 'rotate-180');
+                setTimeout(() => userInput.focus(), 100);
+            } else {
+                chatWindow.classList.add('chat-hidden');
+                chatWindow.classList.remove('chat-visible');
+                iconClosed.classList.remove('scale-0', 'opacity-0');
+                iconOpened.classList.add('scale-0', 'opacity-0', 'rotate-180');
+            }
+        }
+
+        function toggleSettings() {
+            settingsPanel.classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            const newSheetId = document.getElementById('sheet-id-input').value.trim();
+            const newGeminiKey = document.getElementById('gemini-key-input').value.trim();
+            const newTogetherKey = document.getElementById('together-key-input').value.trim();
+
+            if(newSheetId) {
+                sheetId = newSheetId;
+                localStorage.setItem('chat_sheet_id', sheetId);
+            }
+            if(newGeminiKey) {
+                geminiKey = newGeminiKey;
+                localStorage.setItem('chat_gemini_key', geminiKey);
+            }
+            if(newTogetherKey) {
+                togetherKey = newTogetherKey;
+                localStorage.setItem('chat_together_key', togetherKey);
+            }
+
+            toggleSettings();
+            addMessage('system', 'บันทึกการตั้งค่าเรียบร้อย กำลังโหลดข้อมูลใหม่ค่ะ...');
+            fetchSheetData();
+        }
+
+        function addMessage(role, text) {
+            const isUser = role === 'user';
+            const div = document.createElement('div');
+            div.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''} animate-fade-in`;
+            
+            const avatar = isUser ? '' : 
+                `<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-[10px] font-bold shrink-0 shadow-sm">AI</div>`;
+
+            const bubbleColor = isUser ? 'bg-red-600 text-white' : 'bg-white text-gray-800 border border-gray-100';
+            const systemStyle = role === 'system' ? 'bg-yellow-50 text-yellow-700 border-yellow-100 text-xs w-full text-center' : '';
+
+            // Auto-link detection
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const textWithLinks = text.replace(urlRegex, function(url) {
+                return `<a href="${url}" target="_blank" class="underline text-blue-200 hover:text-white break-all">${url}</a>`;
+            });
+
+            div.innerHTML = `
+                ${role === 'system' ? '' : avatar}
+                <div class="max-w-[85%] p-3 rounded-2xl ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-sm text-sm leading-relaxed break-words ${role === 'system' ? systemStyle : bubbleColor}">
+                    ${textWithLinks}
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage('user', text);
+            userInput.value = '';
+            loading.classList.remove('hidden');
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const reply = await getAIResponse(text);
+            
+            loading.classList.add('hidden');
+            addMessage('ai', reply);
+        });
+    </script>
+</body>
+</html>
