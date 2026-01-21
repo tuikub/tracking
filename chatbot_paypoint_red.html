@@ -189,6 +189,9 @@
         
         let togetherKey = localStorage.getItem('chat_together_key') || 'f1ab2db1ed0da368ff5d3001a70855fac21f2b161a12021e44c1e3e75f05e575'; 
         
+        // รหัสผ่านสำหรับเข้าเมนูตั้งค่า
+        const ADMIN_PASSWORD = "9999"; 
+
         // Knowledge Base Storage
         let KNOWLEDGE_BASE = "";
         
@@ -450,7 +453,20 @@
         }
 
         function toggleSettings() {
-            settingsPanel.classList.toggle('hidden');
+            // ตรวจสอบสถานะว่าแผงตั้งค่าเปิดอยู่หรือไม่
+            if (settingsPanel.classList.contains('hidden')) {
+                // ถ้าปิดอยู่ -> จะเปิด (ต้องใส่รหัส)
+                const password = prompt("กรุณากรอกรหัสผ่าน Admin เพื่อเข้าสู่การตั้งค่า:", "");
+                
+                if (password === ADMIN_PASSWORD) {
+                    settingsPanel.classList.remove('hidden');
+                } else if (password !== null) { // กรณีไม่ได้กด Cancel แต่ใส่ผิด
+                    alert("⛔ รหัสผ่านไม่ถูกต้อง! ไม่สามารถเข้าถึงการตั้งค่าได้");
+                }
+            } else {
+                // ถ้าเปิดอยู่ -> จะปิด (ไม่ต้องใส่รหัส)
+                settingsPanel.classList.add('hidden');
+            }
         }
 
         function saveSettings() {
@@ -469,7 +485,8 @@
             togetherKey = newTogetherKey;
             localStorage.setItem('chat_together_key', togetherKey);
 
-            toggleSettings();
+            // ปิดหน้าตั้งค่าทันทีหลังบันทึก
+            settingsPanel.classList.add('hidden');
             addMessage('system', 'บันทึกการตั้งค่าเรียบร้อย กำลังโหลดข้อมูลใหม่ค่ะ...');
             fetchSheetData();
         }
