@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot PAYPOINT Tracking</title>
-    <!-- Tailwind CSS & Font Awesome -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* ตั้งค่าฟอนต์หลัก */
+        /* Main Fonts */
         .font-sans { font-family: 'Sarabun', sans-serif; }
         .font-header { font-family: 'Prompt', sans-serif; }
 
@@ -28,20 +29,24 @@
             gap: 16px;
         }
 
-        /* ป้องกันการเลือกข้อความใน Chatbot */
-        #chat-window {
+        /* Prevent Text Selection in Header */
+        #chat-window header {
             -webkit-user-select: none;
             user-select: none;
         }
 
-        /* Scrollbar ซ่อน */
+        /* Hide Scrollbar */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
         /* Animations */
         .chat-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .chat-hidden { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; visibility: hidden; }
         .chat-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; visibility: visible; }
         
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+
         /* Typing Dots Animation */
         .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
@@ -57,12 +62,18 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 h-screen flex items-center justify-center">
 
-    <!-- ส่วน Widget Chatbot -->
+    <!-- Demo Background Content (Optional) -->
+    <div class="text-center text-gray-400 p-4">
+        <h1 class="text-2xl font-bold font-header mb-2">PAYPOINT Website Demo</h1>
+        <p>The chatbot widget is located at the bottom right corner.</p>
+    </div>
+
+    <!-- WIDGET START -->
     <div id="chatbot-widget-container">
         
-        <!-- หน้าต่างแชท (Chat Window) -->
+        <!-- Chat Window -->
         <div id="chat-window" class="chat-hidden chat-transition bg-white w-[350px] h-[520px] max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
             
             <!-- Header (Theme: Paypoint Red) -->
@@ -70,15 +81,15 @@
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold relative border border-white/30">
                         <i class="fa-solid fa-headset text-lg"></i>
-                        <!-- จุดสถานะ Online -->
-                        <div id="status-dot" class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full"></div>
+                        <!-- Online Status Dot -->
+                        <div id="status-dot" class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full" title="Connecting..."></div>
                     </div>
                     <div>
-                        <h1 class="font-header font-bold text-lg leading-tight">น้องบริการลูกค้า</h1>
-                        <p id="model-status" class="text-[11px] text-orange-100 opacity-90">PAYPOINT Support</p>
+                        <h1 class="font-header font-bold text-lg leading-tight">Logistics Support</h1>
+                        <p id="model-status" class="text-[11px] text-orange-100 opacity-90">ผู้ช่วยอัจฉริยะ</p>
                     </div>
                 </div>
-                <!-- ปุ่มปิด/ตั้งค่า -->
+                <!-- Controls -->
                 <div class="flex gap-1">
                     <button onclick="toggleSettings()" class="text-white/70 hover:text-white p-2 rounded-full transition" title="ตั้งค่า">
                         <i class="fa-solid fa-sliders text-xs"></i>
@@ -89,14 +100,14 @@
                 </div>
             </div>
 
-            <!-- พื้นที่แชท (Chat Area) -->
+            <!-- Chat Area -->
             <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 scrollbar-hide text-sm relative">
-                <!-- ข้อความต้อนรับ -->
-                <div class="flex items-start gap-2">
+                <!-- Welcome Message -->
+                <div class="flex items-start gap-2 animate-fade-in">
                     <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xs font-bold shrink-0 shadow-sm">AI</div>
                     <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-gray-800 leading-relaxed">
-                        สวัสดีค่ะ! 🙏<br>
-                        น้อง AI ยินดีให้บริการค่ะ สอบถามเรื่องเช็คพัสดุ ค่าส่ง หรือการแพ็คของ ถามมาสั้นๆ ได้เลยนะคะ
+                        สวัสดีครับ! 🙏<br>
+                        ผมคือผู้ช่วยอัจฉริยะประจำร้านบริการรับส่งเอกชนและไปรษณีย์ ยินดีให้บริการข้อมูลพัสดุและระบบขนส่งครับ
                     </div>
                 </div>
             </div>
@@ -115,13 +126,13 @@
                 <form id="chat-form" class="flex gap-2 items-center relative">
                     <input type="text" id="user-input" 
                         class="flex-1 bg-gray-100 border-0 text-gray-900 text-sm rounded-full focus:ring-2 focus:ring-red-500 block w-full px-4 py-3 outline-none transition placeholder-gray-400" 
-                        placeholder="พิมพ์คำถามค่ะ..." autocomplete="off">
+                        placeholder="พิมพ์คำถามครับ..." autocomplete="off">
                     <button type="submit" 
-                        class="bg-red-600 hover:bg-red-700 text-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition transform hover:scale-105 active:scale-95">
+                        class="bg-red-600 hover:bg-red-700 text-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fa-solid fa-paper-plane text-sm"></i>
                     </button>
                 </form>
-                <div class="chat-watermark">PAYPOINT Tracking Support AI</div>
+                <div class="chat-watermark">PAYPOINT Logistics Support AI</div>
             </div>
 
             <!-- Settings Panel -->
@@ -133,7 +144,7 @@
                 <div class="space-y-4 flex-1 overflow-y-auto">
                     <div>
                         <label class="text-xs font-semibold text-gray-500 uppercase">Google Sheet ID</label>
-                        <input type="text" id="sheet-id-input" class="w-full border rounded-lg p-2 text-xs mt-1 bg-gray-50 focus:ring-1 focus:ring-red-500 outline-none">
+                        <input type="text" id="sheet-id-input" class="w-full border rounded-lg p-2 text-xs mt-1 bg-gray-50 focus:ring-1 focus:ring-red-500 outline-none placeholder-gray-300" placeholder="e.g., 1-G8YWdp...">
                     </div>
                     <hr class="border-gray-100">
                     <div>
@@ -144,6 +155,9 @@
                         <label class="text-xs font-semibold text-purple-600 uppercase">Fallback: Together.ai Key</label>
                         <input type="password" id="together-key-input" class="w-full border border-purple-100 rounded-lg p-2 text-xs mt-1 focus:ring-1 focus:ring-purple-500 outline-none">
                     </div>
+                    <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                         <p class="text-[10px] text-yellow-700"><i class="fa-solid fa-circle-info mr-1"></i> Keys are saved in your browser's local storage.</p>
+                    </div>
                 </div>
 
                 <div class="mt-6 flex gap-3">
@@ -153,7 +167,7 @@
             </div>
         </div>
 
-        <!-- ปุ่มเปิด/ปิด Chatbot -->
+        <!-- Toggle Button -->
         <button onclick="toggleChat()" id="chat-toggle-btn" 
             class="bg-gradient-to-br from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative z-50 ring-4 ring-white/30">
             <i class="fa-solid fa-comment-dots text-3xl absolute transition-all duration-300 transform group-hover:rotate-12 scale-100 opacity-100" id="icon-closed"></i>
@@ -166,21 +180,18 @@
         </button>
     </div>
 
-    <!-- Script การทำงาน -->
+    <!-- Script -->
     <script>
         // --- Configuration ---
-        // 1. Google Sheet ID
+        // Defaults (can be overridden in UI)
         let sheetId = localStorage.getItem('chat_sheet_id') || '1-G8YWdpXq8YsXNNK9d5vhUcVrEOlCvKucHrd5Bmimcc';
-        
-        // 2. Gemini API Key
         let geminiKey = localStorage.getItem('chat_gemini_key') || 'AIzaSyCBr6LjhCCkJVwkAJTqEIMuIekkjl3X6r4';
         
-        // 3. Together AI Key
         let togetherKey = localStorage.getItem('chat_together_key') || 'f1ab2db1ed0da368ff5d3001a70855fac21f2b161a12021e44c1e3e75f05e575'; 
-
+        
+        // Knowledge Base Storage
         let KNOWLEDGE_BASE = "";
-        let isKnowledgeLoaded = false;
-
+        
         // --- Init ---
         document.addEventListener('DOMContentLoaded', () => {
             const sheetInput = document.getElementById('sheet-id-input');
@@ -194,47 +205,102 @@
             if(sheetId) fetchSheetData();
         });
 
-        // --- Fetch Knowledge Base ---
+        // --- Fetch Knowledge Base (Google CSV) ---
         async function fetchSheetData() {
             try {
                 // Fetch as CSV
                 const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
                 const response = await fetch(url);
-                if (!response.ok) throw new Error("ไม่สามารถเข้าถึงไฟล์ Google Sheet ได้ (ตรวจสอบสิทธิ์ Publish)");
+                
+                if (!response.ok) {
+                    if (response.status === 404) throw new Error("ไม่พบไฟล์ Sheet ID นี้");
+                    throw new Error("ไม่สามารถเข้าถึงไฟล์ (ตรวจสอบสิทธิ์ Share: Anyone with link)");
+                }
+                
                 const csvText = await response.text();
                 parseCSVtoKnowledge(csvText);
                 
+                // Status Update: Green
                 document.getElementById('status-dot').className = "absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full";
+                document.getElementById('status-dot').title = "Online: Knowledge Loaded";
                 console.log("Knowledge Base Loaded Successfully");
             } catch (error) {
                 console.error("Sheet Error:", error);
+                // Status Update: Red
                 document.getElementById('status-dot').className = "absolute bottom-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full";
-                addMessage('system', '⚠️ ระบบขัดข้อง: ไม่สามารถดึงข้อมูลจาก Google Sheet ได้ กรุณาตรวจสอบ ID หรือการแชร์ไฟล์ค่ะ');
+                document.getElementById('status-dot').title = "Error: Check Settings";
+                addMessage('system', `⚠️ <strong>System Error:</strong> ${error.message}<br>กรุณาตรวจสอบ ID ในเมนูตั้งค่า`);
             }
         }
 
         function parseCSVtoKnowledge(csv) {
-            const rows = csv.split('\n').map(row => row.split(','));
-            let textData = "# ข้อมูลร้านรับส่งพัสดุ PAYPOINT (Knowledge Base)\n";
+            const rows = csv.split(/\r?\n/);
+            let textData = "# ข้อมูลร้านรับส่งพัสดุ PAYPOINT (Knowledge Base)\n\n";
+            let validCount = 0;
             
-            rows.forEach((cols, index) => {
+            console.group("🔍 ตรวจสอบข้อมูล Google Sheet (Rows A-B-C)");
+            
+            rows.forEach((row, index) => {
                 if(index === 0) return; // Skip Header
+                if(!row.trim()) return; // Skip empty rows
+
+                // Robust CSV Parsing (Handle quotes and commas inside fields)
+                let cols = [];
+                let current = '';
+                let inQuote = false;
+                
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    if (char === '"') {
+                        if (inQuote && row[i+1] === '"') { // Handle escaped quotes ""
+                            current += '"';
+                            i++;
+                        } else {
+                            inQuote = !inQuote;
+                        }
+                    } else if (char === ',' && !inQuote) {
+                        cols.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                cols.push(current.trim()); // Push last column
+
+                // Map Columns: A=Question (0), B=Answer (1), C=URL (2)
                 if(cols.length >= 2) {
-                    const q = cols[0] ? cols[0].replace(/^"|"$/g, '').trim() : '';
-                    const a = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : '';
+                    const q = cols[0].replace(/^"|"$/g, '').trim(); 
+                    const a = cols[1].replace(/^"|"$/g, '').trim();
+                    // Fix: Explicitly check for column C
                     const url = cols[2] ? cols[2].replace(/^"|"$/g, '').trim() : '';
                     
                     if(q && a) {
-                        textData += `- Q: "${q}"\n  A: "${a}" ${url ? '(Link: '+url+')' : ''}\n`;
+                        textData += `--- ITEM ---\nQuestion (A): ${q}\nAnswer (B): ${a}\n${url ? 'URL (C): ' + url : ''}\n`;
+                        validCount++;
+
+                        // Debug: Show first 5 rows OR any row with URL to verify C column
+                        if (index <= 5 || url) {
+                            console.log(`Row ${index}:`, {
+                                'A (ถาม)': q,
+                                'B (ตอบ)': a,
+                                'C (URL)': url || '(ไม่มี)'
+                            });
+                        }
                     }
                 }
             });
+            
+            console.log(`✅ โหลดข้อมูลสำเร็จทั้งหมด ${validCount} รายการ`);
+            console.groupEnd();
+            
             KNOWLEDGE_BASE = textData;
+            // แจ้งเตือนในแชทเมื่อโหลดเสร็จ (เฉพาะตอนเริ่ม)
+            // addMessage('system', `โหลดฐานข้อมูล ${validCount} รายการเรียบร้อย`);
         }
 
         // --- AI Logic (Gemini -> Fallback Together) ---
         async function getAIResponse(userMessage) {
-            if (!geminiKey && !togetherKey) return "กรุณาตั้งค่า API Key ในเมนูตั้งค่าก่อนค่ะ";
+            if (!geminiKey && !togetherKey) return "⚠️ กรุณาตั้งค่า API Key (Gemini หรือ Together AI) ในเมนูตั้งค่าก่อนเริ่มใช้งานค่ะ";
 
             // 1. Try Gemini
             if (geminiKey) {
@@ -243,11 +309,9 @@
                     return await callGemini(userMessage);
                 } catch (error) {
                     console.warn("Gemini Error, Switching to Fallback...", error);
-                    if (togetherKey) {
-                        // Silent Fallback
-                    } else {
+                    if (!togetherKey) {
                         document.getElementById('model-status').innerText = "Gemini Error";
-                        return "ขออภัยค่ะ ระบบขัดข้องชั่วคราว (Gemini Limit)";
+                        return `ขออภัยค่ะ ระบบ Gemini ขัดข้อง (${error.message || 'Unknown'})`;
                     }
                 }
             }
@@ -263,24 +327,38 @@
                     return "ขออภัยค่ะ ระบบขัดข้องทั้ง 2 ช่องทาง กรุณาลองใหม่ภายหลังนะคะ";
                 }
             }
+            
             return "ไม่พบ API Key ที่ใช้งานได้ค่ะ";
         }
 
         async function callGemini(message) {
+            // Using Gemini 1.5 Flash (Efficient for chat)
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
             
-            // System Prompt: เน้นความเป็นผู้หญิง สั้น กระชับ สุภาพ **และห้ามทวนคำถาม**
             const prompt = `
-            Context: ${KNOWLEDGE_BASE}
+            Context Data (Knowledge Base from Google Sheet):
+            ${KNOWLEDGE_BASE}
+            
+            System Instructions:
+            You are "ผู้ช่วยอัจฉริยะประจำร้านบริการรับส่งเอกชนและไปรษณีย์" (Logistics Support AI).
+            Your duty is to answer questions based ONLY on the "Context Data".
+            
+            Context Awareness & Persona:
+            1. IF the user asks about: "ระบบล่ม", "เติมเงิน", "ตัดเงินผิด", "เรียกรถเข้ารับ", "ติดต่อแอดมิน", "Flash Home", "J&T Home", "ปริ้นไม่ออก" (Branch/Franchise issues):
+               - Tone: Concise, direct, technical.
+               - Focus: Troubleshooting and technical steps.
+            2. IF the user asks about: "พัสดุถึงไหน", "เช็คเลข", "ค่าส่งเท่าไหร่", "ของแตก", "ส่งของเหลวได้ไหม", "COD", "กี่วันถึง" (General Customer):
+               - Tone: Polite, soft, service-minded, avoid technical jargon.
+            
+            Strict Rules:
+            1. NO Hallucinations: Answer ONLY based on the Context Data.
+            2. Unknown Information: If the answer is not in the Context Data, reply EXACTLY: "ขออภัยครับ ข้อมูลส่วนนี้อยู่นอกเหนือฐานข้อมูล รบกวนติดต่อแอดมินส่วนกลางโดยตรงเพื่อความถูกต้องครับ"
+            3. **MANDATORY**: If the Context Data for the answer contains a 'URL (C)', you MUST append it at the end of the response. Do NOT forget the link.
+            4. Formatting: Use numbered lists (1, 2, 3) for steps.
+            5. Language: Thai only.
+            
             User Question: ${message}
-            Role: คุณคือ "น้อง AI" พนักงานสาวสวยของศูนย์บริการ PAYPOINT (ร้านไปรษณีย์)
-            Instruction: 
-            1. ตอบคำถามโดยอ้างอิงข้อมูลใน Context เท่านั้น
-            2. ตอบให้ "สั้น กระชับ เข้าใจง่าย" ตัดน้ำและคำเยิ่นเย้อออก
-            3. **ห้ามทวนคำถามเดิมของลูกค้า** ให้เริ่มตอบคำตอบได้เลยทันที (Direct Answer)
-            4. ใช้ภาษาพูดที่สุภาพ เป็นกันเอง ลงท้ายด้วย "ค่ะ/นะคะ"
-            5. ถ้าไม่มีข้อมูลใน Context ให้ตอบว่า "ขออภัยค่ะ ไม่ทราบข้อมูลส่วนนี้ รบกวนติดต่อแอดมินโดยตรงนะคะ"
-            6. ห้ามแต่งเรื่องเองเด็ดขาด`;
+            `;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -289,7 +367,9 @@
             });
             
             const data = await response.json();
+            
             if (data.error) throw new Error(data.error.message);
+            if (!data.candidates || data.candidates.length === 0) throw new Error("No response generated");
             
             document.getElementById('model-status').innerText = "ตอบโดย น้อง AI";
             return data.candidates[0].content.parts[0].text;
@@ -298,15 +378,23 @@
         async function callTogetherAI(message) {
             const url = "https://api.together.xyz/v1/chat/completions";
             
+            // Optimized System Prompt for Llama 3.2 3B Instruct Turbo
+            // Tactic: Force strict retrieval, punish hallucination, ensure URL presence.
             const promptSystem = `
-            You are "Nong AI", a helpful female staff at PAYPOINT parcel service.
-            Context: ${KNOWLEDGE_BASE}
+            You are a helpful assistant for PAYPOINT. 
+            Your goal is to answer the user's question using ONLY the provided Context Data.
+            
+            Context Data:
+            ${KNOWLEDGE_BASE}
+            
             Instructions:
-            - Answer in THAI language only.
-            - Be SHORT, CONCISE, and POLITE (use "ค่ะ", "นะคะ").
-            - **Do NOT repeat the user's question.** Start answering immediately (Direct Answer).
-            - Answer based ONLY on the provided Context.
-            - If answer is unknown, say "ขออภัยค่ะ ไม่ทราบข้อมูลส่วนนี้ รบกวนติดต่อแอดมินโดยตรงนะคะ".
+            1. Search the "Context Data" for a "Question (A)" that has the same meaning as the User's Question.
+            2. If found, reply exactly with the corresponding "Answer (B)".
+            3. If the answer contains a "URL (C)", append it to the end.
+            4. If the answer is NOT in the context, reply: "ขออภัยครับ ข้อมูลส่วนนี้อยู่นอกเหนือฐานข้อมูล รบกวนติดต่อแอดมินส่วนกลางโดยตรงเพื่อความถูกต้องครับ"
+            5. Do NOT make up answers. Do NOT assume. Use ONLY the text provided.
+            
+            Language: Thai
             `;
 
             const response = await fetch(url, {
@@ -321,8 +409,11 @@
                         { role: "system", content: promptSystem },
                         { role: "user", content: message }
                     ],
-                    max_tokens: 256,
-                    temperature: 0.5
+                    max_tokens: 512,
+                    temperature: 0.1, // LOW temperature to force strict adherence to context
+                    top_p: 0.8,
+                    top_k: 40,
+                    repetition_penalty: 1.1 // Prevents loops
                 })
             });
 
@@ -371,14 +462,12 @@
                 sheetId = newSheetId;
                 localStorage.setItem('chat_sheet_id', sheetId);
             }
-            if(newGeminiKey) {
-                geminiKey = newGeminiKey;
-                localStorage.setItem('chat_gemini_key', geminiKey);
-            }
-            if(newTogetherKey) {
-                togetherKey = newTogetherKey;
-                localStorage.setItem('chat_together_key', togetherKey);
-            }
+            // Allow clearing keys by saving empty
+            geminiKey = newGeminiKey;
+            localStorage.setItem('chat_gemini_key', geminiKey);
+            
+            togetherKey = newTogetherKey;
+            localStorage.setItem('chat_together_key', togetherKey);
 
             toggleSettings();
             addMessage('system', 'บันทึกการตั้งค่าเรียบร้อย กำลังโหลดข้อมูลใหม่ค่ะ...');
@@ -399,7 +488,7 @@
             // Auto-link detection
             const urlRegex = /(https?:\/\/[^\s]+)/g;
             const textWithLinks = text.replace(urlRegex, function(url) {
-                return `<a href="${url}" target="_blank" class="underline text-blue-200 hover:text-white break-all">${url}</a>`;
+                return `<a href="${url}" target="_blank" class="underline decoration-dotted ${isUser ? 'text-white' : 'text-blue-600'} hover:opacity-80 break-all">${url}</a>`;
             });
 
             div.innerHTML = `
@@ -418,15 +507,28 @@
             const text = userInput.value.trim();
             if (!text) return;
 
+            // UI Updates
             addMessage('user', text);
             userInput.value = '';
             loading.classList.remove('hidden');
             chatBox.scrollTop = chatBox.scrollHeight;
-
-            const reply = await getAIResponse(text);
             
-            loading.classList.add('hidden');
-            addMessage('ai', reply);
+            // Disable input while thinking
+            userInput.disabled = true;
+            document.querySelector('#chat-form button').disabled = true;
+
+            try {
+                const reply = await getAIResponse(text);
+                addMessage('ai', reply);
+            } catch (err) {
+                addMessage('system', 'Error getting response');
+            } finally {
+                loading.classList.add('hidden');
+                userInput.disabled = false;
+                document.querySelector('#chat-form button').disabled = false;
+                userInput.focus();
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         });
     </script>
 </body>
