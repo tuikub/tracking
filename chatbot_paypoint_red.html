@@ -1,552 +1,566 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot PAYPOINT Tracking</title>
+    <title>Paypoint Family Portal - ศูนย์รวมบริการแฟรนไชส์</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        /* Main Fonts */
-        .font-sans { font-family: 'Sarabun', sans-serif; }
-        .font-header { font-family: 'Prompt', sans-serif; }
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            background-color: #f0f4f8; 
+            color: #334155; 
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Widget Container */
-        #chatbot-widget-container { 
-            font-family: 'Sarabun', sans-serif; 
-            z-index: 99999; 
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
+        /* Card Hover Effects */
+        .hover-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1); }
+
+        /* Section Title Styling */
+        .section-header {
+            display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0;
+        }
+        .section-title { font-size: 1.25rem; font-weight: 700; color: #1e293b; }
+        
+        /* Lock Screen */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
             flex-direction: column;
-            align-items: flex-end;
-            gap: 16px;
         }
 
-        /* Prevent Text Selection in Header */
-        #chat-window header {
-            -webkit-user-select: none;
-            user-select: none;
+        /* --- Chatbot Widget Styles (Red Theme) --- */
+        .chat-container {
+            font-family: 'Sarabun', sans-serif;
+            display: flex; flex-direction: column; height: 100%; background: white;
         }
+        .chat-header {
+            /* Changed to Red-Orange Gradient */
+            background: linear-gradient(to right, #dc2626, #f97316); 
+            color: white;
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 15px; background: #f8fafc;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .chat-input-area {
+            padding: 10px; border-top: 1px solid #e2e8f0; background: white;
+            display: flex; gap: 8px; position: relative;
+        }
+        .chat-input {
+            flex: 1; padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 20px;
+            outline: none; font-size: 0.9em; transition: border-color 0.2s;
+        }
+        .chat-input:focus { border-color: #dc2626; }
+        .chat-send-btn {
+            background: #dc2626; color: white; border: none; width: 40px; height: 40px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .chat-send-btn:hover { background: #b91c1c; }
 
-        /* Hide Scrollbar */
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Message Bubbles */
+        .msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 0.9em; line-height: 1.4; word-wrap: break-word; }
+        .msg.bot { background: #fff1f2; color: #0f172a; align-self: flex-start; border-top-left-radius: 2px; border: 1px solid #ffe4e6; }
+        .msg.user { background: #dc2626; color: white; align-self: flex-end; border-top-right-radius: 2px; }
+        .msg.backup { border: 1px solid #fca5a5; background: #fef2f2; }
         
-        /* Animations */
-        .chat-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .chat-hidden { opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; visibility: hidden; }
-        .chat-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; visibility: visible; }
+        /* Suggestions */
+        .suggestions { display: flex; gap: 5px; overflow-x: auto; padding: 5px 15px; background: white; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+        .chip {
+            background: #fff7ed; color: #c2410c; padding: 4px 10px; border-radius: 12px;
+            font-size: 0.75em; cursor: pointer; border: 1px solid #ffedd5; transition: all 0.2s;
+        }
+        .chip:hover { background: #c2410c; color: white; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-
-        /* Typing Dots Animation */
+        /* Typing Animation */
         .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-
-        /* Watermark */
-        .chat-watermark {
-            font-size: 10px;
-            color: #94a3b8;
-            text-align: center;
-            margin-top: 6px;
-        }
     </style>
 </head>
-<body class="bg-gray-50 h-screen flex items-center justify-center">
+<body class="min-h-screen flex flex-col relative overflow-hidden" id="main-body">
 
-    <!-- Demo Background Content (Optional) -->
-    <div class="text-center text-gray-400 p-4">
-        <h1 class="text-2xl font-bold font-header mb-2">PAYPOINT</h1>
-        <p>The chatbot by pratya chartmontree.</p>
-    </div>
-
-    <!-- WIDGET START -->
-    <div id="chatbot-widget-container">
-        
-        <!-- Chat Window -->
-        <div id="chat-window" class="chat-hidden chat-transition bg-white w-[350px] h-[520px] max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+    <!-- LOCK SCREEN (Password Protection) -->
+    <div id="lock-screen">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center m-4">
+            <div class="mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-lock text-3xl text-blue-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">ระบบภายใน (Internal)</h2>
+                <p class="text-slate-500 text-sm mt-1">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งาน</p>
+            </div>
             
-            <!-- Header (Theme: Paypoint Red) -->
-            <div class="bg-gradient-to-r from-red-600 to-orange-500 p-4 flex items-center justify-between text-white shadow-md z-10">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold relative border border-white/30">
-                        <i class="fa-solid fa-headset text-lg"></i>
-                        <!-- Online Status Dot -->
-                        <div id="status-dot" class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full" title="Connecting..."></div>
-                    </div>
-                    <div>
-                        <h1 class="font-header font-bold text-lg leading-tight">Logistics Support</h1>
-                        <p id="model-status" class="text-[11px] text-orange-100 opacity-90">ผู้ช่วยอัจฉริยะ</p>
-                    </div>
+            <form onsubmit="checkPassword(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" id="passwordInput" 
+                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition text-center text-lg tracking-widest"
+                        placeholder="Enter Passcode" required>
                 </div>
-                <!-- Controls -->
-                <div class="flex gap-1">
-                    <button onclick="toggleSettings()" class="text-white/70 hover:text-white p-2 rounded-full transition" title="ตั้งค่า">
-                        <i class="fa-solid fa-sliders text-xs"></i>
-                    </button>
-                    <button onclick="toggleChat()" class="text-white/80 hover:text-white p-2 rounded-full transition">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Chat Area -->
-            <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 scrollbar-hide text-sm relative">
-                <!-- Welcome Message -->
-                <div class="flex items-start gap-2 animate-fade-in">
-                    <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xs font-bold shrink-0 shadow-sm">AI</div>
-                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-gray-800 leading-relaxed">
-                        สวัสดีครับ! 🙏<br>
-                        ผมคือผู้ช่วยอัจฉริยะประจำร้านบริการรับส่งเอกชนและไปรษณีย์ ยินดีให้บริการข้อมูลพัสดุและระบบขนส่งครับ
-                    </div>
-                </div>
-            </div>
-
-            <!-- Loading Indicator -->
-            <div id="loading" class="hidden px-4 pb-2">
-                <div class="flex items-center space-x-1 bg-white px-3 py-2 rounded-xl w-fit shadow-sm border border-gray-100">
-                    <div class="w-1.5 h-1.5 bg-red-500 rounded-full typing-dot"></div>
-                    <div class="w-1.5 h-1.5 bg-red-500 rounded-full typing-dot"></div>
-                    <div class="w-1.5 h-1.5 bg-red-500 rounded-full typing-dot"></div>
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="p-3 bg-white border-t border-gray-100">
-                <form id="chat-form" class="flex gap-2 items-center relative">
-                    <input type="text" id="user-input" 
-                        class="flex-1 bg-gray-100 border-0 text-gray-900 text-sm rounded-full focus:ring-2 focus:ring-red-500 block w-full px-4 py-3 outline-none transition placeholder-gray-400" 
-                        placeholder="พิมพ์คำถามครับ..." autocomplete="off">
-                    <button type="submit" 
-                        class="bg-red-600 hover:bg-red-700 text-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fa-solid fa-paper-plane text-sm"></i>
-                    </button>
-                </form>
-                <div class="chat-watermark">PAYPOINT Logistics Support AI</div>
-            </div>
-
-            <!-- Settings Panel -->
-            <div id="settings-panel" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col p-6 animate-fade-in font-sans">
-                <h3 class="font-header font-bold text-gray-700 mb-6 flex items-center gap-2 text-lg">
-                    <i class="fa-solid fa-gear text-red-500"></i> ตั้งค่าระบบ
-                </h3>
-                
-                <div class="space-y-4 flex-1 overflow-y-auto">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-500 uppercase">Google Sheet ID</label>
-                        <input type="text" id="sheet-id-input" class="w-full border rounded-lg p-2 text-xs mt-1 bg-gray-50 focus:ring-1 focus:ring-red-500 outline-none placeholder-gray-300" placeholder="e.g., 1-G8YWdp...">
-                    </div>
-                    <hr class="border-gray-100">
-                    <div>
-                        <label class="text-xs font-semibold text-blue-600 uppercase">Primary: Gemini API Key</label>
-                        <input type="password" id="gemini-key-input" class="w-full border border-blue-100 rounded-lg p-2 text-xs mt-1 focus:ring-1 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-purple-600 uppercase">Fallback: Together.ai Key</label>
-                        <input type="password" id="together-key-input" class="w-full border border-purple-100 rounded-lg p-2 text-xs mt-1 focus:ring-1 focus:ring-purple-500 outline-none">
-                    </div>
-                    <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
-                         <p class="text-[10px] text-yellow-700"><i class="fa-solid fa-circle-info mr-1"></i> Keys are saved in your browser's local storage.</p>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex gap-3">
-                    <button onclick="toggleSettings()" class="flex-1 py-2.5 text-gray-600 text-sm hover:bg-gray-100 rounded-lg transition font-medium">ยกเลิก</button>
-                    <button onclick="saveSettings()" class="flex-1 py-2.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 shadow-md transition font-medium">บันทึก</button>
-                </div>
-            </div>
+                <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-200">
+                    เข้าสู่ระบบ
+                </button>
+            </form>
+            <p id="error-msg" class="text-red-500 text-sm mt-3 hidden"><i class="fa-solid fa-circle-exclamation"></i> รหัสผ่านไม่ถูกต้อง</p>
         </div>
-
-        <!-- Toggle Button -->
-        <button onclick="toggleChat()" id="chat-toggle-btn" 
-            class="bg-gradient-to-br from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative z-50 ring-4 ring-white/30">
-            <i class="fa-solid fa-comment-dots text-3xl absolute transition-all duration-300 transform group-hover:rotate-12 scale-100 opacity-100" id="icon-closed"></i>
-            <i class="fa-solid fa-chevron-down text-2xl absolute transition-all duration-300 transform rotate-180 scale-0 opacity-0" id="icon-opened"></i>
-            
-            <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-4 w-4 bg-orange-500 border-2 border-white"></span>
-            </span>
-        </button>
+        <p class="text-slate-500 text-xs mt-8">Paypoint Family Portal System</p>
     </div>
 
-    <!-- Script -->
+    <!-- MAIN CONTENT (Hidden by default) -->
+    <div id="app-content" class="hidden">
+        <!-- Navbar -->
+        <nav class="bg-white/95 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="https://tuikub.github.io/tracking//paypoint.png" alt="Logo" class="w-9 h-9 object-contain drop-shadow-sm">
+                    <div>
+                        <h1 class="font-bold text-slate-800 text-lg leading-tight tracking-tight">PAYPOINT FAMILY</h1>
+                        <p class="text-[10px] text-slate-500 font-medium">Portal Center</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center gap-4 text-sm font-medium text-slate-600">
+                    <a href="#training" class="hover:text-blue-600 transition">คู่มือ/อบรม</a>
+                    <a href="#forms" class="hover:text-blue-600 transition">ฟอร์มเอกสาร</a>
+                    <a href="#contact" class="hover:text-green-600 transition"><i class="fa-solid fa-headset mr-1"></i> ติดต่อเรา</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Header Section -->
+        <header class="relative bg-gradient-to-r from-blue-900 to-slate-900 text-white pt-10 pb-20 px-4 overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+            <div class="relative z-10 max-w-4xl mx-auto text-center">
+                <span class="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-blue-100 text-xs font-bold mb-4 backdrop-blur-sm">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Authorized Access Only
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 tracking-tight">ศูนย์รวมบริการและเครื่องมือสาขา</h2>
+                <p class="text-slate-300 text-sm md:text-base font-light">
+                    รวบรวมลิงก์ระบบ คู่มือ ฟอร์มเอกสาร และช่องทางติดต่อไว้ในที่เดียว
+                </p>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20 pb-20 space-y-10">
+            
+            <!-- 1. Quick Access -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- Login -->
+                <a href="https://merchant.paypoint.in.th/auth/login" target="_blank" class="hover-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 text-sm">เข้าสู่ระบบ</h3>
+                        <p class="text-[10px] text-slate-400 mt-1">Merchant Login</p>
+                    </div>
+                </a>
+
+                <!-- Printer Fix -->
+                <a href="https://tuikub.github.io/paypoint/1.html" class="hover-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-print"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 text-sm">แก้ปัญหาปริ้นเตอร์</h3>
+                        <p class="text-[10px] text-slate-400 mt-1">ตั้งค่า/ไดร์เวอร์</p>
+                    </div>
+                </a>
+
+                <!-- Dispute Guide -->
+                <a href="https://tuikub.github.io/paypoint/Digital.html" class="hover-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-2xl group-hover:bg-red-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 text-sm">โต้แย้งค่าปรับ</h3>
+                        <p class="text-[10px] text-slate-400 mt-1">คู่มือลดค่าใช้จ่าย</p>
+                    </div>
+                </a>
+
+                <!-- Response Helper -->
+                <a href="https://tuikub.github.io/paypoint/response_helper.html" class="hover-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-2xl group-hover:bg-green-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 text-sm">คลังถาม-ตอบ</h3>
+                        <p class="text-[10px] text-slate-400 mt-1">ช่วยตอบลูกค้า</p>
+                    </div>
+                </a>
+
+                <!-- Staff Support -->
+                <a href="https://tuikub.github.io/paypoint/staff_login.html" class="hover-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 text-sm">ระบบช่วยเหลือ</h3>
+                        <p class="text-[10px] text-slate-400 mt-1">สำหรับ Staff</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- 2. System Management -->
+            <section id="system">
+                <div class="section-header">
+                    <i class="fa-solid fa-desktop text-blue-600 text-xl"></i>
+                    <h2 class="section-title">ระบบจัดการร้านค้า</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="https://merchant.paypoint.in.th/auth/login" target="_blank" class="block p-6 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-blue-50 text-blue-600 p-3 rounded-full group-hover:bg-blue-600 group-hover:text-white transition">
+                                <i class="fa-solid fa-key text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800">เข้าสู่ระบบ Merchant (New)</h3>
+                                <p class="text-sm text-slate-500">ระบบคีย์พัสดุและจัดการหน้าร้าน</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="https://lookerstudio.google.com/u/0/reporting/4a76f14a-1738-4b1d-af7c-6ce5ef150b97/page/V8SWF" target="_blank" class="block p-6 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-orange-50 text-orange-600 p-3 rounded-full group-hover:bg-orange-600 group-hover:text-white transition">
+                                <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800">ค้นหา User / Password</h3>
+                                <p class="text-sm text-slate-500">ตรวจสอบรหัสผ่านสาขา</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="mt-3 text-center">
+                    <a href="https://www.paypoint.co.th/member/index.php" target="_blank" class="inline-flex items-center gap-2 text-xs text-red-400 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full transition border border-red-100">
+                        <i class="fa-solid fa-triangle-exclamation"></i> ระบบเก่า (Paypoint.co.th) ยกเลิกแล้ว
+                    </a>
+                </div>
+            </section>
+
+            <!-- 3. Training & Manuals -->
+            <section id="training">
+                <div class="section-header">
+                    <i class="fa-solid fa-graduation-cap text-green-600 text-xl"></i>
+                    <h2 class="section-title">การอบรมและคู่มือ</h2>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-6 bg-green-50 p-5 rounded-xl border border-green-100">
+                        <div class="text-center md:text-left">
+                            <h3 class="text-lg font-bold text-green-800 mb-1">อบรมออนไลน์ (Google Meet)</h3>
+                            <p class="text-sm text-green-700"><i class="fa-regular fa-clock mr-1"></i> จันทร์ - ศุกร์</p>
+                            <p class="text-sm text-green-600">เช้า: 10.00 – 11.30 น. | บ่าย: 13.30 – 14.30 น.</p>
+                            <div class="mt-2 text-xs bg-white inline-block px-2 py-1 rounded border border-green-200 text-green-600">รหัสห้อง: <b>rxw-bkpd-iut</b></div>
+                        </div>
+                        <a href="https://meet.google.com/rxw-bkpd-iut" target="_blank" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow-md transition flex items-center gap-2 whitespace-nowrap font-bold">
+                            <i class="fa-solid fa-video"></i> เข้าร่วมอบรม
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="https://youtube.com/playlist?list=PLDEaXlvkU2-aBb6jaCNszznT9V_ZWc8n8&si=hFfB4ZE322szdhNc" target="_blank" class="flex items-center gap-3 p-4 rounded-lg bg-white border border-slate-200 hover:border-red-400 hover:shadow-sm transition group">
+                            <i class="fa-brands fa-youtube text-red-500 text-2xl group-hover:scale-110 transition"></i>
+                            <div>
+                                <span class="font-bold text-slate-700 block">Youtube Playlist</span>
+                                <span class="text-xs text-slate-500">รวมคลิปสอนใช้งานทุกขั้นตอน</span>
+                            </div>
+                        </a>
+                        <a href="https://drive.google.com/drive/folders/14DsJpG__tflMG6U79IUbEYPsUMUNxTgk" target="_blank" class="flex items-center gap-3 p-4 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition group">
+                            <i class="fa-solid fa-file-pdf text-blue-500 text-2xl group-hover:scale-110 transition"></i>
+                            <div>
+                                <span class="font-bold text-slate-700 block">คู่มือใช้งาน (PDF)</span>
+                                <span class="text-xs text-slate-500">ดาวน์โหลดเอกสารคู่มือ</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Support Contact -->
+            <section id="contact" class="mb-10">
+                <div class="section-header">
+                    <i class="fa-solid fa-headset text-orange-500 text-xl"></i>
+                    <h2 class="section-title">ติดต่อช่วยเหลือ</h2>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <a href="tel:0855078656" class="flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-sm border border-slate-200 text-slate-700 hover:border-green-500 hover:text-green-600 transition font-bold">
+                        <i class="fa-solid fa-phone-volume"></i> 085-507-8656
+                    </a>
+                    <a href="tel:0855158456" class="flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-sm border border-slate-200 text-slate-700 hover:border-green-500 hover:text-green-600 transition font-bold">
+                        <i class="fa-solid fa-phone-volume"></i> 085-515-8456
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="https://lin.ee/g4n2bQXs" target="_blank" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-xl text-center shadow-sm transition">
+                        <i class="fa-brands fa-line text-3xl mb-2"></i>
+                        <span class="block text-sm font-bold">น้องแอน / น้องมด</span>
+                    </a>
+                    <a href="https://lin.ee/ZBTSaqA" target="_blank" class="bg-slate-800 hover:bg-slate-900 text-white p-4 rounded-xl text-center shadow-sm transition">
+                        <i class="fa-solid fa-laptop-code text-3xl mb-2"></i>
+                        <span class="block text-sm font-bold">ฝ่ายไอที (IT)</span>
+                    </a>
+                    <a href="https://lin.ee/XwvdNg2" target="_blank" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-xl text-center shadow-sm transition">
+                        <i class="fa-brands fa-line text-3xl mb-2"></i>
+                        <span class="block text-sm font-bold">น้องปุ๊กกี้</span>
+                    </a>
+                    <a href="https://lin.ee/YSE9XbQ" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl text-center shadow-sm transition">
+                        <i class="fa-solid fa-user-tie text-3xl mb-2"></i>
+                        <span class="block text-sm font-bold">คุณโอ๋ / คุณตุ้ย</span>
+                    </a>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-slate-900 text-slate-400 py-10 text-center text-sm mt-auto">
+            <div class="max-w-7xl mx-auto px-4">
+                <img src="https://tuikub.github.io/tracking//paypoint.png" alt="Logo" class="w-10 h-10 object-contain mx-auto mb-4 grayscale opacity-30">
+                <p class="mb-2 font-medium text-slate-300">© 2024 PAYPOINT FAMILY SYSTEM SUPPORT</p>
+                <p class="text-xs">รวบรวมข้อมูลเพื่อความสะดวกในการใช้งานสำหรับสาขาแฟรนไชส์</p>
+                <p class="text-xs mt-2 opacity-50">Developed by Pratya Chatmontree (Secured)</p>
+            </div>
+        </footer>
+
+        <!-- AI Chat Floating Button & Modal -->
+        <div id="ai-widget-container" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-4">
+            
+            <!-- Chat Box (Embedded) -->
+            <div id="chat-window" class="hidden w-[90vw] sm:w-[380px] h-[550px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right transform scale-95 opacity-0 relative flex flex-col">
+                <!-- Chat Header (Red Theme + No Settings Button) -->
+                <div class="chat-header">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
+                            <i class="fa-solid fa-robot text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm">Logistics Support AI</h3>
+                            <p class="text-[10px] opacity-90">Paypoint Assistant</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleChat()" class="text-white hover:bg-white/20 p-1 rounded transition"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="suggestions">
+                    <span class="chip" onclick="quickAsk('ผ่านโปรได้สิทธิอะไรบ้าง')">✅ ผ่านโปร</span>
+                    <span class="chip" onclick="quickAsk('สมัครงาน')">💼 งานใหม่</span>
+                    <span class="chip" onclick="quickAsk('ลืมลงเวลาเข้างาน')">⏰ ลืมสแกน</span>
+                    <span class="chip" onclick="quickAsk('เลิกจ้างจ่ายชดเชยยังไง')">⚖️ ค่าชดเชย</span>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chat-messages">
+                    <div class="msg bot">
+                        สวัสดีครับ! ผมคือผู้ช่วยอัจฉริยะประจำร้าน Paypoint 🤖<br>
+                        มีข้อสงสัยเรื่องระบบขนส่ง, งานบุคคล หรือกฎหมายแรงงาน ถามได้เลยครับ!
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-area">
+                    <input type="text" id="userInput" class="chat-input" placeholder="พิมพ์คำถามที่นี่..." onkeypress="handleKeyPress(event)">
+                    <button class="chat-send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+                
+                <!-- Watermark -->
+                <div class="text-[10px] text-slate-400 text-center pb-2 bg-white">
+                    Powered by Dual AI (Gemini + Together)
+                </div>
+            </div>
+
+            <!-- Toggle Button (Red Gradient) -->
+            <button onclick="toggleChat()" id="chat-toggle-btn" class="group flex items-center gap-2 bg-gradient-to-br from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white p-4 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 ring-4 ring-white/30">
+                <span class="hidden group-hover:block text-sm font-bold pr-2 pl-1 animate-fadeIn">ปรึกษา AI</span>
+                <i class="fa-solid fa-robot text-xl animate-bounce"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script>
-        // --- Configuration ---
-        // Defaults (can be overridden in UI)
-        let sheetId = localStorage.getItem('chat_sheet_id') || '1-G8YWdpXq8YsXNNK9d5vhUcVrEOlCvKucHrd5Bmimcc';
-        let geminiKey = localStorage.getItem('chat_gemini_key') || 'AIzaSyCBr6LjhCCkJVwkAJTqEIMuIekkjl3X6r4';
-        
-        let togetherKey = localStorage.getItem('chat_together_key') || 'f1ab2db1ed0da368ff5d3001a70855fac21f2b161a12021e44c1e3e75f05e575'; 
-        
-        // รหัสผ่านสำหรับเข้าเมนูตั้งค่า
-        const ADMIN_PASSWORD = "02817648+++"; 
+        // --- Security Logic ---
+        function checkPassword(event) {
+            event.preventDefault();
+            const input = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('error-msg');
+            const lockScreen = document.getElementById('lock-screen');
+            const content = document.getElementById('app-content');
+            const body = document.getElementById('main-body');
 
-        // Knowledge Base Storage
-        let KNOWLEDGE_BASE = "";
-        
-        // --- Init ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const sheetInput = document.getElementById('sheet-id-input');
-            const geminiInput = document.getElementById('gemini-key-input');
-            const togetherInput = document.getElementById('together-key-input');
+            if (input === '02817648++') {
+                lockScreen.style.opacity = '0';
+                lockScreen.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                    content.classList.remove('hidden');
+                    body.classList.remove('overflow-hidden');
+                }, 500);
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        // --- Chat Widget Logic ---
+        const chatWindow = document.getElementById('chat-window');
+
+        function toggleChat() {
+            if (chatWindow.classList.contains('hidden')) {
+                chatWindow.classList.remove('hidden');
+                setTimeout(() => {
+                    chatWindow.classList.remove('scale-95', 'opacity-0');
+                    chatWindow.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            } else {
+                chatWindow.classList.remove('scale-100', 'opacity-100');
+                chatWindow.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => chatWindow.classList.add('hidden'), 300);
+            }
+        }
+
+        // --- AI Logic (Embedded) ---
+        // 🔑 API KEYS (Hardcoded - No Settings Panel)
+        const GEMINI_API_KEY = "AIzaSyCBr6LjhCCkJVwkAJTqEIMuIekkjl3X6r4"; 
+        const TOGETHER_API_KEY = "f1ab2db1ed0da368ff5d3001a70855fac21f2b161a12021e44c1e3e75f05e575";
+
+        // Local Database
+        const localDatabase = [
+            { keywords: ["เวลาทำงาน", "เข้างาน"], answer: "📌 **เวลาทำงาน**: จันทร์-ศุกร์ (สนง.) หรือ จันทร์-เสาร์ (ปฏิบัติการ) 08.30-17.30 น." },
+            { keywords: ["ลืมสแกน", "ลืมลงเวลา"], answer: "📌 **ลืมลงเวลา**: แจ้ง 'ขอรับรองเวลา' ในระบบ ให้หัวหน้าอนุมัติภายในวันที่ 21" },
+            { keywords: ["ลาป่วย"], answer: "📌 **ลาป่วย**: แจ้งก่อน 10.00 น. หากลา 3 วันต้องมีใบรับรองแพทย์" },
+            { keywords: ["พักร้อน"], answer: "📌 **พักร้อน**: สิทธิ 6 วัน/ปี (อายุงาน 1 ปี) ขออนุมัติล่วงหน้า 7 วัน" },
+            { keywords: ["ลากิจ"], answer: "📌 **ลากิจ**: 3 วัน/ปี (ผ่านโปรแล้ว) ขอล่วงหน้า 3 วัน" },
+            { keywords: ["ลาคลอด"], answer: "📌 **ลาคลอด**: 98 วัน (จ่าย 45 วัน) เบิกประกันสังคมเพิ่มได้ 15,000 + 50%" },
+            { keywords: ["ทดลองงาน", "ผ่านโปร"], answer: "📌 **ทดลองงาน**: 119 วัน (เมื่อผ่านโปรได้สิทธิลากิจ 3 วัน/ปี)" },
+            { keywords: ["สมัครงาน", "งานใหม่"], answer: "📌 **สมัครงาน**: ติดต่อฝ่ายบุคคล โทร 02-451-533-5 หรือดูบอร์ดประชาสัมพันธ์" },
+            { keywords: ["ติดต่อ", "hr"], answer: "📞 **ติดต่อ HR**: โทร 02-451-533-5 หรือไลน์น้องแอน/น้องมด" }
+        ];
+
+        async function sendMessage() {
+            const inputField = document.getElementById("userInput");
+            const message = inputField.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            inputField.value = '';
             
-            if(sheetInput) sheetInput.value = sheetId;
-            if(geminiInput) geminiInput.value = geminiKey;
-            if(togetherInput) togetherInput.value = togetherKey;
+            // 1. Local Search
+            const localMatch = checkLocalDB(message);
+            if (localMatch) {
+                setTimeout(() => addMessage(localMatch, 'bot'), 400);
+                return;
+            }
 
-            if(sheetId) fetchSheetData();
-        });
+            // 2. AI Process
+            addMessage("... กำลังค้นหาข้อมูล ...", 'bot', true); 
 
-        // --- Fetch Knowledge Base (Google CSV) ---
-        async function fetchSheetData() {
             try {
-                // Fetch as CSV
-                const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    if (response.status === 404) throw new Error("ไม่พบไฟล์ Sheet ID นี้");
-                    throw new Error("ไม่สามารถเข้าถึงไฟล์ (ตรวจสอบสิทธิ์ Share: Anyone with link)");
-                }
-                
-                const csvText = await response.text();
-                parseCSVtoKnowledge(csvText);
-                
-                // Status Update: Green
-                document.getElementById('status-dot').className = "absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full";
-                document.getElementById('status-dot').title = "Online: Knowledge Loaded";
-                console.log("Knowledge Base Loaded Successfully");
-            } catch (error) {
-                console.error("Sheet Error:", error);
-                // Status Update: Red
-                document.getElementById('status-dot').className = "absolute bottom-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full";
-                document.getElementById('status-dot').title = "Error: Check Settings";
-                addMessage('system', `⚠️ <strong>System Error:</strong> ${error.message}<br>กรุณาตรวจสอบ ID ในเมนูตั้งค่า`);
-            }
-        }
-
-        function parseCSVtoKnowledge(csv) {
-            const rows = csv.split(/\r?\n/);
-            let textData = "# ข้อมูลร้านรับส่งพัสดุ PAYPOINT (Knowledge Base)\n\n";
-            let validCount = 0;
-            
-            console.group("🔍 ตรวจสอบข้อมูล Google Sheet (Rows A-B-C)");
-            
-            rows.forEach((row, index) => {
-                if(index === 0) return; // Skip Header
-                if(!row.trim()) return; // Skip empty rows
-
-                // Robust CSV Parsing (Handle quotes and commas inside fields)
-                let cols = [];
-                let current = '';
-                let inQuote = false;
-                
-                for (let i = 0; i < row.length; i++) {
-                    const char = row[i];
-                    if (char === '"') {
-                        if (inQuote && row[i+1] === '"') { // Handle escaped quotes ""
-                            current += '"';
-                            i++;
-                        } else {
-                            inQuote = !inQuote;
-                        }
-                    } else if (char === ',' && !inQuote) {
-                        cols.push(current.trim());
-                        current = '';
-                    } else {
-                        current += char;
-                    }
-                }
-                cols.push(current.trim()); // Push last column
-
-                // Map Columns: A=Question (0), B=Answer (1), C=URL (2)
-                if(cols.length >= 2) {
-                    const q = cols[0].replace(/^"|"$/g, '').trim(); 
-                    const a = cols[1].replace(/^"|"$/g, '').trim();
-                    // Fix: Explicitly check for column C
-                    const url = cols[2] ? cols[2].replace(/^"|"$/g, '').trim() : '';
-                    
-                    if(q && a) {
-                        textData += `--- ITEM ---\nQuestion (A): ${q}\nAnswer (B): ${a}\n${url ? 'URL (C): ' + url : ''}\n`;
-                        validCount++;
-
-                        // Debug: Show first 5 rows OR any row with URL to verify C column
-                        if (index <= 5 || url) {
-                            console.log(`Row ${index}:`, {
-                                'A (ถาม)': q,
-                                'B (ตอบ)': a,
-                                'C (URL)': url || '(ไม่มี)'
-                            });
-                        }
-                    }
-                }
-            });
-            
-            console.log(`✅ โหลดข้อมูลสำเร็จทั้งหมด ${validCount} รายการ`);
-            console.groupEnd();
-            
-            KNOWLEDGE_BASE = textData;
-            // แจ้งเตือนในแชทเมื่อโหลดเสร็จ (เฉพาะตอนเริ่ม)
-            // addMessage('system', `โหลดฐานข้อมูล ${validCount} รายการเรียบร้อย`);
-        }
-
-        // --- AI Logic (Gemini -> Fallback Together) ---
-        async function getAIResponse(userMessage) {
-            if (!geminiKey && !togetherKey) return "⚠️ กรุณาตั้งค่า API Key (Gemini หรือ Together AI) ในเมนูตั้งค่าก่อนเริ่มใช้งานค่ะ";
-
-            // 1. Try Gemini
-            if (geminiKey) {
-                document.getElementById('model-status').innerText = "กำลังพิมพ์... (Gemini)";
+                // A. Gemini (Primary)
+                const geminiResponse = await callGeminiAPI(message);
+                removeLoadingMessage();
+                addMessage(geminiResponse, 'bot');
+            } catch (geminiError) {
+                console.error("Gemini Failed, switching to backup...", geminiError);
+                // B. Together AI (Backup)
                 try {
-                    return await callGemini(userMessage);
-                } catch (error) {
-                    console.warn("Gemini Error, Switching to Fallback...", error);
-                    if (!togetherKey) {
-                        document.getElementById('model-status').innerText = "Gemini Error";
-                        return `ขออภัยค่ะ ระบบ Gemini ขัดข้อง (${error.message || 'Unknown'})`;
-                    }
+                    const togetherResponse = await callTogetherAPI(message);
+                    removeLoadingMessage();
+                    addMessage(togetherResponse + "<br><small style='color:#ef4444; font-size:0.7em;'>(ระบบสำรองทำงาน)</small>", 'bot', false, 'backup');
+                } catch (togetherError) {
+                    removeLoadingMessage();
+                    addMessage("ขออภัยครับ ระบบ AI ไม่สามารถตอบได้ในขณะนี้", 'bot');
                 }
             }
-
-            // 2. Fallback to Together AI
-            if (togetherKey) {
-                document.getElementById('model-status').innerText = "กำลังพิมพ์... (Backup AI)";
-                try {
-                    return await callTogetherAI(userMessage);
-                } catch (error) {
-                    console.error("Together AI Error:", error);
-                    document.getElementById('model-status').innerText = "System Error";
-                    return "ขออภัยค่ะ ระบบขัดข้องทั้ง 2 ช่องทาง กรุณาลองใหม่ภายหลังนะคะ";
-                }
-            }
-            
-            return "ไม่พบ API Key ที่ใช้งานได้ค่ะ";
         }
 
-        async function callGemini(message) {
-            // Using Gemini 1.5 Flash (Efficient for chat)
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
-            
-            const prompt = `
-            Context Data (Knowledge Base from Google Sheet):
-            ${KNOWLEDGE_BASE}
-            
-            System Instructions:
-            You are "ผู้ช่วยอัจฉริยะประจำร้านบริการรับส่งเอกชนและไปรษณีย์" (Logistics Support AI).
-            Your duty is to answer questions based ONLY on the "Context Data".
-            
-            Context Awareness & Persona:
-            1. IF the user asks about: "ระบบล่ม", "เติมเงิน", "ตัดเงินผิด", "เรียกรถเข้ารับ", "ติดต่อแอดมิน", "Flash Home", "J&T Home", "ปริ้นไม่ออก" (Branch/Franchise issues):
-               - Tone: Concise, direct, technical.
-               - Focus: Troubleshooting and technical steps.
-            2. IF the user asks about: "พัสดุถึงไหน", "เช็คเลข", "ค่าส่งเท่าไหร่", "ของแตก", "ส่งของเหลวได้ไหม", "COD", "กี่วันถึง" (General Customer):
-               - Tone: Polite, soft, service-minded, avoid technical jargon.
-            
-            Strict Rules:
-            1. NO Hallucinations: Answer ONLY based on the Context Data.
-            2. Unknown Information: If the answer is not in the Context Data, reply EXACTLY: "ขออภัยครับ ข้อมูลส่วนนี้อยู่นอกเหนือฐานข้อมูล รบกวนติดต่อแอดมินส่วนกลางโดยตรงเพื่อความถูกต้องครับ"
-            3. **MANDATORY**: If the Context Data for the answer contains a 'URL (C)', you MUST append it at the end of the response. Do NOT forget the link.
-            4. Formatting: Use numbered lists (1, 2, 3) for steps.
-            5. Language: Thai only.
-            
-            User Question: ${message}
-            `;
+        function checkLocalDB(query) {
+            const lowerQuery = query.toLowerCase();
+            let bestMatch = null;
+            let maxScore = 0;
+            for (let item of localDatabase) {
+                let score = 0;
+                item.keywords.forEach(k => { if (lowerQuery.includes(k)) score++; });
+                if (score > maxScore) { maxScore = score; bestMatch = item.answer; }
+            }
+            return bestMatch;
+        }
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-            
+        async function callGeminiAPI(userPrompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const requestBody = { contents: [{ parts: [{ text: "คุณคือผู้ช่วย HR ตอบคำถามกฎหมายแรงงานและระเบียบพนักงาน สั้นๆ เข้าใจง่าย\n\nUser: " + userPrompt }] }] };
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+            if (!response.ok) throw new Error("Gemini Error");
             const data = await response.json();
-            
-            if (data.error) throw new Error(data.error.message);
-            if (!data.candidates || data.candidates.length === 0) throw new Error("No response generated");
-            
-            document.getElementById('model-status').innerText = "ตอบโดย น้อง AI";
             return data.candidates[0].content.parts[0].text;
         }
 
-        async function callTogetherAI(message) {
+        async function callTogetherAPI(userPrompt) {
             const url = "https://api.together.xyz/v1/chat/completions";
-            
-            // Optimized System Prompt for Llama 3.2 3B Instruct Turbo
-            // Tactic: Force strict retrieval, punish hallucination, ensure URL presence.
-            const promptSystem = `
-            You are a helpful assistant for PAYPOINT. 
-            Your goal is to answer the user's question using ONLY the provided Context Data.
-            
-            Context Data:
-            ${KNOWLEDGE_BASE}
-            
-            Instructions:
-            1. Search the "Context Data" for a "Question (A)" that has the same meaning as the User's Question.
-            2. If found, reply exactly with the corresponding "Answer (B)".
-            3. If the answer contains a "URL (C)", append it to the end.
-            4. If the answer is NOT in the context, reply: "ขออภัยครับ ข้อมูลส่วนนี้อยู่นอกเหนือฐานข้อมูล รบกวนติดต่อแอดมินส่วนกลางโดยตรงเพื่อความถูกต้องครับ"
-            5. Do NOT make up answers. Do NOT assume. Use ONLY the text provided.
-            
-            Language: Thai
-            `;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${togetherKey}`, 
-                    'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify({
-                    model: "meta-llama/Llama-3.2-3B-Instruct-Turbo",
-                    messages: [
-                        { role: "system", content: promptSystem },
-                        { role: "user", content: message }
-                    ],
-                    max_tokens: 512,
-                    temperature: 0.1, // LOW temperature to force strict adherence to context
-                    top_p: 0.8,
-                    top_k: 40,
-                    repetition_penalty: 1.1 // Prevents loops
-                })
-            });
-
+            const requestBody = {
+                model: "meta-llama/Llama-3.2-3B-Instruct-Turbo",
+                messages: [{ role: "system", content: "ตอบคำถามกฎหมายแรงงานไทยเป็นภาษาไทย" }, { role: "user", content: userPrompt }],
+                max_tokens: 512
+            };
+            const response = await fetch(url, { method: 'POST', headers: { 'Authorization': `Bearer ${TOGETHER_API_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+            if (!response.ok) throw new Error("Together Error");
             const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-            
-            document.getElementById('model-status').innerText = "ตอบโดย Backup AI";
             return data.choices[0].message.content;
         }
 
-        // --- UI Functions ---
-        const chatWindow = document.getElementById('chat-window');
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
-        const loading = document.getElementById('loading');
-        const settingsPanel = document.getElementById('settings-panel');
-        const iconClosed = document.getElementById('icon-closed');
-        const iconOpened = document.getElementById('icon-opened');
-
-        function toggleChat() {
-            const isHidden = chatWindow.classList.contains('chat-hidden');
-            if (isHidden) {
-                chatWindow.classList.remove('chat-hidden');
-                chatWindow.classList.add('chat-visible');
-                iconClosed.classList.add('scale-0', 'opacity-0');
-                iconOpened.classList.remove('scale-0', 'opacity-0', 'rotate-180');
-                setTimeout(() => userInput.focus(), 100);
-            } else {
-                chatWindow.classList.add('chat-hidden');
-                chatWindow.classList.remove('chat-visible');
-                iconClosed.classList.remove('scale-0', 'opacity-0');
-                iconOpened.classList.add('scale-0', 'opacity-0', 'rotate-180');
-            }
-        }
-
-        function toggleSettings() {
-            // ตรวจสอบสถานะว่าแผงตั้งค่าเปิดอยู่หรือไม่
-            if (settingsPanel.classList.contains('hidden')) {
-                // ถ้าปิดอยู่ -> จะเปิด (ต้องใส่รหัส)
-                const password = prompt("กรุณากรอกรหัสผ่าน Admin เพื่อเข้าสู่การตั้งค่า:", "");
-                
-                if (password === ADMIN_PASSWORD) {
-                    settingsPanel.classList.remove('hidden');
-                } else if (password !== null) { // กรณีไม่ได้กด Cancel แต่ใส่ผิด
-                    alert("⛔ รหัสผ่านไม่ถูกต้อง! ไม่สามารถเข้าถึงการตั้งค่าได้");
-                }
-            } else {
-                // ถ้าเปิดอยู่ -> จะปิด (ไม่ต้องใส่รหัส)
-                settingsPanel.classList.add('hidden');
-            }
-        }
-
-        function saveSettings() {
-            const newSheetId = document.getElementById('sheet-id-input').value.trim();
-            const newGeminiKey = document.getElementById('gemini-key-input').value.trim();
-            const newTogetherKey = document.getElementById('together-key-input').value.trim();
-
-            if(newSheetId) {
-                sheetId = newSheetId;
-                localStorage.setItem('chat_sheet_id', sheetId);
-            }
-            // Allow clearing keys by saving empty
-            geminiKey = newGeminiKey;
-            localStorage.setItem('chat_gemini_key', geminiKey);
+        function addMessage(text, sender, isLoading = false, type = 'normal') {
+            const chatBox = document.getElementById("chat-messages");
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `msg ${sender} ${type}`;
+            if (isLoading) msgDiv.id = "loadingMsg";
             
-            togetherKey = newTogetherKey;
-            localStorage.setItem('chat_together_key', togetherKey);
-
-            // ปิดหน้าตั้งค่าทันทีหลังบันทึก
-            settingsPanel.classList.add('hidden');
-            addMessage('system', 'บันทึกการตั้งค่าเรียบร้อย กำลังโหลดข้อมูลใหม่ค่ะ...');
-            fetchSheetData();
-        }
-
-        function addMessage(role, text) {
-            const isUser = role === 'user';
-            const div = document.createElement('div');
-            div.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''} animate-fade-in`;
+            // Markdown Basic Parsing (Bold & Break)
+            let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             
-            const avatar = isUser ? '' : 
-                `<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-[10px] font-bold shrink-0 shadow-sm">AI</div>`;
+            // Typing Animation HTML
+            if (isLoading) {
+               formattedText = `<div class="flex items-center space-x-1 h-4">
+                                    <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
+                                    <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
+                                    <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
+                                </div>`;
+            }
 
-            const bubbleColor = isUser ? 'bg-red-600 text-white' : 'bg-white text-gray-800 border border-gray-100';
-            const systemStyle = role === 'system' ? 'bg-yellow-50 text-yellow-700 border-yellow-100 text-xs w-full text-center' : '';
-
-            // Auto-link detection
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            const textWithLinks = text.replace(urlRegex, function(url) {
-                return `<a href="${url}" target="_blank" class="underline decoration-dotted ${isUser ? 'text-white' : 'text-blue-600'} hover:opacity-80 break-all">${url}</a>`;
-            });
-
-            div.innerHTML = `
-                ${role === 'system' ? '' : avatar}
-                <div class="max-w-[85%] p-3 rounded-2xl ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-sm text-sm leading-relaxed break-words ${role === 'system' ? systemStyle : bubbleColor}">
-                    ${textWithLinks}
-                </div>
-            `;
-            chatBox.appendChild(div);
+            msgDiv.innerHTML = formattedText;
+            
+            chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // --- Event Listeners ---
-        document.getElementById('chat-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const text = userInput.value.trim();
-            if (!text) return;
+        function removeLoadingMessage() {
+            const loadingMsg = document.getElementById("loadingMsg");
+            if (loadingMsg) loadingMsg.remove();
+        }
 
-            // UI Updates
-            addMessage('user', text);
-            userInput.value = '';
-            loading.classList.remove('hidden');
-            chatBox.scrollTop = chatBox.scrollHeight;
-            
-            // Disable input while thinking
-            userInput.disabled = true;
-            document.querySelector('#chat-form button').disabled = true;
-
-            try {
-                const reply = await getAIResponse(text);
-                addMessage('ai', reply);
-            } catch (err) {
-                addMessage('system', 'Error getting response');
-            } finally {
-                loading.classList.add('hidden');
-                userInput.disabled = false;
-                document.querySelector('#chat-form button').disabled = false;
-                userInput.focus();
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        });
+        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+        function quickAsk(q) { document.getElementById("userInput").value = q; sendMessage(); }
     </script>
 </body>
 </html>
