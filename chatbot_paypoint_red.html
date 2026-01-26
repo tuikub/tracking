@@ -6,153 +6,168 @@
     <title>TuiKub Ai Assistant</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Sarabun & Prompt -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Marked.js for Markdown -->
+    <!-- Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
         body { 
             font-family: 'Sarabun', sans-serif; 
             margin: 0; padding: 0; 
-            background-color: #f8fafc; 
+            background-color: #f0f4f8; 
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        /* Scrollbar Styling */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
         
         .chat-container {
             display: flex; flex-direction: column; height: 100%; 
             background: white;
             max-width: 100%;
             margin: 0 auto;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            box-shadow: 0 0 25px rgba(0,0,0,0.05);
         }
         
-        /* Theme: Calm Blue */
+        /* Header Theme */
         .chat-header {
-            background: linear-gradient(135deg, #2563eb, #0ea5e9); 
+            background: linear-gradient(120deg, #3b82f6, #06b6d4); 
             color: white;
-            padding: 14px 18px; 
+            padding: 14px 20px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px -2px rgba(59, 130, 246, 0.3);
             flex-shrink: 0;
-            z-index: 10;
+            z-index: 20;
         }
 
         .chat-messages {
             flex: 1; 
             overflow-y: auto; 
             padding: 20px; 
-            background-color: #f1f5f9; 
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 20px 20px; 
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+            background-size: 24px 24px; 
             display: flex; 
             flex-direction: column; 
-            gap: 14px;
+            gap: 16px;
             scroll-behavior: smooth;
         }
 
         .chat-input-area {
             padding: 16px; 
-            border-top: 1px solid #e2e8f0; 
+            border-top: 1px solid #f1f5f9; 
             background: white;
             display: flex; 
-            gap: 10px; 
+            gap: 12px; 
             position: relative;
             flex-shrink: 0;
             align-items: center;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
         }
 
         .chat-input {
             flex: 1; 
             padding: 12px 20px; 
             border: 1px solid #e2e8f0; 
-            border-radius: 30px;
+            border-radius: 50px;
             outline: none; 
             font-size: 0.95em; 
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             background-color: #f8fafc;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            color: #334155;
         }
         .chat-input:focus { 
             border-color: #3b82f6; 
             background-color: white; 
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
 
         .chat-send-btn {
-            background: #2563eb; 
+            background: linear-gradient(135deg, #3b82f6, #2563eb); 
             color: white; 
             border: none; 
-            width: 45px; 
-            height: 45px;
+            width: 46px; 
+            height: 46px;
             border-radius: 50%; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
-        .chat-send-btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .chat-send-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); }
         .chat-send-btn:active { transform: scale(0.95); }
 
-        /* Message Bubbles */
+        /* Bubbles */
         .msg { 
-            max-width: 80%; 
-            padding: 12px 16px; 
-            border-radius: 18px; 
+            max-width: 85%; 
+            padding: 14px 18px; 
+            border-radius: 20px; 
             font-size: 0.95em; 
             line-height: 1.6; 
             word-wrap: break-word; 
             position: relative;
-            animation: fadeIn 0.3s ease-out;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .msg.bot { 
             background: white; 
             color: #334155; 
             align-self: flex-start; 
             border-bottom-left-radius: 4px; 
-            border: 1px solid #e2e8f0; 
+            border: 1px solid #f1f5f9; 
         }
+        
         .msg.user { 
-            background: #2563eb; 
+            background: linear-gradient(135deg, #3b82f6, #2563eb); 
             color: white; 
             align-self: flex-end; 
             border-bottom-right-radius: 4px; 
         }
-        .msg.error { border: 1px solid #fecaca; background: #fff1f2; color: #991b1b; }
+        
+        .msg.error { 
+            border: 1px solid #fecaca; 
+            background: #fef2f2; 
+            color: #b91c1c; 
+            align-self: center;
+            font-size: 0.85em;
+            text-align: center;
+        }
 
         .msg img {
             max-width: 100%;
             border-radius: 12px;
-            margin-top: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
+        .msg img:hover { transform: scale(1.02); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Suggestions Chips */
+        /* Chips */
         .suggestions { 
             display: flex; 
-            gap: 8px; 
+            gap: 10px; 
             overflow-x: auto; 
-            padding: 12px 16px; 
+            padding: 12px 20px; 
             background: white; 
-            border-bottom: 1px solid #f1f5f9; 
+            border-bottom: 1px solid #f8fafc; 
             white-space: nowrap;
             flex-shrink: 0;
             scrollbar-width: none; 
@@ -160,30 +175,39 @@
         .suggestions::-webkit-scrollbar { display: none; }
         
         .chip {
-            background: #eff6ff; 
-            color: #1e40af; 
+            background: #f0f9ff; 
+            color: #0369a1; 
             padding: 8px 16px; 
-            border-radius: 20px;
+            border-radius: 25px;
             font-size: 0.85em; 
             cursor: pointer; 
-            border: 1px solid #dbeafe; 
+            border: 1px solid #e0f2fe; 
             transition: all 0.2s;
             font-weight: 500;
             font-family: 'Prompt', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .chip:hover { 
-            background: #2563eb; 
+            background: #0ea5e9; 
             color: white; 
-            border-color: #2563eb; 
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+            border-color: #0ea5e9; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
         }
 
-        /* Typing Animation */
-        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        /* Typing Dots */
+        .typing-container {
+            display: flex; align-items: center; gap: 4px; padding: 4px 0;
+        }
+        .typing-dot { 
+            width: 6px; height: 6px; background: #94a3b8; border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both; 
+        }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         
         /* Status Dot */
         .status-dot {
@@ -192,22 +216,30 @@
             box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
         }
         .bg-loading { background-color: #fbbf24; }
-        .bg-online { background-color: #4ade80; box-shadow: 0 0 8px #4ade80; }
+        .bg-online { background-color: #4ade80; box-shadow: 0 0 8px rgba(74, 222, 128, 0.6); }
         
-        /* Social Icons in Footer */
+        /* Footer & Social */
+        .footer {
+            background-color: #f8fafc;
+            padding: 8px 0;
+            border-top: 1px solid #e2e8f0;
+        }
         .social-links {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 5px;
+            gap: 18px;
+            margin-bottom: 4px;
         }
         .social-link {
             color: #94a3b8;
-            font-size: 14px;
+            font-size: 16px;
             transition: all 0.2s;
             text-decoration: none;
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 50%; background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .social-link:hover { color: #2563eb; transform: scale(1.1); }
+        .social-link:hover { transform: translateY(-2px); }
         .social-link.youtube:hover { color: #ef4444; }
         .social-link.line:hover { color: #06c755; }
         .social-link.facebook:hover { color: #1877f2; }
@@ -217,51 +249,51 @@
 <body>
 
     <div class="chat-container">
-        <!-- Chat Header -->
+        <!-- Header -->
         <div class="chat-header">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-inner relative">
-                    <!-- Icon เปลี่ยนเป็น Headset สาวๆ -->
-                    <i class="fa-solid fa-headset text-lg"></i>
-                    <div id="db-status" class="status-dot bg-loading" title="กำลังโหลดฐานข้อมูล..."></div>
+                <div class="w-11 h-11 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-inner relative">
+                    <!-- Icon สาวสวย -->
+                    <i class="fa-solid fa-user-astronaut text-xl"></i>
+                    <div id="db-status" class="status-dot bg-loading" title="กำลังเชื่อมต่อ..."></div>
                 </div>
                 <div>
-                    <h3 class="font-bold text-base font-['Prompt'] tracking-wide">TuiKub Ai Assistant</h3>
-                    <p class="text-[11px] opacity-80 font-light" id="status-text">กำลังเชื่อมต่อฐานข้อมูล...</p>
+                    <h3 class="font-bold text-lg font-['Prompt'] tracking-wide">TuiKub Ai Assistant</h3>
+                    <p class="text-[11px] opacity-90 font-light" id="status-text">กำลังเตรียมพร้อม...</p>
                 </div>
             </div>
-            <button onclick="window.parent.postMessage('closeChat', '*')" class="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition" title="ปิดหน้าต่าง">
+            <button onclick="window.parent.postMessage('closeChat', '*')" class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition" title="ปิดหน้าต่าง">
                 <i class="fa-solid fa-chevron-down text-lg"></i>
             </button>
         </div>
 
-        <!-- Suggestions -->
+        <!-- Chips -->
         <div class="suggestions" id="suggestion-box">
-            <span class="chip" onclick="quickAsk('เช็คพัสดุยังไง')"><i class="fa-solid fa-box-open mr-1"></i> เช็คพัสดุ</span>
-            <span class="chip" onclick="quickAsk('ค่าส่งเท่าไหร่')"><i class="fa-solid fa-coins mr-1"></i> ค่าส่ง</span>
-            <span class="chip" onclick="quickAsk('พื้นที่ห่างไกล')"><i class="fa-solid fa-map-location-dot mr-1"></i> พื้นที่ห่างไกล</span>
-            <span class="chip" onclick="quickAsk('ติดต่อตุ้ยคลับ')"><i class="fa-solid fa-headset mr-1"></i> ติดต่อเรา</span>
+            <span class="chip" onclick="quickAsk('เช็คพัสดุยังไง')"><i class="fa-solid fa-magnifying-glass"></i> เช็คพัสดุ</span>
+            <span class="chip" onclick="quickAsk('ค่าส่งเท่าไหร่')"><i class="fa-solid fa-hand-holding-dollar"></i> ค่าส่ง</span>
+            <span class="chip" onclick="quickAsk('พื้นที่ห่างไกล')"><i class="fa-solid fa-map-location-dot"></i> พื้นที่ห่างไกล</span>
+            <span class="chip" onclick="quickAsk('ติดต่อตุ้ยคลับ')"><i class="fa-solid fa-comments"></i> ติดต่อแอดมิน</span>
         </div>
 
-        <!-- Chat Messages -->
+        <!-- Messages -->
         <div class="chat-messages" id="chat-messages">
             <div class="msg bot">
-                สวัสดีค่ะ! <b>แอดมิน TuiKub (ตุ้ยคลับ)</b> ยินดีให้บริการค่ะ 👩‍💻<br>
-                มีข้อสงสัยเรื่องระบบขนส่ง, พัสดุ, หรืออยากปรึกษาเรื่องร้านแฟรนไชส์ สอบถามแอดมินได้เลยนะคะ!
+                สวัสดีค่า! <b>แอดมิน TuiKub (ตุ้ยคลับ)</b> ยินดีดูแลค่ะ 👩‍💼💖<br>
+                ต้องการเช็คพัสดุ สอบถามค่าส่ง หรือปรึกษาเรื่องแฟรนไชส์ Paypoint ทักแอดมินได้เลยนะคะ พร้อมช่วยเสมอจ้า!
             </div>
         </div>
 
-        <!-- Input Area -->
+        <!-- Input -->
         <div class="chat-input-area">
-            <input type="text" id="userInput" class="chat-input" placeholder="พิมพ์คำถามที่นี่ค่ะ..." autocomplete="off" onkeypress="handleKeyPress(event)">
+            <input type="text" id="userInput" class="chat-input" placeholder="พิมพ์คำถามให้น้องตุ้ยคลับช่วยดูได้เลยค่ะ..." autocomplete="off" onkeypress="handleKeyPress(event)">
             <button class="chat-send-btn" onclick="sendMessage()">
-                <i class="fa-solid fa-paper-plane text-sm"></i>
+                <i class="fa-solid fa-paper-plane text-lg"></i>
             </button>
         </div>
         
         <!-- Footer -->
-        <div class="bg-white py-2 border-t border-slate-50">
-            <div class="social-links mb-1">
+        <div class="footer">
+            <div class="social-links">
                 <a href="https://www.youtube.com/channel/UC0IEG_tOt1Hrj4FXDbkZN-A" target="_blank" class="social-link youtube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
                 <a href="https://www.facebook.com/papacking" target="_blank" class="social-link facebook" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
                 <a href="https://lin.ee/khaW3QI" target="_blank" class="social-link line" title="Line"><i class="fa-brands fa-line"></i></a>
@@ -277,16 +309,30 @@
         const SHEET_ID = '13YE50RWDXik5YhrIqB6naWRxfwDFtFVFbtqs-2bH0Hc'; 
         const N8N_WEBHOOK_URL = "https://n8n.srv1265116.hstgr.cloud/webhook/chat"; 
 
-        // --- HARDCODED KNOWLEDGE BASE (Female Tone) ---
+        // --- DATA (Friendly Female Tone - Fallback) ---
+        // ✅ ปรับปรุงข้อมูลตามที่ขอ และใส่ลิงก์ให้ถูกต้อง
         const STATIC_DATA = [
-            { keywords: ["ติดต่อ", "คุยกับพนักงาน", "ขอเบอร์โทร", "ติดต่อตุ้ยคลับ"], answer: "สามารถติดต่อแอดมิน (TuiKub) ได้ทางช่องทางด้านล่างนี้เลยค่ะ:\n\n• Line: [คลิกแอดไลน์](https://lin.ee/khaW3QI)\n• Facebook: [PaPacking](https://www.facebook.com/papacking)\n• YouTube: [TuiKub Channel](https://www.youtube.com/channel/UC0IEG_tOt1Hrj4FXDbkZN-A)", url: "https://lin.ee/khaW3QI" },
-            { keywords: ["ของถึงไหน", "เช็คสถานะ"], answer: "เช็คสถานะพัสดุได้ที่เมนูเช็คสถานะด้านล่างเลยค่ะ หรือพิมพ์เลขพัสดุมาให้แอดมินช่วยดูได้นะคะ" },
-            { keywords: ["เช็คเลขไม่ขึ้น", "หาไม่เจอ", "ส่งเมื่อวานเช็คไม่ได้"], answer: "ถ้าพนักงานยังไม่เข้ารับ หรือคีย์เข้าระบบ สถานะอาจจะยังไม่ขึ้นค่ะ ลองติดต่อร้านต้นทางดูนะคะ" },
-            { keywords: ["เช็คพัสดุยังไง", "ขอลิงก์เช็คเลข"], answer: "กรอกเลขพัสดุในช่องค้นหาตรงกลางหน้าจอ แล้วกดปุ่มค้นหาได้เลยค่ะ" },
-            { keywords: ["พื้นที่ห่างไกล", "พื้นที่ท่องเที่ยว", "พื้นที่เกาะ"], answer: "• ไม่บวกเพิ่ม: KEX (Kerry) ✅\n\n• บวก 20 บาท: Post Sabuy\n\n• บวก 50 บาท: Flash, J&T, Best , DHL เพิ่มเติมค่ะ", url: "https://tuikub.github.io/tracking/remote.html" },
-            { keywords: ["สนใจแฟรนไชส์", "paypoint", "อยากเปิดร้าน"], answer: "สนใจเปิดร้านแฟรนไชส์ ติดต่อได้เลยค่ะ โทร.099-1209227 (คุณปุ๊กกี้)", url: "https://tuikub.github.io/tracking/franchise.html" },
-            { keywords: ["สวัสดี", "หวัดดี", "ดีครับ", "ดีค่ะ"], answer: "สวัสดีค่ะ! แอดมิน TuiKub ยินดีให้บริการค่ะ มีอะไรให้ช่วยไหมคะ?" },
-            { keywords: ["ใครสร้าง", "เจ้าของ", "ผู้พัฒนา", "pratya"], answer: "ระบบนี้พัฒนาโดยคุณ **Pratya Chatyachatmontree** ค่ะ 😎" }
+            // Contact Info
+            { keywords: ["ติดต่อ", "คุยกับพนักงาน", "ขอเบอร์โทร", "ติดต่อตุ้ยคลับ", "แอดมิน"], answer: "รบกวนลูกค้าติดต่อ **หน้าร้านที่ทำการส่งพัสดุ** หรือโทร **099-218-8853** ได้เลยนะคะ ยินดีให้บริการค่ะ 🙏" },
+            
+            // Tracking - Update link
+            { keywords: ["เช็คพัสดุยังไง", "ขอลิงก์เช็คเลข", "เช็คพัสดุ", "ของถึงไหน", "เช็คสถานะ"], answer: "เช็คพัสดุได้ที่หน้านี้เลยจ้า 👇", url: "https://tuikub.github.io/tracking/tracking.html" },
+            
+            // Price - Update link
+            { keywords: ["ค่าส่งเท่าไหร่", "ค่าส่ง", "ราคา"], answer: "ราคาเริ่มต้นตามนี้เลยค่ะ 👇", url: "https://tuikub.github.io/tracking/price.html" },
+
+            // Remote Area - Update link
+            { keywords: ["พื้นที่ห่างไกล", "พื้นที่ท่องเที่ยว", "พื้นที่เกาะ"], answer: "เช็คพื้นที่ห่างไกลได้ที่นี่เลยค่ะ 👇", url: "https://tuikub.github.io/tracking/remote.html" },
+
+            // Franchise - Update link
+            { keywords: ["สนใจ", "แฟรนไชส์", "paypoint", "อยากเปิดร้าน", "ลงทุนเท่าไหร่"], answer: "สนใจเปิดร้าน ดูรายละเอียดได้ที่นี่เลยค่ะ 👇", url: "https://tuikub.github.io/tracking/franchise.html" },
+
+            // General greeting & Credit
+            { keywords: ["สวัสดี", "หวัดดี", "ดีครับ", "ดีค่ะ", "ทัก"], answer: "สวัสดีค่า! 🙏 น้อง TuiKub ยินดีให้บริการค่ะ วันนี้มีอะไรให้แอดมินช่วยดูแล บอกได้เลยนะคะ ไม่ต้องเกรงใจจ้า" },
+            { keywords: ["ใครสร้าง", "เจ้าของ", "ผู้พัฒนา", "pratya"], answer: "ระบบแสนฉลาดนี้พัฒนาโดยคุณ **Pratya Chatyachatmontree** สุดหล่อคนเก่งของเราเองค่า 😎" },
+
+            // Common issues
+            { keywords: ["เช็คเลขไม่ขึ้น", "หาไม่เจอ", "ส่งเมื่อวานเช็คไม่ได้"], answer: "ถ้าเพิ่งส่งเมื่อวาน บางทีพี่ๆ ขนส่งอาจจะยังคีย์ไม่เข้าระบบนะคะ หรือรถอาจจะยังไม่มารับที่สาขา แอดมินแนะนำให้ลองเช็คกับร้านต้นทางอีกทีน้า" }
         ];
 
         let knowledgeBase = [...STATIC_DATA]; 
@@ -297,33 +343,39 @@
             fetchSheetData(); 
         });
 
-        // --- Fetch Data ---
+        // --- Fetch Sheet ---
         async function fetchSheetData() {
             const statusDot = document.getElementById('db-status');
             const statusText = document.getElementById('status-text');
             try {
-                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+                // Fetch CSV from Sheet (Col A, B, C)
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+                
                 const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                
                 const csvText = await response.text();
                 parseCSV(csvText); 
+                
                 statusDot.className = "status-dot bg-online";
-                statusDot.title = "Online";
-                statusText.innerText = "Online";
+                statusDot.title = "พร้อมใช้งาน (จาก Google Sheet)";
+                statusText.innerText = "พร้อมดูแลค่ะ (Online)";
             } catch (error) {
                 console.warn("Using Local Backup Data:", error);
                 statusDot.className = "status-dot bg-loading"; 
-                statusDot.title = "Offline Mode";
-                statusText.innerText = "Offline Mode";
+                statusDot.title = "โหมดสำรอง (Google Sheet โหลดไม่ได้)";
+                statusText.innerText = "โหมดสำรอง";
             }
         }
 
-        // --- CSV Parser ---
+        // --- CSV Parser (Merge Mode) ---
         function parseCSV(text) {
             const newKnowledge = []; 
             const rows = text.split('\n');
-            rows.forEach((row, index) => {
+            
+            rows.forEach((row) => {
                 if (!row.trim()) return;
+                // Simple CSV split logic
                 const cols = [];
                 let current = '';
                 let inQuote = false;
@@ -334,25 +386,34 @@
                     else current += char;
                 }
                 cols.push(current);
+
+                // Col 0 = Keywords, Col 1 = Answer, Col 2 = URL
                 if (cols.length >= 2) {
                     const cleanKey = cols[0] ? cols[0].trim().replace(/^"|"$/g, '').replace(/""/g, '"').toLowerCase() : "";
                     const cleanAns = cols[1] ? cols[1].trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
                     const cleanUrl = cols[2] ? cols[2].trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
+
                     if (cleanKey && cleanAns) {
                         const keywords = cleanKey.split(/,| /).map(k => k.trim()).filter(k => k);
                         let finalAnswer = cleanAns;
                         if (cleanUrl) {
                             if (cleanUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) finalAnswer += `\n\n![Image](${cleanUrl})`;
-                            else finalAnswer += `\n\n[คลิกเพื่อดูข้อมูลเพิ่มเติม](${cleanUrl})`;
+                            else finalAnswer += `\n\n[คลิกดูรายละเอียดเพิ่มเติม](${cleanUrl})`;
                         }
                         newKnowledge.push({ keywords: keywords, answer: finalAnswer });
                     }
                 }
             });
-            if (newKnowledge.length > 0) knowledgeBase = newKnowledge; 
+            
+            // ✅ MERGE Strategy: เอาข้อมูลใน Sheet มารวมกับ Static Data
+            // เพื่อให้คำถามพื้นฐาน (ที่อยู่ในโค้ด) ยังคงใช้งานได้เสมอ แม้ใน Sheet จะไม่มี
+            if (newKnowledge.length > 0) {
+                knowledgeBase = [...newKnowledge, ...STATIC_DATA];
+                console.log("Knowledge Base Merged: " + knowledgeBase.length + " items");
+            }
         }
 
-        // --- Core Functions ---
+        // --- Main Logic ---
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
             const message = inputField.value.trim();
@@ -361,17 +422,16 @@
             addMessage(message, 'user');
             inputField.value = '';
             
-            // 1. Check Knowledge Base
+            // 1. ถาม Google Sheet / Local Data ก่อน (สำคัญที่สุด!)
             const sheetMatch = checkKnowledgeBase(message);
             if (sheetMatch) {
                 setTimeout(() => addMessage(sheetMatch, 'bot'), 500);
                 return;
             }
 
-            // 2. Fallback to n8n AI
-            addMessage("... กำลังคิดคำตอบ ...", 'bot', true); 
+            // 2. ถ้าไม่เจอจริงๆ ค่อยไปถาม n8n (AI)
+            addMessage("... แอดมินกำลังหาข้อมูลให้นะคะ ...", 'bot', true); 
 
-            // สร้าง AbortController สำหรับ Timeout (ป้องกันรอเก้อเกิน 20 วินาที)
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 20000); 
 
@@ -389,9 +449,7 @@
 
                 const responseText = await response.text(); 
                 
-                // --- จุดที่เคย Error: Empty Response ---
                 if (!responseText || responseText.trim() === "") {
-                     // ถ้าว่างเปล่า แสดงว่า n8n จบงานแต่ไม่ส่งข้อมูลกลับ
                      throw new Error("Empty Response");
                 }
 
@@ -399,18 +457,16 @@
                 try {
                     data = JSON.parse(responseText);
                 } catch (e) {
-                    console.error("n8n Raw Response:", responseText);
                     if (responseText.includes("Workflow was started")) {
-                        throw new Error("SettingError: ลืมเปลี่ยน Webhook Respond เป็น 'Using Respond Node'");
+                        throw new Error("SettingError");
                     }
-                    throw new Error(`ParseError: "${responseText.substring(0, 50)}..."`);
+                    throw new Error("Invalid JSON");
                 }
                 
                 let botReply = data.reply || data.output || data.text;
 
                 if (!botReply) {
-                     // ได้ JSON แต่ไม่มี key ที่ต้องการ
-                     botReply = "ขออภัยค่ะ ระบบตอบกลับมาแบบไม่มีข้อความ (No reply key)";
+                     botReply = "ขออภัยค่า ระบบหลังบ้านไม่ได้ส่งคำตอบมา (No reply key)";
                 }
 
                 removeLoadingMessage();
@@ -420,16 +476,15 @@
                 console.error("n8n Error:", error);
                 removeLoadingMessage();
                 
-                // แปลง Error เป็นภาษาคนที่เข้าใจง่าย
                 let friendlyError = "";
                 if (error.message === "Empty Response") {
-                    friendlyError = "⚠️ ระบบ AI ไม่ส่งคำตอบกลับมา (Empty Response)<br><br><b>วิธีแก้ที่ n8n:</b><br>1. เช็คว่าลากเส้นไปหาโหนด <b>Respond to Webhook</b> หรือยัง?<br>2. เช็คว่า Workflow ไม่ Error กลางทาง";
+                    friendlyError = "⚠️ <b>แอดมินขออภัยค่ะ ระบบ AI ไม่ตอบกลับมา</b><br><small>(วิธีแก้: ไปที่ n8n > ลากเส้นจาก AI ไปหาโหนด Respond to Webhook ให้ครบนะคะ)</small>";
                 } else if (error.name === 'AbortError') {
-                    friendlyError = "⚠️ ระบบใช้เวลานานเกินไป (Timeout) ลองถามใหม่สั้นๆ นะคะ";
+                    friendlyError = "⏳ <b>รอนานเกินไปแล้วจ้า</b><br>ลองถามใหม่อีกทีสั้นๆ นะคะ แอดมินอาจจะเน็ตช้า";
                 } else if (error.message.includes("SettingError")) {
-                    friendlyError = "⚠️ ตั้งค่า n8n ผิด: กรุณาเปลี่ยน Webhook Respond เป็น <b>'Using Respond Node'</b>";
+                    friendlyError = "🔧 <b>ตั้งค่า n8n ยังไม่ครบค่ะ</b><br>ไปที่ n8n > ดับเบิลคลิก Webhook > เปลี่ยน Respond เป็น <b>'Using Respond Node'</b> นะคะ";
                 } else {
-                    friendlyError = `ขออภัยค่ะ ระบบขัดข้องชั่วคราว (${error.message})`;
+                    friendlyError = `😿 <b>ขออภัยค่ะ ระบบขัดข้องชั่วคราว</b><br><small>(${error.message})</small>`;
                 }
 
                 addMessage(friendlyError, 'bot', false, 'error');
@@ -449,7 +504,7 @@
             return maxScore > 0 ? bestMatch : null;
         }
 
-        // --- UI Helpers ---
+        // --- UI Utils ---
         function addMessage(text, sender, isLoading = false, type = 'normal') {
             const chatBox = document.getElementById("chat-messages");
             const msgDiv = document.createElement("div");
@@ -460,10 +515,10 @@
             let formattedText = marked.parse(processedText);
             
             if (isLoading) {
-               formattedText = `<div class="flex items-center space-x-1 h-4">
-                                    <div class="w-1.5 h-1.5 bg-slate-400 rounded-full typing-dot"></div>
-                                    <div class="w-1.5 h-1.5 bg-slate-400 rounded-full typing-dot"></div>
-                                    <div class="w-1.5 h-1.5 bg-slate-400 rounded-full typing-dot"></div>
+               formattedText = `<div class="typing-container">
+                                    <div class="typing-dot"></div>
+                                    <div class="typing-dot"></div>
+                                    <div class="typing-dot"></div>
                                 </div>`;
             }
             msgDiv.innerHTML = formattedText;
