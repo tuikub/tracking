@@ -122,6 +122,7 @@
             box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
         }
         .msg.backup { border: 1px solid #fca5a5; background: #fef2f2; color: #7f1d1d; }
+        .msg.error { border: 1px solid #fecaca; background: #fff1f2; color: #991b1b; }
 
         .msg img {
             max-width: 100%;
@@ -227,16 +228,14 @@
 
     <script>
         // --- Configuration ---
-        // ✅ เปลี่ยน ID เป็นชีตใหม่ของคุณแล้วครับ
         const SHEET_ID = '13YE50RWDXik5YhrIqB6naWRxfwDFtFVFbtqs-2bH0Hc'; 
         
         // ---------------------------------------------------------
-        // ✅ ใช้ n8n Webhook (ปลอดภัย 100%)
+        // ✅ ใช้ n8n Webhook
         // ---------------------------------------------------------
         const N8N_WEBHOOK_URL = "https://n8n.srv1265116.hstgr.cloud/webhook/chat"; 
 
         // --- HARDCODED KNOWLEDGE BASE (Primary Data) ---
-        // ข้อมูลนี้จะใช้ตอบทันทีและเป็น Backup หาก Google Sheet โหลดไม่ได้
         const STATIC_DATA = [
             { keywords: ["ติดต่อ", "คุยกับพนักงาน", "ขอเบอร์โทร"], answer: "รบกวนติดต่อร้านที่ทำการส่งพัสดุ เนื่องจากไลน์นี้ เป็นไลน์เพื่อให้บริการเช็คสถานะพัสดุและให้คำแนะนำเท่านั้นค่ะ", url: "https://lin.ee/nT73QSr9" },
             { keywords: ["ของถึงไหน", "เช็คสถานะ"], answer: "เช็คสถานะพัสดุได้ เมนูเช็คสถานะด้านล่าง (AI)" },
@@ -443,15 +442,29 @@
                 }
 
                 const data = await response.json();
-                const botReply = data.reply || data.output || data.text || "ขออภัย ระบบตอบกลับผิดพลาด";
+                
+                // Debug log
+                console.log("n8n Response:", data);
+
+                // พยายามดึงคำตอบจากหลายๆ key ที่เป็นไปได้
+                let botReply = data.reply || data.output || data.text;
+
+                // ตรวจสอบกรณี n8n ตอบกลับมาว่า Workflow Started (ลืมตั้งค่า Webhook ให้รอตอบกลับ)
+                if (!botReply && data.message === "Workflow was started") {
+                    botReply = "⚠️ การตั้งค่า n8n ยังไม่ถูกต้อง: กรุณากลับไปที่ n8n > ดับเบิลคลิก Webhook Node > เปลี่ยน Respond เป็น 'Using Respond to Webhook Node' แล้วกด Execute ใหม่ครับ";
+                } 
+                // กรณีได้ JSON แต่ไม่มีคำตอบ
+                else if (!botReply) {
+                     botReply = "ขออภัย ระบบตอบกลับผิดพลาด (ได้รับข้อมูลว่างเปล่าจาก n8n) กรุณาตรวจสอบ Console log";
+                }
 
                 removeLoadingMessage();
-                addMessage(botReply, 'bot');
+                addMessage(botReply, 'bot', false, botReply.includes("⚠️") ? 'error' : 'normal');
 
             } catch (error) {
                 console.error("n8n Error:", error);
                 removeLoadingMessage();
-                addMessage("ขออภัยครับ ระบบขัดข้องชั่วคราว (Connecting Error) กรุณาติดต่อ Admin โดยตรงครับ", 'bot');
+                addMessage(`ขออภัยครับ เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}`, 'bot', false, 'error');
             }
         }
 
