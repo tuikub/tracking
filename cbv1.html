@@ -284,161 +284,6 @@
         #notificationToggle:hover {
             color: #ef4444;
         }
-        /* สไตล์สำหรับปุ่มจัดการ FAQ */
-        #manageFAQBtn {
-            background-color: #f59e0b;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        #manageFAQBtn:hover {
-            background-color: #d97706;
-        }
-        /* สไตล์สำหรับฟอร์มจัดการ FAQ */
-        .faq-form {
-            background-color: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-        }
-        body.dark .faq-form {
-            background-color: #374151;
-            color: #f9fafb;
-        }
-        /* สไตล์สำหรับตาราง FAQ */
-        .faq-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .faq-table th, .faq-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        body.dark .faq-table th, 
-        body.dark .faq-table td {
-            border-bottom-color: #4b5563;
-        }
-        .faq-table th {
-            background-color: #f9fafb;
-            font-weight: 600;
-        }
-        body.dark .faq-table th {
-            background-color: #4b5563;
-        }
-        .faq-table tr:hover {
-            background-color: #f9fafb;
-        }
-        body.dark .faq-table tr:hover {
-            background-color: #4b5563;
-        }
-        /* สไตล์สำหรับปุ่มในตาราง */
-        .table-btn {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .edit-btn {
-            background-color: #3b82f6;
-            color: white;
-        }
-        .edit-btn:hover {
-            background-color: #2563eb;
-        }
-        .delete-btn {
-            background-color: #ef4444;
-            color: white;
-        }
-        .delete-btn:hover {
-            background-color: #dc2626;
-        }
-        /* สไตล์สำหรับโมดัล */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal.show {
-            display: flex;
-        }
-        .modal-content {
-            background-color: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        body.dark .modal-content {
-            background-color: #374151;
-            color: #f9fafb;
-        }
-        /* สไตล์สำหรับฟอร์มในโมดัล */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        .form-group input, 
-        .form-group textarea, 
-        .form-group select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.25rem;
-        }
-        body.dark .form-group input, 
-        body.dark .form-group textarea, 
-        body.dark .form-group select {
-            background-color: #4b5563;
-            border-color: #6b7280;
-            color: #f9fafb;
-        }
-        .form-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-        }
-        .btn-primary {
-            background-color: #ef4444;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #dc2626;
-        }
-        .btn-secondary {
-            background-color: #6b7280;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background-color: #4b5563;
-        }
         /* สไตล์สำหรับการให้คะแนน */
         .rating-container {
             display: flex;
@@ -518,6 +363,28 @@
         .clear-history-btn:hover {
             background-color: #d97706;
         }
+        /* สไตล์สำหรับปุ่มแอดมิน */
+        .admin-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f59e0b;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        .admin-btn:hover {
+            background-color: #d97706;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -556,10 +423,6 @@
                     </svg>
                     ติดตาม YouTube
                 </a>
-                <button id="manageFAQBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-1.5 rounded-full text-sm transition-all flex items-center gap-2">
-                    <span class="material-icons text-sm">edit</span>
-                    จัดการ FAQ
-                </button>
             </div>
         </div>
     </header>
@@ -567,39 +430,6 @@
     <!-- Content Section -->
     <main class="max-w-4xl mx-auto py-10 px-4">
         
-        <!-- FAQ Management Section -->
-        <div id="faqManagement" class="hidden">
-            <div class="faq-form">
-                <h2 class="text-xl font-bold mb-4">จัดการคำถามที่พบบ่อย (FAQ)</h2>
-                <div class="flex justify-between mb-4">
-                    <button id="addNewFAQ" class="btn btn-primary">
-                        <span class="material-icons text-sm">add</span>
-                        เพิ่มคำถามใหม่
-                    </button>
-                    <button id="refreshFAQ" class="btn btn-secondary">
-                        <span class="material-icons text-sm">refresh</span>
-                        รีเฟรชข้อมูล
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="faq-table">
-                        <thead>
-                            <tr>
-                                <th>หมวดหมู่</th>
-                                <th>คำถาม</th>
-                                <th>คำตอบ</th>
-                                <th>คำค้นหา</th>
-                                <th>จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="faqTableBody">
-                            <!-- FAQ items will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
         <!-- History Section -->
         <div id="historySection" class="history-container">
             <div class="flex justify-between items-center mb-2">
@@ -710,52 +540,9 @@
 
     </main>
 
-    <!-- FAQ Modal -->
-    <div id="faqModal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="modalTitle" class="text-xl font-bold">เพิ่มคำถามใหม่</h2>
-                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
-            <form id="faqForm">
-                <div class="form-group">
-                    <label for="faqCategory">หมวดหมู่</label>
-                    <select id="faqCategory" required>
-                        <option value="">เลือกหมวดหมู่</option>
-                        <option value="การเช็คพัสดุและสถานะ">การเช็คพัสดุและสถานะ</option>
-                        <option value="ค่าบริการและพื้นที่การส่ง">ค่าบริการและพื้นที่การส่ง</option>
-                        <option value="การเคลมและปัญหาพัสดุ">การเคลมและปัญหาพัสดุ</option>
-                        <option value="ระบบและการเข้าใช้งาน">ระบบและการเข้าใช้งาน</option>
-                        <option value="การอบรมและคู่มือ">การอบรมและคู่มือ</option>
-                        <option value="การเงิน เอกสาร และ COD">การเงิน เอกสาร และ COD</option>
-                        <option value="งานไอทีและอุปกรณ์">งานไอทีและอุปกรณ์</option>
-                        <option value="แฟรนไชส์และติดต่อสอบถาม">แฟรนไชส์และติดต่อสอบถาม</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="faqQuestion">คำถาม</label>
-                    <input type="text" id="faqQuestion" required>
-                </div>
-                <div class="form-group">
-                    <label for="faqAnswer">คำตอบ</label>
-                    <textarea id="faqAnswer" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="faqKeywords">คำค้นหา (คั่นด้วยจุลภาค)</label>
-                    <input type="text" id="faqKeywords" placeholder="เช่น เช็คพัสดุ, tracking, ของถึงไหน">
-                </div>
-                <div class="form-group">
-                    <label for="faqLink">ลิงก์ (ถ้ามี)</label>
-                    <input type="url" id="faqLink" placeholder="https://example.com">
-                </div>
-                <div class="form-buttons">
-                    <button type="button" id="cancelBtn" class="btn btn-secondary">ยกเลิก</button>
-                    <button type="submit" class="btn btn-primary">บันทึก</button>
-                </div>
-            </form>
-        </div>
+    <!-- Admin Button -->
+    <div id="adminBtn" class="admin-btn" title="เข้าสู่ระบบจัดการ">
+        <span class="material-icons">admin_panel_settings</span>
     </div>
 
     <footer class="text-center py-10 text-gray-400 text-sm">
@@ -767,7 +554,6 @@
         const GEMINI_API_KEY = ''; // <-- ใส่ API Key ตรงนี้
         const SHEET_ID = '13YE50RWDXik5YhrIqB6naWRxfwDFtFVFbtqs-2bH0Hc';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
-        const SHEET_EDIT_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
         
         // Data Store
         let faqData = [];
@@ -775,7 +561,6 @@
         let searchHistory = [];
         let notificationsEnabled = true;
         let darkMode = false;
-        let currentEditId = null;
         
         // Elements
         const chatContainer = document.getElementById('chatContainer');
@@ -793,16 +578,7 @@
         const imageUploadBtn = document.getElementById('imageUploadBtn');
         const imageInput = document.getElementById('imageInput');
         const voiceSearchBtn = document.getElementById('voiceSearchBtn');
-        const manageFAQBtn = document.getElementById('manageFAQBtn');
-        const faqManagement = document.getElementById('faqManagement');
-        const faqTableBody = document.getElementById('faqTableBody');
-        const addNewFAQBtn = document.getElementById('addNewFAQ');
-        const refreshFAQBtn = document.getElementById('refreshFAQ');
-        const faqModal = document.getElementById('faqModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const closeModalBtn = document.getElementById('closeModal');
-        const faqForm = document.getElementById('faqForm');
-        const cancelBtn = document.getElementById('cancelBtn');
+        const adminBtn = document.getElementById('adminBtn');
         const historySection = document.getElementById('historySection');
         const historyList = document.getElementById('historyList');
         const clearHistoryBtn = document.getElementById('clearHistory');
@@ -950,11 +726,14 @@
             }
         });
         
-        // Toggle FAQ management
-        manageFAQBtn.addEventListener('click', function() {
-            faqManagement.classList.toggle('hidden');
-            if (!faqManagement.classList.contains('hidden')) {
-                loadFAQTable();
+        // Admin button click
+        adminBtn.addEventListener('click', function() {
+            // Check for admin password (simple implementation)
+            const password = prompt('กรุณกรอกรหัสผ่านแอดมิน:');
+            if (password === 'admin123') { // Change this to a secure password
+                window.open('https://tuikub.github.io/tracking/chatbot_paypoint_admin.html', '_blank');
+            } else if (password !== null) {
+                showNotification('รหัสผ่านไม่ถูกต้อง');
             }
         });
         
@@ -1070,134 +849,29 @@
                     answer: 'เรามีประกันพื้นฐานให้ทุกชิ้น (วงเงินไม่เกิน 2,000 บาท) ค่ะ แต่ถ้าของเสียหาย ต้องรบกวนขอคลิปตอนแกะกล่องเพื่อใช้เป็นหลักฐานในการเคลมด้วยนะคะ รายละเอียดประกัน: https://tuikub.github.io/tracking/warranty.html',
                     keywords: ["ของแตก", "เสียหาย", "ประกัน", "เคลม"],
                     link: "https://tuikub.github.io/tracking/warranty.html"
+                },
+                {
+                    id: 4,
+                    category: "ระบบและการเข้าใช้งาน",
+                    question: "จะเข้าสู่ระบบจัดการร้านค้า (Merchant Login) ได้ทางไหนบ้าง?",
+                    answer: "สามารถเข้าใช้งานได้ที่ลิงก์ระบบใหม่ หรือระบบเดิม Paypoint.co.th (แนะนำให้ Bookmark ไว้นะครับ)",
+                    keywords: ["เข้าระบบ", "login", "เข้าไม่ได้"],
+                    link: "https://merchant.paypoint.in.th/auth/login"
+                },
+                {
+                    id: 5,
+                    category: "แฟรนไชส์และติดต่อสอบถาม",
+                    question: "สนใจเปิดร้านแฟรนไชส์ / ต้องลงทุนเท่าไหร่",
+                    answer: 'ยินดีเลยค่ะ! มาร่วมครอบครัว Paypoint กัน สนใจรายละเอียดแฟรนไชส์ โทรมาคุยกันได้ที่ 086-888-3656 นะคะ หรือดูข้อมูลที่: https://tuikub.github.io/tracking/franchise.html',
+                    keywords: ["สนใจแฟรนไชส์", "ลงทุน", "เปิดร้าน"],
+                    link: "https://tuikub.github.io/tracking/franchise.html"
                 }
             ];
         }
         
-        // Load FAQ table
-        function loadFAQTable() {
-            faqTableBody.innerHTML = '';
-            
-            faqData.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.category}</td>
-                    <td>${item.question}</td>
-                    <td>${item.answer.length > 50 ? item.answer.substring(0, 50) + '...' : item.answer}</td>
-                    <td>${item.keywords.join(', ')}</td>
-                    <td>
-                        <button class="table-btn edit-btn" onclick="editFAQ(${item.id})">
-                            <span class="material-icons text-sm">edit</span>
-                        </button>
-                        <button class="table-btn delete-btn" onclick="deleteFAQ(${item.id})">
-                            <span class="material-icons text-sm">delete</span>
-                        </button>
-                    </td>
-                `;
-                faqTableBody.appendChild(row);
-            });
-        }
-        
-        // Edit FAQ
-        window.editFAQ = function(id) {
-            const item = faqData.find(faq => faq.id === id);
-            if (!item) return;
-            
-            currentEditId = id;
-            modalTitle.textContent = 'แก้ไขคำถาม';
-            
-            document.getElementById('faqCategory').value = item.category;
-            document.getElementById('faqQuestion').value = item.question;
-            document.getElementById('faqAnswer').value = item.answer;
-            document.getElementById('faqKeywords').value = item.keywords.join(', ');
-            document.getElementById('faqLink').value = item.link || '';
-            
-            faqModal.classList.add('show');
-        };
-        
-        // Delete FAQ
-        window.deleteFAQ = function(id) {
-            if (confirm('คุณต้องการลบคำถามนี้หรือไม่?')) {
-                // In a real implementation, you would send a request to the server
-                // For this demo, we'll just remove it from the local array
-                faqData = faqData.filter(item => item.id !== id);
-                loadFAQTable();
-                showNotification('ลบคำถามเรียบร้อยแล้ว');
-            }
-        };
-        
-        // Show FAQ modal
-        addNewFAQBtn.addEventListener('click', function() {
-            currentEditId = null;
-            modalTitle.textContent = 'เพิ่มคำถามใหม่';
-            faqForm.reset();
-            faqModal.classList.add('show');
-        });
-        
-        // Close FAQ modal
-        closeModalBtn.addEventListener('click', function() {
-            faqModal.classList.remove('show');
-        });
-        
-        cancelBtn.addEventListener('click', function() {
-            faqModal.classList.remove('show');
-        });
-        
-        // Submit FAQ form
-        faqForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const category = document.getElementById('faqCategory').value;
-            const question = document.getElementById('faqQuestion').value;
-            const answer = document.getElementById('faqAnswer').value;
-            const keywords = document.getElementById('faqKeywords').value.split(',').map(k => k.trim());
-            const link = document.getElementById('faqLink').value;
-            
-            if (currentEditId) {
-                // Update existing FAQ
-                const item = faqData.find(faq => faq.id === currentEditId);
-                if (item) {
-                    item.category = category;
-                    item.question = question;
-                    item.answer = answer;
-                    item.keywords = keywords;
-                    item.link = link;
-                }
-                showNotification('อัปเดตคำถามเรียบร้อยแล้ว');
-            } else {
-                // Add new FAQ
-                const newId = Math.max(...faqData.map(item => item.id), 0) + 1;
-                faqData.push({
-                    id: newId,
-                    category: category,
-                    question: question,
-                    answer: answer,
-                    keywords: keywords,
-                    link: link
-                });
-                showNotification('เพิ่มคำถามใหม่เรียบร้อยแล้ว');
-            }
-            
-            // In a real implementation, you would send a request to the server to save the changes
-            // For this demo, we'll just update the local array and table
-            
-            loadFAQTable();
-            faqModal.classList.remove('show');
-            
-            // Refresh random questions
-            displayRandomQuestions();
-        });
-        
-        // Refresh FAQ data
-        refreshFAQBtn.addEventListener('click', function() {
-            fetchFAQ();
-            loadFAQTable();
-            showNotification('รีเฟรชข้อมูล FAQ เรียบร้อยแล้ว');
-        });
-        
         // Display random questions
         function displayRandomQuestions() {
-            const randomQuestions = getRandomQuestions(10);
+            const randomQuestions = getRandomQuestions(5); // Changed to 5 questions
             let html = '';
             
             randomQuestions.forEach((item, index) => {
@@ -1214,7 +888,7 @@
         }
         
         // Get random questions
-        function getRandomQuestions(count = 10) {
+        function getRandomQuestions(count = 5) { // Changed default to 5
             const shuffled = [...faqData].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, Math.min(count, faqData.length));
         }
