@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำถามที่พบบ่อย (FAQ) - Paypoint & Tracking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- การตั้งค่าพื้นฐานและโทนสี --- */
+        :root {
+            --primary-color: #3498db; /* สีฟ้าสดใสสำหรับหัวข้อและลิงก์ */
+            --secondary-color: #2c3e50; /* สีเข้มสำหรับตัวหนังสือทั่วไป */
+            --bg-light: #f4f7f6; /* สีพื้นหลังโทนสบายตา */
+            --white: #ffffff;
+            --accordion-bg: #eef2f7; /* สีพื้นหลังหัวข้อคำถาม */
+            --border-radius: 12px;
+            --box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* --- Container จัดให้อยู่ตรงกลาง --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        /* --- Header และ เมนูเล็ก --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .mini-menu {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mini-menu a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            background-color: var(--accordion-bg);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .mini-menu a:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+        
+        /* ไอคอนเล็กๆ หน้าเมนู */
+        .mini-menu a::before {
+            margin-right: 6px;
+        }
+        .link-home::before { content: '🏠'; }
+        .link-track::before { content: '📦'; }
+        .link-line::before { content: '💬'; }
+
+        /* --- ส่วนของ FAQ --- */
+        h2.category-title {
+            color: var(--secondary-color);
+            border-left: 5px solid var(--primary-color);
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .faq-question {
+            background-color: var(--accordion-bg);
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .faq-question:hover {
+            background-color: #dce4ec;
+        }
+
+        /* ไอคอนลูกศร */
+        .faq-question::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            transition: transform 0.3s;
+        }
+
+        /* เมื่อเปิดใหัหมุนลูกศร */
+        .faq-item.active .faq-question::after {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            background-color: var(--white);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px; /* ตั้งค่าความสูงเผื่อไว้ */
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .faq-answer p {
+            margin-top: 0;
+        }
+
+        .faq-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .faq-link:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .mini-menu {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            .mini-menu a {
+                flex-grow: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>ศูนย์ช่วยเหลือ / คำถามที่พบบ่อย</h1>
+        <nav class="mini-menu">
+            <a href="https://tuikub.github.io/paypoint/#home" target="_blank" class="link-home">หน้าหลักคู่มือ</a>
+            <a href="https://tuikub.github.io/tracking/" target="_blank" class="link-track">ระบบเช็คพัสดุ</a>
+            <a href="https://lin.ee/Lr1qLQx" target="_blank" class="link-line">ติดต่อ LINE</a>
+        </nav>
+    </header>
+
+    <h2 class="category-title">📦 หมวดการเช็คพัสดุและสถานะ</h2>
+    
+    <div class="faq-item">
+        <div class="faq-question">Q: เช็คพัสดุได้ที่ไหน / ขอเลข Tracking หน่อย?</div>
+        <div class="faq-answer">
+            <p>ลูกค้าสามารถเช็คสถานะพัสดุได้ง่ายๆ เลยค่ะ เพียงกดเมนู "เช็คสถานะ" หรือคลิกลิงก์ด้านล่างเพื่อกรอกเลขพัสดุได้เลยนะคะ</p>
+            <a href="https://tuikub.github.io/tracking/tracking.html" target="_blank" class="faq-link">👉 คลิกเพื่อเช็คพัสดุที่นี่</a>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">Q: เช็คเลขแล้วไม่ขึ้น / หาข้อมูลไม่เจอ?</div>
+        <div class="faq-answer">
+            <p>ถ้าเพิ่งส่งของ อาจจะต้องรอรถเข้ารับหรือคีย์เข้าระบบสักครู่นะคะ แต่ถ้าส่งนานแล้วยังเช็คไม่ขึ้น แนะนำให้ลองติดต่อร้านต้นทางเพื่อความชัวร์ค่ะ</p>
+            <a href="https://tuikub.github.io/tracking/tracking.html" target="_blank" class="faq-link">👉 ตรวจสอบสถานะอีกครั้ง</a>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">Q: ทำไมของยังไม่ถึง / ส่งช้ามาก?</div>
+        <div class="faq-answer">
+            <p>ขออภัยในความล่าช้าด้วยนะคะ ช่วงนี้พัสดุอาจจะเยอะนิดนึง แต่ไม่ต้องห่วงค่ะ ระบบกำลังเร่งนำส่งให้เร็วที่สุดเลยค่ะ</p>
+            <a href="https://tuikub.github.io/paypoint/#sender" target="_blank" class="faq-link">👉 ข้อมูลบริการลูกค้า</a>
+        </div>
+    </div>
+
+    <h2 class="category-title">💰 หมวดค่าบริการและพื้นที่การส่ง</h2>
+    
+    <div class="faq-item">
+        <div class="faq-question">Q: ค่าส่งกี่บาท / ราคาแพงไหม?</div>
+        <div class="faq-answer">
+            <p>ค่าส่งเราเริ่มต้นเบาๆ แค่ 25 บาทเองค่ะ! ราคาจริงจะคิดตามน้ำหนักและขนาดกล่อง ลองแจ้งรายละเอียดมาให้แอดมินช่วยคำนวณก่อนได้นะคะ</p>
+            <a href="https://tuikub.github.io/paypoint/c.html" target="_blank" class="faq-link">👉 ดูตารางราคา</a>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">Q: ส่งพื้นที่ห่างไกล (เกาะ/ดอย/3 จว.ชายแดน) มีบวกเพิ่มไหม?</div>
+        <div class="faq-answer">
+            <p>พื้นที่พิเศษอาจมีค่าธรรมเนียมเพิ่มนิดหน่อยค่ะ (20-50 บาท) แต่ถ้าเลือกส่ง KEX (Kerry) จะไม่มีบวกเพิ่มนะคะ คุ้มมาก!</p>
+            <a href="https://tuikub.github.io/tracking/remote.html" target="_blank" class="faq-link">👉 ตรวจสอบพื้นที่ห่างไกล</a>
+        </div>
+    </div>
+
+    <h2 class="category-title">⚠️ หมวดการเคลมและปัญหาพัสดุ</h2>
+
+    <div class="faq-item">
+        <div class="faq-question">Q: ถ้าของแตกหรือเสียหาย รับผิดชอบไหม?</div>
+        <div class="faq-answer">
+            <p>เรามีประกันพื้นฐานให้ทุกชิ้น (วงเงินไม่เกิน 2,000 บาท) ค่ะ แต่ถ้าของเสียหาย ต้องรบกวนขอคลิปตอนแกะกล่องเพื่อใช้เป็นหลักฐานในการเคลมด้วยนะคะ</p>
+            <a href="https://tuikub.github.io/tracking/warranty.html" target="_blank" class="faq-link">👉 อ่านรายละเอียดประกัน</a>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">Q: ไม่แน่ใจว่าสินค้าชิ้นนี้ส่งได้ไหม หรือต้องแพ็คอย่างไร?</div>
+        <div class="faq-answer">
+            <p>สำคัญมากครับ ขอให้ศึกษาเงื่อนไขได้ที่เมนู "คู่มือผู้ส่ง" ซึ่งจะระบุ สิ่งของต้องห้าม (Prohibited Items) และวิธีการแพ็คที่ถูกต้องเพื่อป้องกันปัญหาค่ะ</p>
+            <a href="https://tuikub.github.io/tracking/packing.html" target="_blank" class="faq-link">👉 คู่มือการแพ็คและของต้องห้าม</a>
+        </div>
+    </div>
+
+    <h2 class="category-title">💻 หมวดระบบและการเข้าใช้งาน</h2>
+
+    <div class="faq-item">
+        <div class="faq-question">Q: จะเข้าสู่ระบบจัดการร้านค้า (Login) ได้ทางไหนบ้าง?</div>
+        <div class="faq-answer">
+            <p>สามารถเข้าใช้งานได้ที่ระบบใหม่ตามลิงก์ด้านล่าง (แนะนำให้ Bookmark เก็บไว้นะคะ)</p>
+            <a href="https://merchant.paypoint.in.th/auth/login" target="_blank" class="faq-link">👉 เข้าสู่ระบบร้านค้า (Merchant Login)</a>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">Q: ต้องการให้เจ้าหน้าที่รีโมทมาช่วยดูหน้าจอ ต้องทำอย่างไร?</div>
+        <div class="faq-answer">
+            <p>กรุณาดาวน์โหลดโปรแกรม AnyDesk หรือ TeamViewer เตรียมไว้ และแจ้งรหัส ID กับเจ้าหน้าที่เพื่อทำการเชื่อมต่อค่ะ</p>
+            <a href="https://tuikub.github.io/paypoint/#system" target="_blank" class="faq-link">👉 วิธีการรีโมท</a>
+        </div>
+    </div>
+
+    <h2 class="category-title">📚 หมวดการอบรมและคู่มือ</h2>
+
+    <div class="faq-item">
+        <div class="faq-question">Q: มีตารางอบรมออนไลน์ช่วงไหนบ้าง / มีคลิปย้อนหลังไหม?</div>
+        <div class="faq-answer">
+            <p>อบรมผ่าน Google Meet ทุกวัน จ.-ศ. (รอบเช้า 10.00 / รอบบ่าย 13.30) หากไม่สะดวกสามารถดูคลิปวิดีโอสอนย้อนหลังได้ที่ YouTube Channel ค่ะ</p>
+            <a href="https://tuikub.github.io/paypoint/#training" target="_blank" class="faq-link">👉 ดูข้อมูลการอบรมและคลิปสอน</a>
+        </div>
+    </div>
+
+    <h2 class="category-title">💵 หมวดการเงินและเอกสาร</h2>
+
+    <div class="faq-item">
+        <div class="faq-question">Q: ยอด COD (เก็บเงินปลายทาง) จะโอนเข้าวันไหน?</div>
+        <div class="faq-answer">
+            <p>ยอด COD จะโอนเข้าบัญชีภายใน 3-5 วันทำการค่ะ (ไม่นับเสาร์-อาทิตย์)</p>
+            <a href="https://tuikub.github.io/tracking/cod.html" target="_blank" class="faq-link">👉 ข้อมูลเรื่อง COD</a>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">Q: ต้องการเอกสาร บัญชี/ภาษี หรือสมัครบริการเสริม?</div>
+        <div class="faq-answer">
+            <p>สามารถทำรายการขอเอกสารใบเสร็จ ใบกำกับภาษี หนังสือรับรอง หรือสมัครบริการเสริมต่างๆ ได้ที่ลิงก์รวมแบบฟอร์มค่ะ</p>
+            <a href="https://tuikub.github.io/paypoint/#forms" target="_blank" class="faq-link">👉 ไปที่หน้าเอกสารและแบบฟอร์ม</a>
+        </div>
+    </div>
+
+     <h2 class="category-title">📞 หมวดติดต่อสอบถาม</h2>
+    <div class="faq-item">
+        <div class="faq-question">Q: มีเรื่องด่วนมาก ต้องการโทรคุยกับ Call Center?</div>
+        <div class="faq-answer">
+            <p>ติดต่อสายด่วนได้ที่เบอร์: 085-507-8656 หรือ 085-515-8456 (น้องแอน / น้องมด)</p>
+            <a href="https://tuikub.github.io/paypoint/#contact" target="_blank" class="faq-link">👉 ช่องทางติดต่อเรา</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // สคริปต์สำหรับทำให้ Accordion เปิด-ปิดได้
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentElement;
+            
+            // ถ้าต้องการให้เปิดได้ทีละอัน ให้เอา comment ด้านล่างออก
+            /*
+            document.querySelectorAll('.faq-item').forEach(i => {
+                if (i !== item) i.classList.remove('active');
+            });
+            */
+            
+            item.classList.toggle('active');
+        });
+    });
+</script>
+
+</body>
+</html>
