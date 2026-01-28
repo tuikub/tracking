@@ -3,538 +3,714 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TuiKub Ai Assistant</title>
-    <!-- Tailwind CSS -->
+    <title>Paypoint Help Center | ศูนย์ช่วยเหลือลูกค้า</title>
+    <!-- Tailwind CSS for modern UI -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Marked.js -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
+    <!-- Font: Prompt (นิยมสำหรับเว็บไทยสมัยใหม่) -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Sarabun', sans-serif; 
-            margin: 0; padding: 0; 
-            background-color: #f0f4f8; 
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
-        
-        .chat-container {
-            display: flex; flex-direction: column; height: 100%; 
-            background: white;
-            max-width: 100%;
-            margin: 0 auto;
-            box-shadow: 0 0 25px rgba(0,0,0,0.05);
-        }
-        
-        /* Header Theme */
-        .chat-header {
-            background: linear-gradient(120deg, #3b82f6, #06b6d4); 
-            color: white;
-            padding: 14px 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            box-shadow: 0 4px 10px -2px rgba(59, 130, 246, 0.3);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .chat-messages {
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 20px; 
-            background-color: #f8fafc;
-            background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
-            background-size: 24px 24px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px;
+        html {
             scroll-behavior: smooth;
         }
-
-        .chat-input-area {
-            padding: 16px; 
-            border-top: 1px solid #f1f5f9; 
-            background: white;
-            display: flex; 
-            gap: 12px; 
-            position: relative;
-            flex-shrink: 0;
-            align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
-        }
-
-        .chat-input {
-            flex: 1; 
-            padding: 12px 20px; 
-            border: 1px solid #e2e8f0; 
-            border-radius: 50px;
-            outline: none; 
-            font-size: 0.95em; 
-            transition: all 0.3s ease;
-            background-color: #f8fafc;
-            color: #334155;
-        }
-        .chat-input:focus { 
-            border-color: #3b82f6; 
-            background-color: white; 
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-        }
-
-        .chat-send-btn {
-            background: linear-gradient(135deg, #3b82f6, #2563eb); 
-            color: white; 
-            border: none; 
-            width: 46px; 
-            height: 46px;
-            border-radius: 50%; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-        }
-        .chat-send-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); }
-        .chat-send-btn:active { transform: scale(0.95); }
-
-        /* Bubbles */
-        .msg { 
-            max-width: 85%; 
-            padding: 14px 18px; 
-            border-radius: 20px; 
-            font-size: 0.95em; 
-            line-height: 1.6; 
-            word-wrap: break-word; 
-            position: relative;
-            animation: slideIn 0.3s ease-out;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .msg.bot { 
-            background: white; 
-            color: #334155; 
-            align-self: flex-start; 
-            border-bottom-left-radius: 4px; 
-            border: 1px solid #f1f5f9; 
-        }
-        
-        .msg.user { 
-            background: linear-gradient(135deg, #3b82f6, #2563eb); 
-            color: white; 
-            align-self: flex-end; 
-            border-bottom-right-radius: 4px; 
-        }
-        
-        .msg.error { 
-            border: 1px solid #fecaca; 
-            background: #fef2f2; 
-            color: #b91c1c; 
-            align-self: center;
-            font-size: 0.85em;
-            text-align: center;
-        }
-
-        .msg img {
-            max-width: 100%;
-            border-radius: 12px;
-            margin-top: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .msg img:hover { transform: scale(1.02); }
-
-        /* Chips */
-        .suggestions { 
-            display: flex; 
-            gap: 10px; 
-            overflow-x: auto; 
-            padding: 12px 20px; 
-            background: white; 
-            border-bottom: 1px solid #f8fafc; 
-            white-space: nowrap;
-            flex-shrink: 0;
-            scrollbar-width: none; 
-        }
-        .suggestions::-webkit-scrollbar { display: none; }
-        
-        .chip {
-            background: #f0f9ff; 
-            color: #0369a1; 
-            padding: 8px 16px; 
-            border-radius: 25px;
-            font-size: 0.85em; 
-            cursor: pointer; 
-            border: 1px solid #e0f2fe; 
-            transition: all 0.2s;
-            font-weight: 500;
+        body {
             font-family: 'Prompt', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .chip:hover { 
-            background: #0ea5e9; 
-            color: white; 
-            border-color: #0ea5e9; 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
-        }
-
-        /* Typing Dots */
-        .typing-container {
-            display: flex; align-items: center; gap: 4px; padding: 4px 0;
-        }
-        .typing-dot { 
-            width: 6px; height: 6px; background: #94a3b8; border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both; 
-        }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-        
-        /* Status Dot */
-        .status-dot {
-            width: 10px; height: 10px; border-radius: 50%; border: 2px solid white;
-            position: absolute; bottom: 0; right: 0;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
-        }
-        .bg-loading { background-color: #fbbf24; }
-        .bg-online { background-color: #4ade80; box-shadow: 0 0 8px rgba(74, 222, 128, 0.6); }
-        
-        /* Footer & Social */
-        .footer {
             background-color: #f8fafc;
-            padding: 8px 0;
-            border-top: 1px solid #e2e8f0;
         }
-        .social-links {
+        .bg-primary-dark { background-color: #1f2937; } /* เทาเข้ม */
+        .bg-primary { background-color: #374151; } /* เทา */
+        .text-primary { color: #1f2937; }
+        
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #60a5fa; /* เปลี่ยนเป็นสีฟ้า */
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Chat Specific Styles */
+        #chatContainer {
+            height: 60vh;
+            min-height: 400px;
+        }
+        .msg-row {
             display: flex;
-            justify-content: center;
-            gap: 18px;
-            margin-bottom: 4px;
+            margin-bottom: 1rem;
         }
-        .social-link {
-            color: #94a3b8;
-            font-size: 16px;
+        .msg-bubble {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 1rem;
+            position: relative;
+            line-height: 1.5;
+        }
+        .msg-bot {
+            background-color: white;
+            color: #1f2937;
+            border-bottom-left-radius: 0.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .msg-user {
+            background-color: #3b82f6; /* เปลี่ยนเป็นสีฟ้า */
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+            margin-left: auto;
+        }
+        .suggestion-btn {
+            display: inline-block;
+            margin: 4px 4px 4px 0;
+            padding: 6px 12px;
+            background-color: #dbeafe; /* เปลี่ยนเป็นสีฟ้าอ่อน */
+            color: #1e40af; /* เปลี่ยนเป็นสีฟ้าเข้ม */
+            border: 1px solid #bfdbfe; /* เปลี่ยนเป็นสีฟ้าอ่อน */
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            cursor: pointer;
             transition: all 0.2s;
-            text-decoration: none;
-            display: flex; align-items: center; justify-content: center;
-            width: 32px; height: 32px; border-radius: 50%; background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .social-link:hover { transform: translateY(-2px); }
-        .social-link.youtube:hover { color: #ef4444; }
-        .social-link.line:hover { color: #06c755; }
-        .social-link.facebook:hover { color: #1877f2; }
-
+        .suggestion-btn:hover {
+            background-color: #bfdbfe; /* เปลี่ยนเป็นสีฟ้าอ่อนเข้มขึ้น */
+        }
+        /* เพิ่มสไตล์สำหรับลิงก์ในข้อความ */
+        .msg-bot a {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+        .msg-bot a:hover {
+            color: #2563eb;
+        }
+        /* สไตล์สำหรับการ์ดคำถามสุ่ม - เปลี่ยนเป็นโทนสีสบายตา */
+        .random-questions-card {
+            background: linear-gradient(135deg, #86efac 0%, #60a5fa 100%); /* เปลี่ยนเป็นสีเขียวอ่อนและฟ้า */
+            color: #1f2937;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .question-item {
+            background-color: rgba(255, 255, 255, 0.7); /* เปลี่ยนเป็นสีขาวโปร่งแสง */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .question-item:hover {
+            background-color: rgba(255, 255, 255, 0.9); /* เปลี่ยนเป็นสีขาวโปร่งแสงเข้มขึ้น */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .question-number {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 28px;
+            height: 28px;
+            background-color: rgba(59, 130, 246, 0.5); /* เปลี่ยนเป็นสีฟ้าโปร่งแสง */
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+        .refresh-btn {
+            background-color: rgba(255, 255, 255, 0.5); /* เปลี่ยนเป็นสีขาวโปร่งแสง */
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: #1f2937;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .refresh-btn:hover {
+            background-color: rgba(255, 255, 255, 0.7); /* เปลี่ยนเป็นสีขาวโปร่งแสงเข้มขึ้น */
+        }
+        /* เพิ่มสไตล์สำหรับปุ่มส่งข้อความ */
+        #sendBtn {
+            background-color: #3b82f6; /* เปลี่ยนเป็นสีฟ้า */
+        }
+        #sendBtn:hover {
+            background-color: #2563eb; /* เปลี่ยนเป็นสีฟ้าเข้ม */
+        }
+        /* เพิ่มสไตล์สำหรับช่องค้นหา */
+        #chatInput:focus {
+            border-color: #3b82f6; /* เปลี่ยนเป็นสีฟ้า */
+        }
+        /* เพิ่มสไตล์สำหรับลิงก์ติดตาม */
+        .follow-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #ff0000;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .follow-link:hover {
+            background-color: #cc0000;
+        }
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-    <div class="chat-container">
-        <!-- Header -->
-        <div class="chat-header">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-inner relative">
-                    <!-- Icon สาวสวย -->
-                    <i class="fa-solid fa-user-astronaut text-xl"></i>
-                    <div id="db-status" class="status-dot bg-loading" title="กำลังเชื่อมต่อ..."></div>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg font-['Prompt'] tracking-wide">TuiKub Ai Assistant</h3>
-                    <p class="text-[11px] opacity-90 font-light" id="status-text">กำลังเตรียมพร้อม...</p>
-                </div>
-            </div>
-            <button onclick="window.parent.postMessage('closeChat', '*')" class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition" title="ปิดหน้าต่าง">
-                <i class="fa-solid fa-chevron-down text-lg"></i>
-            </button>
+    <!-- Header Section -->
+    <header class="bg-gray-800 text-white py-12 px-4 shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10">
+            <svg width="200" height="200" fill="currentColor" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
         </div>
-
-        <!-- Chips: Added "สนใจแฟรนไชส์" -->
-        <div class="suggestions" id="suggestion-box">
-            <span class="chip" onclick="quickAsk('เช็คพัสดุยังไง')"><i class="fa-solid fa-magnifying-glass"></i> เช็คพัสดุ</span>
-            <span class="chip" onclick="quickAsk('ค่าส่งเท่าไหร่')"><i class="fa-solid fa-hand-holding-dollar"></i> ค่าส่ง</span>
-            <span class="chip" onclick="quickAsk('พื้นที่ห่างไกล')"><i class="fa-solid fa-map-location-dot"></i> พื้นที่ห่างไกล</span>
-            <span class="chip" onclick="quickAsk('สนใจแฟรนไชส์')"><i class="fa-solid fa-shop"></i> สนใจแฟรนไชส์</span>
-            <span class="chip" onclick="quickAsk('ติดต่อตุ้ยคลับ')"><i class="fa-solid fa-comments"></i> ติดต่อแอดมิน</span>
-        </div>
-
-        <!-- Messages -->
-        <div class="chat-messages" id="chat-messages">
-            <div class="msg bot">
-                สวัสดีค่า! <b>แอดมิน TuiKub (ตุ้ยคลับ)</b> ยินดีดูแลค่ะ 👩‍💼💖<br>
-                ต้องการเช็คพัสดุ สอบถามค่าส่ง หรือปรึกษาเรื่องแฟรนไชส์ Paypoint ทักแอดมินได้เลยนะคะ พร้อมช่วยเสมอจ้า!
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <!-- เปลี่ยนโลโก้ -->
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi0o9dy2uhW38GNxBXXHg4HiSPX15dXO3NMX1kOG0xJc7Tpmva2s_vqh_3cz3jA-2DFDOGzv3cJcg3BR06tW2CzOFzCDVkcMEYQpm6TKzaGWLnHUZAnFpWzS-LW6HFcSB7g-ENiGlmYDcP74K33dOokl3ZJOlpeILfS2xIA9LS8IpJA_-umKp-ssSe_oGo/w200-h96/PAYPOINT%20_111.png" alt="Paypoint Logo" class="h-20 mx-auto mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">Paypoint Help Center</h1>
+            <p class="text-blue-100 mb-8 font-light">ค้นหาคำตอบที่คุณสงสัยได้ทันที รวดเร็ว ทันใจ</p>
+            
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="https://tuikub.github.io/paypoint/#home" target="_blank" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white px-4 py-1.5 rounded-full text-sm transition-all flex items-center gap-2">
+                    📖 คู่มือ
+                </a>
+                <a href="https://tuikub.github.io/tracking/" target="_blank" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white px-4 py-1.5 rounded-full text-sm transition-all flex items-center gap-2">
+                    📦 เช็คเลข
+                </a>
+                <a href="https://lin.ee/Lr1qLQx" target="_blank" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white px-4 py-1.5 rounded-full text-sm transition-all flex items-center gap-2">
+                    💬 แอดมิน
+                </a>
+                <a href="https://tuikub.github.io/tracking/f.html" target="_blank" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white px-4 py-1.5 rounded-full text-sm transition-all flex items-center gap-2">
+                    ❓ คำถามพบบ่อย
+                </a>
+                <!-- เพิ่มลิงก์ติดตาม YouTube -->
+                <a href="https://www.youtube.com/channel/UC0IEG_tOt1Hrj4FXDbkZN-A" target="_blank" class="follow-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                    </svg>
+                    ติดตาม YouTube
+                </a>
             </div>
         </div>
+    </header>
 
-        <!-- Input -->
-        <div class="chat-input-area">
-            <input type="text" id="userInput" class="chat-input" placeholder="พิมพ์คำถามให้น้องตุ้ยคลับช่วยดูได้เลยค่ะ..." autocomplete="off" onkeypress="handleKeyPress(event)">
-            <button class="chat-send-btn" onclick="sendMessage()">
-                <i class="fa-solid fa-paper-plane text-lg"></i>
-            </button>
+    <!-- Content Section -->
+    <main class="max-w-4xl mx-auto py-10 px-4">
+        
+        <!-- Random Questions Section -->
+        <div id="randomQuestionsSection" class="mb-6">
+            <div class="random-questions-card">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        คำถามสุ่มที่น่าสนใจ
+                    </h2>
+                    <button id="refreshQuestions" class="refresh-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        สุ่มใหม่
+                    </button>
+                </div>
+                <div id="randomQuestionsList">
+                    <!-- Random questions will be loaded here -->
+                </div>
+            </div>
         </div>
         
-        <!-- Footer -->
-        <div class="footer">
-            <div class="social-links">
-                <a href="https://www.youtube.com/channel/UC0IEG_tOt1Hrj4FXDbkZN-A" target="_blank" class="social-link youtube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.facebook.com/papacking" target="_blank" class="social-link facebook" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                <a href="https://lin.ee/khaW3QI" target="_blank" class="social-link line" title="Line"><i class="fa-brands fa-line"></i></a>
+        <!-- Chat Interface -->
+        <div class="bg-gray-50 rounded-2xl shadow-xl overflow-hidden border border-gray-200 flex flex-col">
+            
+            <!-- Chat History -->
+            <div id="chatContainer" class="p-6 overflow-y-auto bg-slate-100">
+                <!-- Loading State (Initial) -->
+                <div id="loading" class="flex flex-col items-center justify-center py-10">
+                    <div class="loader mb-4"></div>
+                    <p class="text-gray-500 text-sm">กำลังเตรียมข้อมูล...</p>
+                </div>
+                <!-- Messages will appear here -->
             </div>
-            <div class="text-[10px] text-slate-400 text-center select-none font-['Prompt']">
-                Powered by TuiKub Ai Assistant | Created by @pratya chatyachatmontree
+
+            <!-- Input Area -->
+            <div class="bg-white p-4 border-t border-gray-200">
+                <form id="chatForm" class="flex gap-2 relative">
+                    <button 
+                        type="button" 
+                        id="clearBtn"
+                        class="bg-gray-200 text-gray-600 p-3 rounded-full hover:bg-gray-300 transition-colors"
+                        title="ล้างแชท / เริ่มใหม่"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    </button>
+                    <input 
+                        type="text" 
+                        id="chatInput"
+                        placeholder="พิมพ์คำถามของคุณที่นี่..." 
+                        class="flex-1 py-3 px-5 rounded-full bg-gray-100 border-transparent focus:bg-white focus:border-gray-400 focus:ring-0 transition-all outline-none"
+                        autocomplete="off"
+                        disabled
+                    >
+                    <button 
+                        type="submit" 
+                        id="sendBtn"
+                        class="bg-gray-800 text-white p-3 rounded-full hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </button>
+                </form>
             </div>
         </div>
-    </div>
+
+    </main>
+
+    <footer class="text-center py-10 text-gray-400 text-sm">
+        &copy; 2024 Paypoint System. ขับเคลื่อนด้วยระบบอัตโนมัติ
+    </footer>
 
     <script>
-        // --- Configuration ---
-        const SHEET_ID = '13YE50RWDXik5YhrIqB6naWRxfwDFtFVFbtqs-2bH0Hc'; 
-        const N8N_WEBHOOK_URL = "https://n8n.srv1265116.hstgr.cloud/webhook/chat"; 
-
-        // --- STATIC DATA (Priority: High) ---
-        // ✅ ข้อมูลชุดนี้จะถูกใช้ก่อนเสมอ เพื่อป้องกัน Sheet ทับ
-        const STATIC_DATA = [
-            // Contact (Fix)
-            { keywords: ["ติดต่อ", "คุยกับพนักงาน", "ขอเบอร์โทร", "ติดต่อตุ้ยคลับ", "แอดมิน", "ติดต่อเรา"], answer: "รบกวนลูกค้าติดต่อ **หน้าร้านที่ทำการส่งพัสดุ** หรือโทร **099-218-8853** ได้เลยนะคะ ยินดีให้บริการค่ะ 🙏" },
-            
-            // Link: Check Parcel
-            { keywords: ["เช็คพัสดุยังไง", "ขอลิงก์เช็คเลข", "เช็คพัสดุ", "ของถึงไหน", "เช็คสถานะ"], answer: "เช็คพัสดุได้ที่หน้านี้เลยจ้า 👇\n\n[คลิกเพื่อเช็คพัสดุ](https://tuikub.github.io/tracking/tracking.html)" },
-            
-            // Link: Price
-            { keywords: ["ค่าส่งเท่าไหร่", "ค่าส่ง", "ราคา"], answer: "เช็คราคาค่าส่งเริ่มต้นได้ที่นี่เลยค่ะ 👇\n\n[คลิกดูตารางค่าส่ง](https://tuikub.github.io/tracking/price.html)" },
-
-            // Link: Remote Area
-            { keywords: ["พื้นที่ห่างไกล", "พื้นที่ท่องเที่ยว", "พื้นที่เกาะ"], answer: "เช็ครายชื่อพื้นที่ห่างไกลได้ที่ลิงก์นี้เลยค่ะ 👇\n\n[คลิกเช็คพื้นที่ห่างไกล](https://tuikub.github.io/tracking/remote.html)" },
-
-            // Link: Franchise
-            { keywords: ["สนใจ", "แฟรนไชส์", "paypoint", "อยากเปิดร้าน", "ลงทุนเท่าไหร่", "สนใจแฟรนไชส์"], answer: "สนใจเปิดร้านแฟรนไชส์ ดูรายละเอียดเพิ่มเติมได้ที่นี่เลยค่ะ 👇\n\n[คลิกดูรายละเอียดแฟรนไชส์](https://tuikub.github.io/tracking/franchise.html)" },
-
-            // General greeting & Credit
-            { keywords: ["สวัสดี", "หวัดดี", "ดีครับ", "ดีค่ะ", "ทัก"], answer: "สวัสดีค่า! 🙏 น้อง TuiKub ยินดีให้บริการค่ะ วันนี้มีอะไรให้แอดมินช่วยดูแล บอกได้เลยนะคะ ไม่ต้องเกรงใจจ้า" },
-            { keywords: ["ใครสร้าง", "เจ้าของ", "ผู้พัฒนา", "pratya"], answer: "ระบบแสนฉลาดนี้พัฒนาโดยคุณ **Pratya Chatyachatmontree** สุดหล่อคนเก่งของเราเองค่า 😎" }
+        // --- CONFIGURATION ---
+        // คำเตือน: API Key นี้จะปรากฏใน Source Code (View Source)
+        // แนะนำให้ไปที่ Google Cloud Console > API Keys > เลือก Key > ตั้งค่า Website restrictions ให้เป็นโดเมนของคุณ
+        const GEMINI_API_KEY = ''; // <-- ใส่ API Key ตรงนี้
+        const SHEET_ID = '13YE50RWDXik5YhrIqB6naWRxfwDFtFVFbtqs-2bH0Hc';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+        
+        const rawFaqData = [
+          {
+            category: "การเช็คพัสดุและสถานะ",
+            items: [
+              {
+                keywords: ["เช็คพัสดุ", "ของถึงไหน", "tracking"],
+                question: "เช็คพัสดุได้ที่ไหน / ของถึงไหนแล้ว / ขอเลข Tracking หน่อย",
+                answer: 'ลูกค้าสามารถเช็คสถานะพัสดุได้ง่ายๆ เลยค่ะ เพียงกดเมนู "เช็คสถานะ" ด้านล่าง หรือกรอกเลขพัสดุในลิงก์นี้ได้เลยนะคะ: https://tuikub.github.io/tracking/tracking.html',
+                link: "https://tuikub.github.io/tracking/tracking.html"
+              },
+              {
+                keywords: ["ไม่พบข้อมูล", "เช็คไม่ขึ้น", "เลขผิด"],
+                question: "เช็คเลขแล้วไม่ขึ้น / หาข้อมูลไม่เจอ / เลขผิดหรือเปล่า",
+                answer: "ถ้าเพิ่งส่งของ อาจจะต้องรอรถเข้ารับหรือคีย์เข้าระบบสักครู่นะคะ แต่ถ้าส่งนานแล้วยังเช็คไม่ขึ้น แนะนำให้ลองติดต่อร้านต้นทางเพื่อความชัวร์ค่ะ",
+                link: "https://tuikub.github.io/tracking/tracking.html"
+              },
+              {
+                keywords: ["ส่งช้า", "ของยังไม่ถึง", "ค้าง"],
+                question: "ทำไมของยังไม่ถึง / ส่งช้ามาก / พัสดุค้างอยู่ที่เดิม",
+                answer: "ขออภัยในความล่าช้าด้วยนะคะ ช่วงนี้พัสดุอาจจะเยอะนิดนึง แต่ไม่ต้องห่วงค่ะ ระบบกำลังเร่งนำส่งให้เร็วที่สุดเลย",
+                link: ""
+              }
+            ]
+          },
+          {
+            category: "ค่าบริการและพื้นที่การส่ง",
+            items: [
+              {
+                keywords: ["ค่าส่ง", "ราคา", "กี่บาท"],
+                question: "ค่าส่งกี่บาท / ราคาแพงไหม / คิดเงินยังไง",
+                answer: 'ค่าส่งเราเริ่มต้นเบาๆ แค่ 25 บาทเองค่ะ! ราคาจริงจะคิดตามน้ำหนักและขนาดกล่อง ลองแจ้งรายละเอียดมาให้แอดมินช่วยคำนวณก่อนได้นะคะ ดูเพิ่มเติม: https://tuikub.github.io/paypoint/c.html',
+                link: "https://tuikub.github.io/paypoint/c.html"
+              },
+              {
+                keywords: ["พื้นที่ห่างไกล", "เกาะ", "ดอย", "3จังหวัด"],
+                question: "ส่งพื้นที่ห่างไกล (เกาะ/ดอย/3 จังหวัดชายแดน) มีบวกเพิ่มไหม",
+                answer: 'พื้นที่พิเศษอาจมีค่าธรรมเนียมเพิ่มนิดหน่อยค่ะ (20-50 บาท) แต่ถ้าเลือกส่ง KEX (Kerry) จะไม่มีบวกเพิ่มนะคะ คุ้มมาก! รายละเอียด: https://tuikub.github.io/tracking/remote.html',
+                link: "https://tuikub.github.io/tracking/remote.html"
+              },
+              {
+                keywords: ["ตัดรอบ", "ส่งทันไหม"],
+                question: "ร้านตัดรอบกี่โมง / ส่งวันนี้ทันไหม",
+                answer: "ร้านเราตัดรอบ 16.00 น. ทุกวันค่ะ ถ้ามาทันเวลานี้ ของออกเดินทางวันนี้เลย พรุ่งนี้-มะรืนเตรียมรับของได้เลยค่ะ",
+                link: ""
+              }
+            ]
+          },
+          {
+            category: "การเคลมและปัญหาพัสดุ",
+            items: [
+              {
+                keywords: ["ของแตก", "เสียหาย", "ประกัน", "เคลม"],
+                question: "ถ้าของแตกหรือเสียหาย รับผิดชอบไหม / มีประกันไหม",
+                answer: 'เรามีประกันพื้นฐานให้ทุกชิ้น (วงเงินไม่เกิน 2,000 บาท) ค่ะ แต่ถ้าของเสียหาย ต้องรบกวนขอคลิปตอนแกะกล่องเพื่อใช้เป็นหลักฐานในการเคลมด้วยนะคะ รายละเอียดประกัน: https://tuikub.github.io/tracking/warranty.html',
+                link: "https://tuikub.github.io/tracking/warranty.html"
+              },
+              {
+                keywords: ["น้ำหนักเกิน", "โดนหักเงิน", "ส่วนต่าง"],
+                question: "โดนหักเงินส่วนต่างน้ำหนักเกิน ต้องทำยังไง",
+                answer: 'ที่มียอดหักเงิน เพราะน้ำหนักหรือขนาดที่ขนส่งวัดได้จริง "มากกว่า" ที่ร้านแจ้งไว้ค่ะ แต่ไม่ต้องกังวลนะคะ ตอนนี้เรามีระบบใหม่ "Digital Dispute" ให้ร้านยื่นอุทธรณ์ได้เองภายใน 5 วันค่ะ: https://tuikub.github.io/paypoint/Digital.html',
+                link: "https://tuikub.github.io/paypoint/Digital.html"
+              },
+              {
+                keywords: ["ของห้ามส่ง", "แพ็คของ"],
+                question: "ไม่แน่ใจว่าสินค้าชิ้นนี้ส่งได้ไหม หรือต้องแพ็คอย่างไรไม่ให้เสียหาย?",
+                answer: "สำคัญมากครับ ขอให้ศึกษาเงื่อนไขได้ที่เมนู 'คู่มือผู้ส่ง' ซึ่งจะระบุสิ่งของต้องห้าม (Prohibited Items) และวิธีการแพ็คที่ถูกต้อง",
+                link: "https://tuikub.github.io/tracking/packing.html"
+              }
+            ]
+          },
+          {
+            category: "ระบบและการเข้าใช้งาน",
+            items: [
+              {
+                keywords: ["เข้าระบบ", "login", "เข้าไม่ได้"],
+                question: "จะเข้าสู่ระบบจัดการร้านค้า (Merchant Login) ได้ทางไหนบ้าง?",
+                answer: "สามารถเข้าใช้งานได้ที่ลิงก์ระบบใหม่ หรือระบบเดิม Paypoint.co.th (แนะนำให้ Bookmark ไว้นะครับ)",
+                link: "https://merchant.paypoint.in.th/auth/login"
+              },
+              {
+                keywords: ["รีโมท", "anydesk", "teamviewer"],
+                question: "ต้องการให้เจ้าหน้าที่รีโมทเข้ามาช่วยเหลือ ต้องเตรียมตัวอย่างไร?",
+                answer: "กรุณาดาวน์โหลด AnyDesk หรือ TeamViewer ไว้ที่เครื่อง แล้วแจ้งรหัส ID กับเจ้าหน้าที่ครับ",
+                link: "https://tuikub.github.io/paypoint/#system"
+              },
+              {
+                keywords: ["รูปภาพ", "ป้าย", "สื่อประชาสัมพันธ์"],
+                question: "ต้องการไฟล์รูปภาพ ป้ายไวนิล หรือสื่อประชาสัมพันธ์?",
+                answer: "ดาวน์โหลดไฟล์อาร์ตเวิร์คทั้งหมดได้ที่ Google Drive ของบริษัทครับ",
+                link: "https://tuikub.github.io/paypoint/#contact"
+              }
+            ]
+          },
+          {
+            category: "การอบรมและคู่มือ",
+            items: [
+              {
+                keywords: ["อบรม", "เรียนออนไลน์", "ตารางเรียน"],
+                question: "สนใจเข้าอบรมการใช้งานระบบ มีตารางเรียนออนไลน์ช่วงไหนบ้าง?",
+                answer: "อบรมผ่าน Google Meet (จ.-ศ.) รอบเช้า 10.00-11.30 น. | รอบบ่าย 13.30-14.30 น.",
+                link: "https://tuikub.github.io/paypoint/#training"
+              },
+              {
+                keywords: ["คลิปสอน", "ย้อนหลัง", "youtube"],
+                question: "ถ้าไม่สะดวกเข้าเรียนตามเวลา มีคลิปวิดีโอไหม?",
+                answer: "รับชมวิดีโอสอนการใช้งานย้อนหลังได้ที่ YouTube: Paypoint Channel",
+                link: "https://tuikub.github.io/paypoint/#training"
+              },
+              {
+                keywords: ["คู่มือ", "pdf", "วิธีใช้"],
+                question: "อยากได้คู่มือเป็นเอกสารไว้อ่าน?",
+                answer: "ดาวน์โหลดคู่มือ PDF ฉบับเต็มได้ที่เมนู 'ดาวน์โหลดคู่มือ' ครับ",
+                link: "https://tuikub.github.io/paypoint/#training"
+              }
+            ]
+          },
+          {
+            category: "การเงิน เอกสาร และ COD",
+            items: [
+              {
+                keywords: ["COD", "เก็บเงินปลายทาง", "โอนเงิน"],
+                question: "ยอด COD (เก็บเงินปลายทาง) จะโอนเข้าวันไหน",
+                answer: "ยอด COD จะโอนเข้าบัญชีภายใน 3-5 วันทำการค่ะ (ไม่นับเสาร์-อาทิตย์)",
+                link: "https://tuikub.github.io/tracking/cod.html"
+              },
+              {
+                keywords: ["ถอนเงิน", "wallet", "ตัดรอบ"],
+                question: "การถอนเงินรายได้ (Wallet) มีรอบการตัดยอดเงินอย่างไร?",
+                answer: "ระบบตัดรอบถอนเงินทุกวันพุธ เวลา 17.00 น. ครับ",
+                link: "https://tuikub.github.io/paypoint/#forms"
+              },
+              {
+                keywords: ["ใบเสร็จ", "ภาษี", "หนังสือรับรอง"],
+                question: "ต้องการขอเอกสารใบเสร็จ ใบกำกับภาษี หรือหนังสือรับรอง?",
+                answer: "ทำรายการขอเอกสารต่างๆ หรือแบบฟอร์มรับรองแฟรนไชส์ได้ที่เมนู 'เอกสาร' ในระบบครับ",
+                link: "https://tuikub.github.io/paypoint/#forms"
+              }
+            ]
+          },
+          {
+            category: "งานไอทีและอุปกรณ์",
+            items: [
+              {
+                keywords: ["ปริ้นเตอร์", "driver", "ตั้งค่า"],
+                question: "เครื่องปริ้นเตอร์ที่ระบบรองรับคือรุ่นไหน / ปริ้นไม่ออก?",
+                answer: "รองรับรุ่น XP-58iiz และ XP-420B ตรวจสอบการตั้งค่าและโหลด Driver ได้ที่ลิงก์ครับ",
+                link: "https://tuikub.github.io/paypoint/1.html"
+              },
+              {
+                keywords: ["ไอที", "แจ้งปัญหา", "ติดต่อช่าง"],
+                question: "หากเจอปัญหาทางเทคนิคซับซ้อน ต้องการติดต่อฝ่ายไอที?",
+                answer: "แจ้งปัญหาพร้อมรูปถ่ายหน้าจอให้คุณตุ้ย, คุณโอ๋ หรือน้องปุ๊กกี้ ได้เลยครับ",
+                link: "https://tuikub.github.io/paypoint/#contact"
+              }
+            ]
+          },
+          {
+            category: "แฟรนไชส์และติดต่อสอบถาม",
+            items: [
+              {
+                keywords: ["สนใจแฟรนไชส์", "ลงทุน", "เปิดร้าน"],
+                question: "สนใจเปิดร้านแฟรนไชส์ / ต้องลงทุนเท่าไหร่",
+                answer: 'ยินดีเลยค่ะ! มาร่วมครอบครัว Paypoint กัน สนใจรายละเอียดแฟรนไชส์ โทรมาคุยกันได้ที่ 086-888-3656 นะคะ หรือดูข้อมูลที่: https://tuikub.github.io/tracking/franchise.html',
+                link: "https://tuikub.github.io/tracking/franchise.html"
+              },
+              {
+                keywords: ["ติดต่อ", "เบอร์โทร", "call center"],
+                question: "มีเรื่องด่วนมาก ต้องการโทรคุยกับ Call Center?",
+                answer: "ติดต่อสายด่วน: 085-507-8656 หรือ 085-515-8456 (น้องแอน/น้องมด)",
+                link: "https://tuikub.github.io/paypoint/#contact"
+              }
+            ]
+          }
         ];
 
-        let knowledgeBase = [...STATIC_DATA]; 
-        let isDbLoaded = true; 
+        // Data Store
+        let faqData = [];
+        let allQuestions = []; // เก็บคำถามทั้งหมดสำหรับการสุ่ม
 
-        // --- Init ---
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchSheetData(); 
-        });
+        // Elements
+        const chatContainer = document.getElementById('chatContainer');
+        const chatInput = document.getElementById('chatInput');
+        const chatForm = document.getElementById('chatForm');
+        const sendBtn = document.getElementById('sendBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loading = document.getElementById('loading');
+        const randomQuestionsList = document.getElementById('randomQuestionsList');
+        const refreshQuestionsBtn = document.getElementById('refreshQuestions');
+        
+        // สร้างเสียงแจ้งเตือนแบบ inline แทนการโหลดจากภายนอก
+        const notificationSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE');
 
-        // --- Fetch Sheet ---
-        async function fetchSheetData() {
-            const statusDot = document.getElementById('db-status');
-            const statusText = document.getElementById('status-text');
+        // 1. Fetch Data from Google Sheets
+        async function fetchFAQ() {
+            // ใช้ข้อมูล Local ก่อนเสมอ (โหลดไว + ปลอดภัย)
+            faqData = flattenFaqData(rawFaqData);
+            allQuestions = extractAllQuestions(rawFaqData);
+
             try {
-                // Fetch CSV from Sheet
-                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
-                
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-                
-                const csvText = await response.text();
-                parseCSV(csvText); 
-                
-                statusDot.className = "status-dot bg-online";
-                statusDot.title = "พร้อมใช้งาน (จาก Google Sheet)";
-                statusText.innerText = "พร้อมดูแลค่ะ (Online)";
+                const response = await fetch(SHEET_URL);
+                if (response.ok) {
+                    const data = await response.text();
+                    // ถ้าดึงข้อมูลจาก Sheet ได้ ให้นำมาต่อท้ายข้อมูลที่มีอยู่
+                    const sheetData = parseCSV(data);
+                    faqData = [...faqData, ...sheetData];
+                }
             } catch (error) {
-                console.warn("Using Local Backup Data:", error);
-                statusDot.className = "status-dot bg-loading"; 
-                statusDot.title = "โหมดสำรอง (Google Sheet โหลดไม่ได้)";
-                statusText.innerText = "โหมดสำรอง";
+                console.log("Using local data only");
             }
+            
+            // Hide loading and show results
+            loading.remove();
+            enableChat();
+            addBotMessage("สวัสดีครับ! ผมคือ Paypoint Bot 🤖<br>มีอะไรให้ผมช่วยไหมครับ? ลองพิมพ์คำถามมาได้เลย");
+            
+            // แสดงคำถามสุ่ม
+            displayRandomQuestions();
         }
 
-        // --- CSV Parser (Priority Fix) ---
-        function parseCSV(text) {
-            const newKnowledge = []; 
-            const rows = text.split('\n');
-            
-            rows.forEach((row) => {
-                if (!row.trim()) return;
-                const cols = [];
-                let current = '';
-                let inQuote = false;
-                for (let i = 0; i < row.length; i++) {
-                    const char = row[i];
-                    if (char === '"') inQuote = !inQuote;
-                    else if (char === ',' && !inQuote) { cols.push(current); current = ''; } 
-                    else current += char;
-                }
-                cols.push(current);
-
-                if (cols.length >= 2) {
-                    const cleanKey = cols[0] ? cols[0].trim().replace(/^"|"$/g, '').replace(/""/g, '"').toLowerCase() : "";
-                    const cleanAns = cols[1] ? cols[1].trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
-                    const cleanUrl = cols[2] ? cols[2].trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "";
-
-                    if (cleanKey && cleanAns) {
-                        const keywords = cleanKey.split(/,| /).map(k => k.trim()).filter(k => k);
-                        let finalAnswer = cleanAns;
-                        if (cleanUrl) {
-                            if (cleanUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) finalAnswer += `\n\n![Image](${cleanUrl})`;
-                            else finalAnswer += `\n\n[คลิกดูรายละเอียดเพิ่มเติม](${cleanUrl})`;
-                        }
-                        newKnowledge.push({ keywords: keywords, answer: finalAnswer });
+        // ฟังก์ชันสำหรับดึงคำถามทั้งหมดจากข้อมูล
+        function extractAllQuestions(data) {
+            const questions = [];
+            data.forEach(category => {
+                category.items.forEach(item => {
+                    if (item.question) {
+                        questions.push({
+                            question: item.question,
+                            answer: item.answer,
+                            link: item.link || ''
+                        });
                     }
-                }
+                });
+            });
+            return questions;
+        }
+
+        // ฟังก์ชันสำหรับสุ่มคำถาม
+        function getRandomQuestions(count = 10) {
+            const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, Math.min(count, allQuestions.length));
+        }
+
+        // ฟังก์ชันสำหรับแสดงคำถามสุ่ม
+        function displayRandomQuestions() {
+            const randomQuestions = getRandomQuestions(10);
+            let html = '';
+            
+            randomQuestions.forEach((item, index) => {
+                // Escape quotes for the onclick handler
+                const q = item.question.replace(/"/g, '&quot;');
+                html += `
+                    <div class="question-item" onclick="handleRandomQuestion('${q}')">
+                        <span class="question-number">${index + 1}</span>
+                        <span>${item.question}</span>
+                    </div>
+                `;
             });
             
-            // ✅ PRIORITY FIX: เอา STATIC_DATA ไว้ข้างหน้าสุดเสมอ
-            // เพื่อให้ข้อมูลสำคัญ (เบอร์โทร/ลิงก์) ที่เราแก้ในโค้ด ชนะข้อมูลใน Sheet
-            if (newKnowledge.length > 0) {
-                knowledgeBase = [...STATIC_DATA, ...newKnowledge]; 
-                console.log("Knowledge Base Merged (Static First): " + knowledgeBase.length + " items");
-            }
+            randomQuestionsList.innerHTML = html;
         }
 
-        // --- Main Logic ---
-        async function sendMessage() {
-            const inputField = document.getElementById("userInput");
-            const message = inputField.value.trim();
-            if (!message) return;
-
-            addMessage(message, 'user');
-            inputField.value = '';
-            
-            // 1. ถาม Local Data / Sheet ก่อน
-            const sheetMatch = checkKnowledgeBase(message);
-            if (sheetMatch) {
-                setTimeout(() => addMessage(sheetMatch, 'bot'), 500);
-                return;
-            }
-
-            // 2. ถ้าไม่เจอ ค่อยไปถาม AI (n8n)
-            addMessage("... แอดมินกำลังหาข้อมูลให้นะคะ ...", 'bot', true); 
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 20000); 
-
-            try {
-                const response = await fetch(N8N_WEBHOOK_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: message }),
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-
-                if (!response.ok) throw new Error(`Status: ${response.status}`);
-
-                const responseText = await response.text(); 
-                
-                if (!responseText || responseText.trim() === "") {
-                     throw new Error("Empty Response");
-                }
-
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                } catch (e) {
-                    if (responseText.includes("Workflow was started")) {
-                        throw new Error("SettingError");
+        // Helper to flatten the new structure
+        function flattenFaqData(nestedData) {
+            const flat = [];
+            nestedData.forEach(group => {
+                group.items.forEach(item => {
+                    if (!item.question) return;
+                    // Append link to answer so the existing regex renderer picks it up
+                    let combinedAnswer = item.answer;
+                    if (item.link) {
+                        combinedAnswer += `\n${item.link}`;
                     }
-                    throw new Error("Invalid JSON");
-                }
+                    flat.push({
+                        category: group.category,
+                        question: item.question,
+                        answer: combinedAnswer,
+                        keywords: item.keywords || []
+                    });
+                });
+            });
+            return flat;
+        }
+
+        // 2. Parse CSV into JSON Objects
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const result = [];
+            
+            // Start from index 1 to skip header (assuming header is: Category, Question, Answer)
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
                 
-                let botReply = data.reply || data.output || data.text;
-
-                if (!botReply) {
-                     botReply = "ขออภัยค่า ระบบหลังบ้านไม่ได้ส่งคำตอบมา (No reply key)";
-                }
-
-                removeLoadingMessage();
-                addMessage(botReply, 'bot');
-
-            } catch (error) {
-                console.error("n8n Error:", error);
-                removeLoadingMessage();
+                // Regex to split CSV while respecting quotes
+                const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
+                const matches = lines[i].match(regex);
                 
-                let friendlyError = "";
-                if (error.message === "Empty Response") {
-                    friendlyError = "⚠️ <b>แอดมินขออภัยค่ะ ระบบ AI ไม่ตอบกลับมา</b><br><small>(วิธีแก้: ไปที่ n8n > ลากเส้นจาก AI ไปหาโหนด Respond to Webhook ให้ครบนะคะ)</small>";
-                } else if (error.name === 'AbortError') {
-                    friendlyError = "⏳ <b>รอนานเกินไปแล้วจ้า</b><br>ลองถามใหม่อีกทีสั้นๆ นะคะ แอดมินอาจจะเน็ตช้า";
-                } else if (error.message.includes("SettingError")) {
-                    friendlyError = "🔧 <b>ตั้งค่า n8n ยังไม่ครบค่ะ</b><br>ไปที่ n8n > ดับเบิลคลิก Webhook > เปลี่ยน Respond เป็น <b>'Using Respond Node'</b> นะคะ";
-                } else {
-                    friendlyError = `😿 <b>ขออภัยค่ะ ระบบขัดข้องชั่วคราว</b><br><small>(${error.message})</small>`;
+                if (matches && matches.length >= 2) {
+                    const clean = (str) => str.replace(/^"|"$/g, '').trim();
+                    result.push({
+                        category: matches.length > 2 ? clean(matches[0]) : 'ทั่วไป',
+                        question: clean(matches[matches.length - 2]),
+                        answer: clean(matches[matches.length - 1])
+                    });
                 }
+            }
+            return result;
+        }
 
-                addMessage(friendlyError, 'bot', false, 'error');
+        // 3. Chat Logic
+        function enableChat() {
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+
+        function addBotMessage(htmlContent) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg-row';
+            msgDiv.innerHTML = `<div class="msg-bubble msg-bot">${htmlContent}</div>`;
+            chatContainer.appendChild(msgDiv);
+            scrollToBottom();
+            // เพิ่มการจัดการ error สำหรับเสียงแจ้งเตือน
+            notificationSound.play().catch(() => {});
+        }
+
+        function addUserMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg-row';
+            msgDiv.innerHTML = `<div class="msg-bubble msg-user">${text}</div>`;
+            chatContainer.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function processQuery(query) {
+            const term = query.toLowerCase().trim();
+            
+            // แก้ไขฟังก์ชันค้นหาให้ใช้ keywords จากข้อมูลในโค้ด
+            const matches = faqData.filter(item => {
+                // ค้นหาจาก keywords ก่อน
+                if (item.keywords && item.keywords.some(k => k.toLowerCase().includes(term))) {
+                    return true;
+                }
+                // ถ้าไม่พบใน keywords ให้ค้นหาจาก question, answer และ category
+                return item.question.toLowerCase().includes(term) || 
+                       item.answer.toLowerCase().includes(term) ||
+                       item.category.toLowerCase().includes(term);
+            });
+
+            if (matches.length === 0) {
+                addBotMessage("ขออภัยครับ ผมไม่พบข้อมูลที่ตรงกับคำถามของคุณ ลองใช้คำค้นอื่นดูนะครับ");
+            } else if (matches.length === 1) {
+                const item = matches[0];
+                // แก้ไขฟังก์ชัน formattedAnswer โดยลบบรรทัดที่ซ้ำกัน
+                const formattedAnswer = item.answer.replace(
+                    /(https?:\/\/[^\s]+)/g, 
+                    '<a href="$1" target="_blank" class="text-blue-600 hover:underline break-all">$1</a>'
+                );
+                addBotMessage(`<strong>${item.question}</strong><br><br>${formattedAnswer.replace(/\n/g, '<br>')}`);
+            } else {
+                // Multiple matches
+                let html = `ผมพบ ${matches.length} หัวข้อที่เกี่ยวข้องครับ:<br>`;
+                // Limit to 5 suggestions to avoid clutter
+                matches.slice(0, 5).forEach((item, index) => {
+                    // Escape quotes for the onclick handler
+                    const q = item.question.replace(/"/g, '&quot;');
+                    html += `<button class="suggestion-btn" style="animation-delay: ${index * 0.1}s" onclick="handleSuggestion('${q}')">${item.question}</button>`;
+                });
+                if (matches.length > 5) html += `<br>...และอื่นๆ`;
+                addBotMessage(html);
             }
         }
 
-        function checkKnowledgeBase(query) {
-            if (!isDbLoaded || knowledgeBase.length === 0) return null;
-            const lowerQuery = query.toLowerCase();
-            let bestMatch = null;
-            let maxScore = 0;
+        // Event Listeners
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if (!text) return;
             
-            // Loop หาคำตอบที่ดีที่สุด (ถ้าคะแนนเท่ากัน ตัวแรกสุดชนะ ซึ่งคือ Static Data)
-            for (let item of knowledgeBase) {
-                let score = 0;
-                item.keywords.forEach(k => { if (lowerQuery.includes(k)) score += 10; });
-                if (score > maxScore) { maxScore = score; bestMatch = item.answer; }
-            }
-            return maxScore > 0 ? bestMatch : null;
-        }
-
-        // --- UI Utils ---
-        function addMessage(text, sender, isLoading = false, type = 'normal') {
-            const chatBox = document.getElementById("chat-messages");
-            const msgDiv = document.createElement("div");
-            msgDiv.className = `msg ${sender} ${type}`;
-            if (isLoading) msgDiv.id = "loadingMsg";
+            addUserMessage(text);
+            chatInput.value = '';
             
-            let processedText = text.replace(/\\n/g, '\n'); 
-            let formattedText = marked.parse(processedText);
+            // Simulate thinking delay
+            setTimeout(() => processQuery(text), 500);
+        });
+
+        // Clear Chat Listener
+        clearBtn.addEventListener('click', () => {
+            chatContainer.innerHTML = '';
+            addBotMessage("สวัสดีครับ! ผมคือ Paypoint Bot 🤖<br>มีอะไรให้ผมช่วยไหมครับ? ลองพิมพ์คำถามมาได้เลย");
+            chatInput.focus();
+        });
+
+        // Refresh Random Questions Listener
+        refreshQuestionsBtn.addEventListener('click', () => {
+            displayRandomQuestions();
+            // เพิ่ม animation effect
+            randomQuestionsList.style.opacity = '0';
+            setTimeout(() => {
+                randomQuestionsList.style.opacity = '1';
+            }, 100);
+        });
+
+        // Global function for suggestion buttons
+        window.handleSuggestion = (question) => {
+            addUserMessage(question);
+            setTimeout(() => processQuery(question), 500);
+        };
+
+        // Global function for random question buttons
+        window.handleRandomQuestion = (question) => {
+            // เลื่อนไปยังส่วนแชท
+            document.getElementById('chatContainer').scrollIntoView({ behavior: 'smooth' });
             
-            if (isLoading) {
-               formattedText = `<div class="typing-container">
-                                    <div class="typing-dot"></div>
-                                    <div class="typing-dot"></div>
-                                    <div class="typing-dot"></div>
-                                </div>`;
-            }
-            msgDiv.innerHTML = formattedText;
-            chatBox.appendChild(msgDiv);
-            setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 50);
-        }
+            // เพิ่มคำถามลงในแชท
+            setTimeout(() => {
+                addUserMessage(question);
+                setTimeout(() => processQuery(question), 500);
+            }, 500);
+        };
 
-        function removeLoadingMessage() {
-            const loadingMsg = document.getElementById("loadingMsg");
-            if (loadingMsg) loadingMsg.remove();
-        }
-
-        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
-        function quickAsk(text) { 
-            const input = document.getElementById("userInput");
-            input.value = text;
-            sendMessage();
-        }
+        // Initialize on Load
+        window.onload = fetchFAQ;
     </script>
 </body>
 </html>
