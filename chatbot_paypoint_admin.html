@@ -10,61 +10,99 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        :root {
+            --primary-color: #ef4444;
+            --primary-hover: #dc2626;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
         html {
             scroll-behavior: smooth;
         }
         body {
             font-family: 'Prompt', sans-serif;
-            background-color: #f8fafc;
+            background-color: var(--bg-color);
+            color: var(--text-main);
         }
+
         /* สไตล์สำหรับฟอร์มจัดการ FAQ */
         .faq-form {
-            background-color: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
         }
+
         /* สไตล์สำหรับตาราง FAQ */
         .faq-table {
             width: 100%;
-            border-collapse: collapse;
-        }
-        .faq-table th, .faq-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
         }
         .faq-table th {
-            background-color: #f9fafb;
+            background-color: #f8fafc;
+            color: var(--text-muted);
             font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
         }
-        .faq-table tr:hover {
-            background-color: #f9fafb;
+        .faq-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+            font-size: 0.95rem;
         }
+        .faq-table tr:last-child td {
+            border-bottom: none;
+        }
+        .faq-table tr:hover td {
+            background-color: #f8fafc;
+        }
+
         /* สไตล์สำหรับปุ่มในตาราง */
         .table-btn {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
             transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            margin-right: 0.25rem;
         }
         .edit-btn {
-            background-color: #3b82f6;
-            color: white;
+            background-color: #eff6ff;
+            color: #3b82f6;
         }
         .edit-btn:hover {
             background-color: #2563eb;
+            color: white;
         }
         .delete-btn {
-            background-color: #ef4444;
-            color: white;
+            background-color: #fef2f2;
+            color: #ef4444;
         }
         .delete-btn:hover {
             background-color: #dc2626;
+            color: white;
         }
+
         /* สไตล์สำหรับโมดัล */
         .modal {
             display: none;
@@ -73,83 +111,123 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         .modal.show {
             display: flex;
+            opacity: 1;
         }
         .modal-content {
             background-color: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
+            border-radius: 1rem;
+            padding: 2rem;
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
             max-height: 80vh;
             overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
         }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
         /* สไตล์สำหรับฟอร์มในโมดัล */
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 600;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
         .form-group input, 
         .form-group textarea, 
         .form-group select {
             width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.25rem;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background-color: #f8fafc;
+            transition: all 0.2s;
         }
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
         .form-buttons {
             display: flex;
             justify-content: flex-end;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            margin-top: 2rem;
         }
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
             transition: all 0.2s;
             border: none;
+            cursor: pointer;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .btn:active {
+            transform: scale(0.98);
         }
         .btn-primary {
-            background-color: #ef4444;
+            background: linear-gradient(to right, #ef4444, #dc2626);
             color: white;
         }
         .btn-primary:hover {
-            background-color: #dc2626;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+            filter: brightness(1.1);
         }
         .btn-secondary {
-            background-color: #6b7280;
-            color: white;
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
         }
         .btn-secondary:hover {
-            background-color: #4b5563;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
         }
+
         /* สไตล์สำหรับปุ่มย้อนกลับ */
         .back-btn {
-            background-color: #6b7280;
+            background-color: rgba(255, 255, 255, 0.1);
             color: white;
             padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
+            border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
-            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .back-btn:hover {
-            background-color: #4b5563;
+            background-color: rgba(255, 255, 255, 0.2);
         }
+
         /* สไตล์สำหรับ loader */
         .loader {
             border: 3px solid #f3f3f3;
@@ -193,37 +271,70 @@
         .notification.info {
             border-left: 4px solid #3b82f6;
         }
+
         /* สไตล์สำหรับสถิติ */
         .stats-card {
-            background-color: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
         }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            gap: 1.5rem;
         }
         .stat-item {
             text-align: center;
-            padding: 1rem;
-            background-color: #f9fafb;
-            border-radius: 0.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            transition: transform 0.2s;
+        }
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            color: #ef4444;
+            background: linear-gradient(to right, #ef4444, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
         }
         .stat-label {
             font-size: 0.875rem;
-            color: #6b7280;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+        /* สไตล์สำหรับตารางยอดฮิต */
+        .top-questions-table tr:last-child td {
+            border-bottom: none;
         }
     </style>
 </head>
 <body class="text-gray-800">
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-gray-900 bg-opacity-90 z-[2000] flex items-center justify-center hidden">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center">
+            <div class="mb-4 bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-red-600">
+                <span class="material-icons text-3xl">lock</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-2 text-gray-800">เข้าสู่ระบบ Admin</h2>
+            <p class="text-gray-500 mb-6 text-sm">กรุณากรอกรหัสผ่านเพื่อจัดการข้อมูล</p>
+            <form id="loginForm">
+                <input type="password" id="adminPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none mb-4 transition-all" placeholder="รหัสผ่าน" required>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-all transform active:scale-95 shadow-lg">
+                    เข้าใช้งาน
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Notification -->
     <div id="notification" class="notification">
         <span class="material-icons">info</span>
@@ -231,7 +342,7 @@
     </div>
 
     <!-- Header Section -->
-    <header class="bg-gray-800 text-white py-8 px-4 shadow-lg">
+    <header class="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-8 px-4 shadow-lg">
         <div class="max-w-6xl mx-auto">
             <div class="flex items-center justify-between">
                 <div>
@@ -239,12 +350,28 @@
                         <span class="material-icons">admin_panel_settings</span>
                         Paypoint FAQ Admin
                     </h1>
-                    <p class="text-gray-300 mt-1">จัดการคำถามที่พบบ่อย (FAQ)</p>
+                    <div class="flex items-center gap-3 mt-1">
+                        <p class="text-gray-300">จัดการคำถามที่พบบ่อย (FAQ)</p>
+                        <div id="connectionStatus" class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-400 border border-gray-600 flex items-center gap-1 transition-all">
+                            <span class="w-2 h-2 rounded-full bg-gray-500"></span>
+                            รอการเชื่อมต่อ...
+                        </div>
+                    </div>
                 </div>
-                <a href="https://tuikub.github.io/tracking/chatbot_paypoint_red.html" class="back-btn">
-                    <span class="material-icons">arrow_back</span>
-                    กลับสู่หน้าหลัก
-                </a>
+                <div class="flex gap-3">
+                    <button id="changePassBtn" class="back-btn hidden" onclick="openChangePasswordModal()">
+                        <span class="material-icons">vpn_key</span>
+                        เปลี่ยนรหัสผ่าน
+                    </button>
+                    <button id="logoutBtn" class="back-btn hidden" onclick="logout()">
+                        <span class="material-icons">logout</span>
+                        ออกจากระบบ
+                    </button>
+                    <a href="https://tuikub.github.io/tracking/chatbot_paypoint_red.html" class="back-btn">
+                        <span class="material-icons">arrow_back</span>
+                        กลับสู่หน้าหลัก
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -280,6 +407,10 @@
                         <span class="material-icons text-sm">add</span>
                         เพิ่มคำถามใหม่
                     </button>
+                    <button id="openSheet" class="btn btn-secondary" style="background-color: #10b981; color: white; border: 1px solid #059669;">
+                        <span class="material-icons text-sm">description</span>
+                        เปิด Google Sheet
+                    </button>
                     <button id="refreshFAQ" class="btn btn-secondary">
                         <span class="material-icons text-sm">refresh</span>
                         รีเฟรชข้อมูล
@@ -287,6 +418,15 @@
                     <button id="exportFAQ" class="btn btn-secondary">
                         <span class="material-icons text-sm">download</span>
                         ส่งออกข้อมูล
+                    </button>
+                    <button id="importFAQ" class="btn btn-secondary">
+                        <span class="material-icons text-sm">upload</span>
+                        นำเข้าข้อมูล
+                    </button>
+                    <input type="file" id="importFile" accept=".xlsx, .xls" class="hidden">
+                    <button id="resetData" class="btn btn-secondary" style="background-color: #f59e0b;">
+                        <span class="material-icons text-sm">restart_alt</span>
+                        รีเซ็ตข้อมูล
                     </button>
                 </div>
             </div>
@@ -327,6 +467,7 @@
                             <th>คำถาม</th>
                             <th>คำตอบ</th>
                             <th>คำค้นหา</th>
+                            <th>สติกเกอร์</th>
                             <th>จัดการ</th>
                         </tr>
                     </thead>
@@ -334,6 +475,14 @@
                         <!-- FAQ items will be loaded here -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Google Form Section -->
+        <div class="faq-form mt-8">
+            <h2 class="text-xl font-bold mb-4">เพิ่มข้อมูลผ่าน Google Form</h2>
+            <div class="w-full overflow-hidden rounded-lg border border-gray-200 flex justify-center">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeaeAgzVjnQCErruBVM-3YWWJx7_vbjHF3JRb1fMtb6tEyOoQ/viewform?embedded=true" width="100%" height="1200" frameborder="0" marginheight="0" marginwidth="0">กำลังโหลด…</iframe>
             </div>
         </div>
 
@@ -379,8 +528,46 @@
                     <label for="faqLink">ลิงก์ (ถ้ามี)</label>
                     <input type="url" id="faqLink" placeholder="https://example.com">
                 </div>
+                <div class="form-group">
+                    <label for="faqImage">รูปภาพประกอบ (URL)</label>
+                    <input type="url" id="faqImage" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="faqSticker">สติกเกอร์ (URL หรือ Emoji)</label>
+                    <input type="text" id="faqSticker" placeholder="เช่น 👋 หรือ URL รูปสติกเกอร์">
+                </div>
                 <div class="form-buttons">
                     <button type="button" id="cancelBtn" class="btn btn-secondary">ยกเลิก</button>
+                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">เปลี่ยนรหัสผ่าน</h2>
+                <button onclick="closeChangePasswordModal()" class="text-gray-500 hover:text-gray-700">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="oldPassword">รหัสผ่านเดิม</label>
+                    <input type="password" id="oldPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">รหัสผ่านใหม่</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">ยืนยันรหัสผ่านใหม่</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" onclick="closeChangePasswordModal()" class="btn btn-secondary">ยกเลิก</button>
                     <button type="submit" class="btn btn-primary">บันทึก</button>
                 </div>
             </form>
@@ -393,9 +580,10 @@
 
     <script>
         // --- CONFIGURATION ---
-        const SHEET_ID = '13YE50RWDXik5YhrIqB6naWRxfwDFtFVFbtqs-2bH0Hc';
-        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
-        const SHEET_EDIT_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+        // ใส่ URL ที่ได้จากการ Deploy Google Apps Script ตรงนี้
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyNiTiikuS9QYVN5xQIuhKozB0jOROZ8pEia3K4QS_FFS4Gnn0JNSJ9H7LS1p5aTOtw/exec'; // <--- วาง URL ของ Google Apps Script ที่ได้ตรงนี้ (ในเครื่องหมายคำพูด)
+        const SHEET_VIEW_URL = 'https://docs.google.com/spreadsheets/d/13YE50RWDXik5YhrIqB6naWRxfwDFtFVFbtqs-2bH0Hc/edit';
+        const DEFAULT_HASH = '0a92fa75206305d98699b4903738c6c46e111883a76584b045c75853252992c6';
         
         // Data Store
         let faqData = [];
@@ -407,8 +595,11 @@
         const faqTableContainer = document.getElementById('faqTableContainer');
         const faqTableBody = document.getElementById('faqTableBody');
         const addNewFAQBtn = document.getElementById('addNewFAQ');
+        const openSheetBtn = document.getElementById('openSheet');
         const refreshFAQBtn = document.getElementById('refreshFAQ');
         const exportFAQBtn = document.getElementById('exportFAQ');
+        const importFAQBtn = document.getElementById('importFAQ');
+        const importFile = document.getElementById('importFile');
         const searchInput = document.getElementById('searchInput');
         const categoryFilter = document.getElementById('categoryFilter');
         const faqModal = document.getElementById('faqModal');
@@ -421,23 +612,54 @@
         const totalFAQ = document.getElementById('totalFAQ');
         const totalCategories = document.getElementById('totalCategories');
         const lastUpdated = document.getElementById('lastUpdated');
+        const connectionStatus = document.getElementById('connectionStatus');
         
         // Initialize app
         window.onload = function() {
+            checkLogin();
+        };
+
+        // Helper: Generate SHA-256 hash
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function getStoredHash() {
+            return localStorage.getItem('admin_password_hash') || DEFAULT_HASH;
+        }
+
+        function checkLogin() {
+            // ปิดระบบ Login ชั่วคราว
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            document.getElementById('changePassBtn').classList.remove('hidden');
             fetchFAQ();
             setupEventListeners();
-        };
+        }
+
+        function logout() {
+            sessionStorage.removeItem('admin_logged_in');
+            window.location.reload();
+        }
         
         // Setup event listeners
         function setupEventListeners() {
             addNewFAQBtn.addEventListener('click', showAddModal);
+            openSheetBtn.addEventListener('click', () => window.open(SHEET_VIEW_URL, '_blank'));
             refreshFAQBtn.addEventListener('click', refreshFAQ);
             exportFAQBtn.addEventListener('click', exportFAQ);
+            importFAQBtn.addEventListener('click', () => importFile.click());
+            importFile.addEventListener('change', importFAQ);
+            document.getElementById('resetData').addEventListener('click', resetToDefault);
             searchInput.addEventListener('input', filterFAQ);
             categoryFilter.addEventListener('change', filterFAQ);
             closeModalBtn.addEventListener('click', closeModal);
             cancelBtn.addEventListener('click', closeModal);
             faqForm.addEventListener('submit', submitFAQ);
+            document.getElementById('changePasswordForm').addEventListener('submit', submitChangePassword);
         }
         
         // Show notification
@@ -450,57 +672,54 @@
             }, 3000);
         }
         
+        // Update connection status UI
+        function updateConnectionStatus(status) {
+            if (!connectionStatus) return;
+            
+            if (status === 'connected') {
+                connectionStatus.className = 'text-xs px-2 py-0.5 rounded-full bg-green-900/50 text-green-200 border border-green-700 flex items-center gap-1';
+                connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> เชื่อมต่อแล้ว';
+            } else if (status === 'error') {
+                connectionStatus.className = 'text-xs px-2 py-0.5 rounded-full bg-red-900/50 text-red-200 border border-red-700 flex items-center gap-1';
+                connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span> เชื่อมต่อล้มเหลว';
+            } else {
+                connectionStatus.className = 'text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-400 border border-gray-600 flex items-center gap-1';
+                connectionStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-gray-500"></span> รอการเชื่อมต่อ...';
+            }
+        }
+        
         // Fetch FAQ data
         async function fetchFAQ() {
+            if (!GAS_API_URL) {
+                showNotification('กรุณาใส่ GAS_API_URL ในโค้ดก่อนใช้งาน', 'error');
+                loading.innerHTML = '<p class="text-red-500">ยังไม่ได้เชื่อมต่อ Google Apps Script</p>';
+                updateConnectionStatus('error');
+                return;
+            }
             try {
-                const response = await fetch(SHEET_URL);
+                // Fetch from Google Apps Script
+                const response = await fetch(`${GAS_API_URL}?action=read`);
                 if (response.ok) {
-                    const data = await response.text();
-                    faqData = parseCSV(data);
+                    const result = await response.json();
+                    // GAS returns array of objects directly
+                    faqData = result;
                     filteredData = [...faqData];
                     displayFAQTable();
                     updateStatistics();
                     showNotification('โหลดข้อมูลสำเร็จ', 'success');
+                    updateConnectionStatus('connected');
                 } else {
                     throw new Error('Failed to fetch FAQ data');
                 }
             } catch (error) {
                 console.error('Error fetching FAQ:', error);
                 showNotification('ไม่สามารถโหลดข้อมูลได้', 'error');
+                updateConnectionStatus('error');
             }
             
             // Hide loading and show table
             loading.classList.add('hidden');
             faqTableContainer.classList.remove('hidden');
-        }
-        
-        // Parse CSV data
-        function parseCSV(csvText) {
-            const lines = csvText.split('\n');
-            const result = [];
-            
-            // Skip header
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                
-                // Regex to split CSV while respecting quotes
-                const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
-                const matches = lines[i].match(regex);
-                
-                if (matches && matches.length >= 4) {
-                    const clean = (str) => str.replace(/^"|"$/g, '').trim();
-                    result.push({
-                        id: i, // Use line number as ID
-                        category: clean(matches[0]),
-                        question: clean(matches[1]),
-                        answer: clean(matches[2]),
-                        keywords: clean(matches[3]).split(',').map(k => k.trim()),
-                        link: matches[4] ? clean(matches[4]) : ''
-                    });
-                }
-            }
-            
-            return result;
         }
         
         // Update statistics
@@ -512,6 +731,30 @@
             
             const now = new Date();
             lastUpdated.textContent = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+
+            // Update Top Questions
+            const topQuestionsBody = document.getElementById('topQuestionsBody');
+            topQuestionsBody.innerHTML = '';
+
+            // Sort by viewCount (descending) - Assuming data has viewCount property
+            // If no viewCount, we can't really show "popular" ones, but code handles it.
+            const sortedData = [...faqData].sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+            const top5 = sortedData.slice(0, 5);
+
+            if (top5.length > 0 && (top5[0].viewCount || 0) > 0) {
+                top5.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-50 hover:bg-gray-50 transition-colors';
+                    row.innerHTML = `
+                        <td class="py-3 pl-4 text-gray-500 font-medium">#${index + 1}</td>
+                        <td class="py-3 text-gray-800">${item.question}</td>
+                        <td class="py-3 pr-4 text-right font-bold text-red-500">${(item.viewCount || 0).toLocaleString()}</td>
+                    `;
+                    topQuestionsBody.appendChild(row);
+                });
+            } else {
+                topQuestionsBody.innerHTML = '<tr><td colspan="3" class="py-6 text-center text-gray-400">ยังไม่มีข้อมูลสถิติการใช้งาน</td></tr>';
+            }
         }
         
         // Display FAQ table
@@ -530,6 +773,7 @@
                     <td>${item.question}</td>
                     <td>${item.answer.length > 50 ? item.answer.substring(0, 50) + '...' : item.answer}</td>
                     <td>${item.keywords.join(', ')}</td>
+                    <td>${item.sticker ? (item.sticker.startsWith('http') ? '<img src="'+item.sticker+'" class="w-8 h-8 rounded object-cover">' : '<span class="text-2xl">'+item.sticker+'</span>') : '-'}</td>
                     <td>
                         <button class="table-btn edit-btn" onclick="editFAQ(${item.id})">
                             <span class="material-icons text-sm">edit</span>
@@ -571,30 +815,82 @@
         
         // Export FAQ
         function exportFAQ() {
-            // Create CSV content
-            let csvContent = "Category,Question,Answer,Keywords,Link\n";
+            // Prepare data for Excel
+            const data = faqData.map(item => ({
+                Category: item.category,
+                Question: item.question,
+                Answer: item.answer,
+                Keywords: item.keywords.join(', '),
+                Link: item.link || '',
+                Image: item.image || '',
+                Sticker: item.sticker || ''
+            }));
+
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(data);
             
-            faqData.forEach(item => {
-                const category = `"${item.category}"`;
-                const question = `"${item.question}"`;
-                const answer = `"${item.answer}"`;
-                const keywords = `"${item.keywords.join(',')}"`;
-                const link = `"${item.link}"`;
-                
-                csvContent += `${category},${question},${answer},${keywords},${link}\n`;
-            });
-            
-            // Create download link
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `paypoint_faq_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "FAQ Data");
+
+            // Generate Excel file
+            XLSX.writeFile(wb, `paypoint_faq_${new Date().toISOString().split('T')[0]}.xlsx`);
             
             showNotification('ส่งออกข้อมูลสำเร็จ', 'success');
         }
         
+        // Import FAQ
+        function importFAQ(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (jsonData.length === 0) {
+                        showNotification('ไม่พบข้อมูลในไฟล์', 'error');
+                        return;
+                    }
+
+                    if (!confirm(`พบข้อมูล ${jsonData.length} รายการ ต้องการนำเข้าหรือไม่? (ข้อมูลเดิมจะถูกแทนที่)`)) {
+                        importFile.value = '';
+                        return;
+                    }
+
+                    showNotification('กำลังนำเข้าข้อมูล...', 'info');
+
+                    const formattedData = jsonData.map(row => ({
+                        category: row.Category || row.category || '',
+                        question: row.Question || row.question || '',
+                        answer: row.Answer || row.answer || '',
+                        keywords: (row.Keywords || row.keywords || '').toString().split(',').map(k => k.trim()).filter(k => k),
+                        link: row.Link || row.link || '',
+                        image: row.Image || row.image || '',
+                        sticker: row.Sticker || row.sticker || ''
+                    }));
+
+                    await fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'import', data: formattedData })
+                    });
+                    
+                    refreshFAQ();
+                    showNotification('นำเข้าข้อมูลสำเร็จ', 'success');
+                } catch (error) {
+                    console.error('Import error:', error);
+                    showNotification('เกิดข้อผิดพลาดในการนำเข้า', 'error');
+                }
+                importFile.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
         // Show add modal
         function showAddModal() {
             currentEditId = null;
@@ -616,20 +912,29 @@
             document.getElementById('faqAnswer').value = item.answer;
             document.getElementById('faqKeywords').value = item.keywords.join(', ');
             document.getElementById('faqLink').value = item.link || '';
+            document.getElementById('faqImage').value = item.image || '';
+            document.getElementById('faqSticker').value = item.sticker || '';
             
             faqModal.classList.add('show');
         };
         
         // Delete FAQ
-        window.deleteFAQ = function(id) {
+        window.deleteFAQ = async function(id) {
             if (confirm('คุณต้องการลบคำถามนี้หรือไม่?')) {
-                // In a real implementation, you would send a request to the server
-                // For this demo, we'll just remove it from the local array
-                faqData = faqData.filter(item => item.id !== id);
-                filteredData = filteredData.filter(item => item.id !== id);
-                displayFAQTable();
-                updateStatistics();
-                showNotification('ลบคำถามเรียบร้อยแล้ว', 'success');
+                showNotification('กำลังลบข้อมูล...', 'info');
+                try {
+                    await fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'delete', id: id })
+                    });
+                    
+                    // Refresh data
+                    refreshFAQ();
+                    showNotification('ลบคำถามเรียบร้อยแล้ว', 'success');
+                } catch (error) {
+                    console.error('Error deleting:', error);
+                    showNotification('เกิดข้อผิดพลาดในการลบ', 'error');
+                }
             }
         };
         
@@ -639,7 +944,7 @@
         }
         
         // Submit FAQ form
-        function submitFAQ(e) {
+        async function submitFAQ(e) {
             e.preventDefault();
             
             const category = document.getElementById('faqCategory').value;
@@ -647,40 +952,70 @@
             const answer = document.getElementById('faqAnswer').value;
             const keywords = document.getElementById('faqKeywords').value.split(',').map(k => k.trim());
             const link = document.getElementById('faqLink').value;
+            const image = document.getElementById('faqImage').value;
+            const sticker = document.getElementById('faqSticker').value;
             
+            const payload = {
+                category, question, answer, keywords, link, image, sticker
+            };
+
+            showNotification('กำลังบันทึกข้อมูล...', 'info');
+            closeModal();
+
             if (currentEditId) {
                 // Update existing FAQ
-                const item = faqData.find(faq => faq.id === currentEditId);
-                if (item) {
-                    item.category = category;
-                    item.question = question;
-                    item.answer = answer;
-                    item.keywords = keywords;
-                    item.link = link;
-                }
-                showNotification('อัปเดตคำถามเรียบร้อยแล้ว', 'success');
+                payload.action = 'update';
+                payload.id = currentEditId;
             } else {
                 // Add new FAQ
-                const newId = Math.max(...faqData.map(item => item.id), 0) + 1;
-                faqData.push({
-                    id: newId,
-                    category: category,
-                    question: question,
-                    answer: answer,
-                    keywords: keywords,
-                    link: link
-                });
-                showNotification('เพิ่มคำถามใหม่เรียบร้อยแล้ว', 'success');
+                payload.action = 'add';
             }
-            
-            // Update filtered data and display
-            filteredData = [...faqData];
-            filterFAQ();
-            updateStatistics();
-            closeModal();
-            
-            // In a real implementation, you would send a request to the server to save the changes
-            // For this demo, we'll just update the local array
+
+            try {
+                await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                refreshFAQ(); // Reload data from server
+                showNotification('บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
+            } catch (error) {
+                console.error('Error saving:', error);
+                showNotification('เกิดข้อผิดพลาดในการบันทึก', 'error');
+            }
+        }
+
+        // Change Password Functions
+        function openChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.add('show');
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.remove('show');
+            document.getElementById('changePasswordForm').reset();
+        }
+
+        async function submitChangePassword(e) {
+            e.preventDefault();
+            const oldPass = document.getElementById('oldPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (newPass !== confirmPass) {
+                alert('รหัสผ่านใหม่ไม่ตรงกัน');
+                return;
+            }
+
+            const oldHash = await sha256(oldPass);
+            if (oldHash !== getStoredHash()) {
+                alert('รหัสผ่านเดิมไม่ถูกต้อง');
+                return;
+            }
+
+            const newHash = await sha256(newPass);
+            localStorage.setItem('admin_password_hash', newHash);
+            showNotification('เปลี่ยนรหัสผ่านเรียบร้อยแล้ว', 'success');
+            closeChangePasswordModal();
         }
     </script>
 </body>

@@ -160,6 +160,58 @@
         .follow-link:hover {
             background-color: #cc0000;
         }
+        /* Quick Reply Styles */
+        .quick-replies-container {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE 10+ */
+        }
+        .quick-replies-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        .quick-reply-btn {
+            white-space: nowrap;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .quick-reply-btn:hover {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-color: #bfdbfe;
+            transform: translateY(-1px);
+        }
+        /* Sticker Styles */
+        .sticker-img {
+            max-width: 120px;
+            max-height: 120px;
+            margin-top: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        .sticker-emoji {
+            font-size: 4rem;
+            display: block;
+            margin-top: 0.5rem;
+            line-height: 1;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -240,6 +292,18 @@
 
             <!-- Input Area -->
             <div class="bg-white p-4 border-t border-gray-200">
+                <!-- Quick Replies -->
+                <div class="quick-replies-container" id="quickReplies">
+                    <button class="quick-reply-btn" onclick="handleSuggestion('โปรโมชั่น')">🔥 โปรโมชั่น</button>
+                    <button class="quick-reply-btn" onclick="handleSuggestion('เช็คพัสดุ')">📦 เช็คพัสดุ</button>
+                    <button class="quick-reply-btn" onclick="handleSuggestion('ค่าส่งเท่าไหร่')">💰 ค่าส่งเท่าไหร่</button>
+                    <button class="quick-reply-btn" onclick="handleSuggestion('พื้นที่ห่างไกล')">🏔️ พื้นที่ห่างไกล</button>
+                    <button class="quick-reply-btn" onclick="handleSuggestion('พัสดุตกค้าง')">⚠️ พัสดุตกค้าง</button>
+                    <button class="quick-reply-btn" onclick="handleSuggestion('ติดต่อแอดมิน')">📞 ติดต่อแอดมิน</button>
+                    <button class="quick-reply-btn" onclick="handleSuggestion('ของห้ามส่ง')">🚫 ของห้ามส่ง</button>
+                    <button class="quick-reply-btn" onclick="handleSuggestion('เวลาทำการ')">⏰ เวลาทำการ</button>
+                </div>
+
                 <form id="chatForm" class="flex gap-2 relative">
                     <button 
                         type="button" 
@@ -313,10 +377,10 @@
             category: "ค่าบริการและพื้นที่การส่ง",
             items: [
               {
-                keywords: ["ค่าส่ง", "ราคา", "กี่บาท"],
-                question: "ค่าส่งกี่บาท / ราคาแพงไหม / คิดเงินยังไง",
-                answer: 'ค่าส่งเราเริ่มต้นเบาๆ แค่ 25 บาทเองค่ะ! ราคาจริงจะคิดตามน้ำหนักและขนาดกล่อง ลองแจ้งรายละเอียดมาให้แอดมินช่วยคำนวณก่อนได้นะคะ ดูเพิ่มเติม: https://tuikub.github.io/paypoint/c.html',
-                link: "https://tuikub.github.io/paypoint/c.html"
+                keywords: ["ค่าส่ง", "ราคา", "กี่บาท", "ราคาเริ่มต้น"],
+                question: "ค่าส่งกี่บาท / ราคาเริ่มต้นเท่าไหร่",
+                answer: 'ค่าส่งเริ่มต้นเบาๆ แค่ 25 บาทค่ะ! ราคาจริงจะคิดตามน้ำหนักและขนาดกล่อง ดูตารางราคาเริ่มต้นได้ที่: https://tuikub.github.io/tracking/price.html',
+                link: "https://tuikub.github.io/tracking/price.html"
               },
               {
                 keywords: ["พื้นที่ห่างไกล", "เกาะ", "ดอย", "3จังหวัด"],
@@ -348,10 +412,17 @@
                 link: "https://tuikub.github.io/paypoint/Digital.html"
               },
               {
+                keywords: ["ตกค้าง", "พัสดุค้าง", "นำจ่ายไม่สำเร็จ", "ติดต่อไม่ได้", "pending"],
+                question: "พัสดุตกค้าง / นำจ่ายไม่สำเร็จ ต้องทำอย่างไร?",
+                answer: "⚠️ **แจ้งเตือนพัสดุตกค้าง**\nหากสถานะขึ้นว่าตกค้าง หรือนำจ่ายไม่สำเร็จ:\n1. **ติดต่อผู้รับ:** ตรวจสอบว่ามีสายเรียกเข้าจากขนส่งหรือไม่\n2. **ตรวจสอบที่อยู่:** เบอร์โทรถูกต้องหรือไม่\n3. **เร่งติดตาม:** แจ้งเลขพัสดุให้แอดมิน หรือโทร Call Center ขนส่งทันทีครับ",
+                sticker: "⚠️"
+              },
+              {
                 keywords: ["ของห้ามส่ง", "แพ็คของ"],
                 question: "ไม่แน่ใจว่าสินค้าชิ้นนี้ส่งได้ไหม หรือต้องแพ็คอย่างไรไม่ให้เสียหาย?",
                 answer: "สำคัญมากครับ ขอให้ศึกษาเงื่อนไขได้ที่เมนู 'คู่มือผู้ส่ง' ซึ่งจะระบุสิ่งของต้องห้าม (Prohibited Items) และวิธีการแพ็คที่ถูกต้อง",
-                link: "https://tuikub.github.io/tracking/packing.html"
+                link: "https://tuikub.github.io/tracking/packing.html",
+                image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi0o9dy2uhW38GNxBXXHg4HiSPX15dXO3NMX1kOG0xJc7Tpmva2s_vqh_3cz3jA-2DFDOGzv3cJcg3BR06tW2CzOFzCDVkcMEYQpm6TKzaGWLnHUZAnFpWzS-LW6HFcSB7g-ENiGlmYDcP74K33dOokl3ZJOlpeILfS2xIA9LS8IpJA_-umKp-ssSe_oGo/s1600/PAYPOINT%20_111.png"
               }
             ]
           },
@@ -425,6 +496,88 @@
             ]
           },
           {
+            category: "โปรโมชั่นและสิทธิพิเศษ",
+            items: [
+              {
+                keywords: ["โปรโมชั่น", "ส่วนลด", "ลดราคา", "promotion", "code", "coupon"],
+                question: "มีโปรโมชั่นหรือส่วนลดค่าส่งอะไรบ้างช่วงนี้?",
+                answer: "🔥 **โปรโมชั่นประจำเดือนนี้:**\n\n1. **สมาชิกใหม่:** ลดทันที 10% บิลแรก\n2. **Flash Express:** วันอาทิตย์ ค่าส่งเริ่มต้น 19 บาท (1kg)\n3. **J&T Express:** ส่ง 10 ชิ้นขึ้นไป ฟรีค่ากล่อง\n\n👉 สมัครสมาชิกรับส่วนลด: https://docs.google.com/forms/d/e/1FAIpQLSfLzcfxzr15pbp-Ctbo_ynY9ksB65lDOKHYsM8amc3COnPB7A/viewform",
+                link: "https://docs.google.com/forms/d/e/1FAIpQLSfLzcfxzr15pbp-Ctbo_ynY9ksB65lDOKHYsM8amc3COnPB7A/viewform"
+              },
+              {
+                keywords: ["สมาชิก", "member", "สมัครสมาชิก"],
+                question: "สมัครสมาชิกมีสิทธิพิเศษอะไรบ้าง / สมัครยังไง?",
+                answer: "สมัครสมาชิกฟรี! ไม่มีค่าใช้จ่าย\n✅ รับเรทค่าส่งพิเศษถูกกว่าหน้าร้าน\n✅ สะสมแต้มแลกของรางวัล\n✅ ไม่ต้องเขียนชื่อที่อยู่เอง (มีระบบเซฟ)\n\nคลิกสมัครเลย: https://docs.google.com/forms/d/e/1FAIpQLSfLzcfxzr15pbp-Ctbo_ynY9ksB65lDOKHYsM8amc3COnPB7A/viewform",
+                link: "https://docs.google.com/forms/d/e/1FAIpQLSfLzcfxzr15pbp-Ctbo_ynY9ksB65lDOKHYsM8amc3COnPB7A/viewform"
+              }
+            ]
+          },
+          {
+            category: "เวลาทำการขนส่ง",
+            items: [
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "ไปรษณีย์", "ems", "thailand post"],
+                question: "เวลาทำการของ ไปรษณีย์ไทย (Thailand Post) / EMS",
+                answer: "จันทร์ - ศุกร์: 08.00 - 18.00 น.\nเสาร์ - อาทิตย์: 09.00 - 14.00 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "kerry", "kex"],
+                question: "เวลาทำการของ Kerry Express (KEX)",
+                answer: "เปิดทำการทุกวัน: 08.30 - 20.30 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "flash"],
+                question: "เวลาทำการของ Flash Express",
+                answer: "เปิดทำการทุกวัน: 08.00 - 20.00 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "j&t", "jnt"],
+                question: "เวลาทำการของ J&T Express",
+                answer: "เปิดทำการทุกวัน 24 ชั่วโมง (เจ้าหน้าที่ 08.00 - 22.00 น.)",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "dhl"],
+                question: "เวลาทำการของ DHL Express",
+                answer: "จันทร์ - ศุกร์: 08.00 - 20.00 น.\nเสาร์: 08.00 - 16.00 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "best"],
+                question: "เวลาทำการของ Best Express",
+                answer: "จันทร์ - ศุกร์: 09.00 - 18.00 น.\nเสาร์ - อาทิตย์: 09.00 - 17.00 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "ninja"],
+                question: "เวลาทำการของ Ninja Van",
+                answer: "เปิดทำการทุกวัน: 09.00 - 20.00 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "spx", "shopee"],
+                question: "เวลาทำการของ SPX Express (Shopee)",
+                answer: "เปิดทำการทุกวัน: 08.00 - 20.00 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "nim"],
+                question: "เวลาทำการของ Nim Express",
+                answer: "จันทร์ - เสาร์: 08.00 - 17.00 น.",
+                link: ""
+              },
+              {
+                keywords: ["เวลาทำการ", "เปิดกี่โมง", "ปิดกี่โมง", "makesend"],
+                question: "เวลาทำการของ MAKESEND",
+                answer: "เปิดทำการทุกวัน: 08.00 - 22.00 น.",
+                link: ""
+              }
+            ]
+          },
+          {
             category: "งานไอทีและอุปกรณ์",
             items: [
               {
@@ -451,10 +604,45 @@
                 link: "https://tuikub.github.io/tracking/franchise.html"
               },
               {
+                keywords: ["สมัครยังไง", "ขั้นตอน", "เอกสารแฟรนไชส์", "วิธีสมัคร"],
+                question: "ขั้นตอนการสมัครแฟรนไชส์มีอะไรบ้าง?",
+                answer: "ง่ายๆ เพียง 3 ขั้นตอนครับ:\n1. กรอกข้อมูลใบสมัครออนไลน์\n2. รอเจ้าหน้าที่ติดต่อกลับเพื่อแนะนำแพ็กเกจ\n3. ชำระเงินและเริ่มติดตั้งระบบ\n\nกรอกใบสมัครได้ที่นี่เลยครับ: https://tuikub.github.io/tracking/franchise.html",
+                link: "https://tuikub.github.io/tracking/franchise.html"
+              },
+              {
                 keywords: ["ติดต่อ", "เบอร์โทร", "call center"],
                 question: "มีเรื่องด่วนมาก ต้องการโทรคุยกับ Call Center?",
                 answer: "ติดต่อสายด่วน: 085-507-8656 หรือ 085-515-8456 (น้องแอน/น้องมด)",
                 link: "https://tuikub.github.io/paypoint/#contact"
+              }
+            ]
+          },
+          {
+            category: "การทักทายและทั่วไป",
+            items: [
+              {
+                keywords: ["สวัสดี", "ดีจ้า", "ทักทาย", "hi", "hello"],
+                question: "สวัสดีครับ มีอะไรให้ช่วยไหมครับ?",
+                answer: "สวัสดีครับ! Paypoint ยินดีให้บริการ 🤖\nสอบถามเรื่องพัสดุ ค่าส่ง หรือแฟรนไชส์ พิมพ์มาได้เลยครับ",
+                sticker: "👋"
+              },
+              {
+                keywords: ["ขอบคุณ", "ขอบใจ", "thx", "thank"],
+                question: "ด้วยความยินดีครับ",
+                answer: "ยินดีที่ได้ดูแลครับ หากมีปัญหาอะไรสอบถามได้ตลอดเวลานะครับ ❤️",
+                sticker: "🙏"
+              },
+              {
+                keywords: ["สุดยอด", "เยี่ยม", "good", "like"],
+                question: "ขอบคุณสำหรับคำชมครับ",
+                answer: "ขอบคุณมากครับ! เป็นกำลังใจให้ทีมงานมากๆ เลยครับ",
+                sticker: "🥰"
+              },
+              {
+                keywords: ["ไม่เข้าใจ", "งง", "ไม่รู้เรื่อง"],
+                question: "ขออภัยที่ทำให้สับสนครับ",
+                answer: "ต้องขออภัยด้วยนะครับ ลองถามด้วยคำสั้นๆ เช่น 'ค่าส่ง', 'เช็คพัสดุ' หรือกดปุ่มเมนูด้านบนได้เลยครับ",
+                sticker: "😅"
               }
             ]
           }
@@ -484,12 +672,24 @@
             allQuestions = extractAllQuestions(rawFaqData);
 
             try {
-                const response = await fetch(SHEET_URL);
+                // Add cache buster
+                const response = await fetch(SHEET_URL + '&t=' + new Date().getTime());
                 if (response.ok) {
                     const data = await response.text();
-                    // ถ้าดึงข้อมูลจาก Sheet ได้ ให้นำมาต่อท้ายข้อมูลที่มีอยู่
-                    const sheetData = parseCSV(data);
-                    faqData = [...faqData, ...sheetData];
+                    
+                    // Check for HTML response (Error/Login page)
+                    if (data.trim().startsWith('<!DOCTYPE') || data.trim().startsWith('<html')) {
+                        console.error('Google Sheet returned HTML. Check sharing settings.');
+                    } else {
+                        const sheetData = parseCSV(data);
+                        if (sheetData.length > 0) {
+                            console.log(`Loaded ${sheetData.length} items from Google Sheet`);
+                            faqData = [...faqData, ...sheetData];
+                            
+                            // Update allQuestions for random display
+                            allQuestions = [...allQuestions, ...sheetData.map(item => ({ question: item.question, answer: item.answer, link: item.link }))];
+                        }
+                    }
                 }
             } catch (error) {
                 console.log("Using local data only");
@@ -561,7 +761,9 @@
                         category: group.category,
                         question: item.question,
                         answer: combinedAnswer,
-                        keywords: item.keywords || []
+                        keywords: item.keywords || [],
+                        image: item.image || '',
+                        sticker: item.sticker || ''
                     });
                 });
             });
@@ -570,23 +772,59 @@
 
         // 2. Parse CSV into JSON Objects
         function parseCSV(csvText) {
-            const lines = csvText.split('\n');
+            const lines = csvText.split(/\r?\n/);
             const result = [];
+            
+            // ตรวจสอบ Header ว่ามี Timestamp หรือไม่ (ถ้ามาจาก Google Form จะมี)
+            let hasTimestamp = false;
+            if (lines.length > 0) {
+                const header = lines[0].toLowerCase();
+                if (header.includes('timestamp') || header.includes('ประทับเวลา')) {
+                    hasTimestamp = true;
+                }
+            }
+            const offset = hasTimestamp ? 1 : 0;
             
             // Start from index 1 to skip header (assuming header is: Category, Question, Answer)
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                // Regex to split CSV while respecting quotes
-                const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
-                const matches = lines[i].match(regex);
+                // Robust CSV parsing
+                const row = [];
+                let inQuote = false;
+                let current = '';
                 
-                if (matches && matches.length >= 2) {
-                    const clean = (str) => str.replace(/^"|"$/g, '').trim();
+                for (let j = 0; j < lines[i].length; j++) {
+                    const char = lines[i][j];
+                    if (char === '"') {
+                        inQuote = !inQuote;
+                    } else if (char === ',' && !inQuote) {
+                        row.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                row.push(current); // Last field
+                
+                const clean = (str) => {
+                    str = (str || '').trim();
+                    if (str.startsWith('"') && str.endsWith('"')) str = str.substring(1, str.length - 1);
+                    return str.replace(/""/g, '"');
+                };
+                
+                if (row.length >= 3 + offset) {
+                    
+                    // รองรับโครงสร้าง 5 คอลัมน์: Category, Question, Answer, Keywords, Link
                     result.push({
-                        category: matches.length > 2 ? clean(matches[0]) : 'ทั่วไป',
-                        question: clean(matches[matches.length - 2]),
-                        answer: clean(matches[matches.length - 1])
+                        category: clean(row[0 + offset]),
+                        question: clean(row[1 + offset]),
+                        answer: clean(row[2 + offset]),
+                        // คอลัมน์ 4 คือ Keywords, คอลัมน์ 5 คือ Link (ถ้ามี)
+                        keywords: row.length > 3 + offset ? clean(row[3 + offset]).split(',').map(k => k.trim()).filter(k => k) : [],
+                        link: row.length > 4 + offset ? clean(row[4 + offset]) : '',
+                        image: row.length > 5 + offset ? clean(row[5 + offset]) : '',
+                        sticker: row.length > 6 + offset ? clean(row[6 + offset]) : ''
                     });
                 }
             }
@@ -622,8 +860,105 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
+        // ฟังก์ชันคำนวณค่าส่งเบื้องต้น
+        function calculateShipping(weightKg) {
+            let flashPrice, jntPrice, kerryPrice;
+            
+            // สูตรคำนวณสมมติ (Mock Data) อ้างอิงราคาตลาดทั่วไป
+            if (weightKg <= 1) {
+                flashPrice = 25; jntPrice = 23; kerryPrice = 24;
+            } else if (weightKg <= 2) {
+                flashPrice = 35; jntPrice = 30; kerryPrice = 40;
+            } else if (weightKg <= 5) {
+                flashPrice = 55; jntPrice = 50; kerryPrice = 65;
+            } else if (weightKg <= 10) {
+                flashPrice = 85; jntPrice = 80; kerryPrice = 100;
+            } else {
+                // เกิน 10kg คิดเพิ่มกิโลละประมาณ 10-15 บาท
+                flashPrice = 85 + ((weightKg - 10) * 12);
+                jntPrice = 80 + ((weightKg - 10) * 10);
+                kerryPrice = 100 + ((weightKg - 10) * 15);
+            }
+
+            return `
+                <strong>📦 ประเมินค่าส่ง (น้ำหนัก ${weightKg} กก.)</strong><br><br>
+                🟡 <strong>Flash Express:</strong> ~${Math.ceil(flashPrice)} บาท<br>
+                🔴 <strong>J&T Express:</strong> ~${Math.ceil(jntPrice)} บาท<br>
+                🟠 <strong>Kerry Express:</strong> ~${Math.ceil(kerryPrice)} บาท<br><br>
+                <small class="text-gray-500">*ราคาโดยประมาณ ขึ้นอยู่กับขนาดและพื้นที่ปลายทาง</small>
+            `;
+        }
+
+        // ฟังก์ชันตรวจสอบพื้นที่ห่างไกล
+        function checkRemoteArea(zipcode) {
+            // รายชื่อรหัสไปรษณีย์พื้นที่ห่างไกล/พิเศษ (อ้างอิงจาก remote.html)
+            const remoteCodes = [
+                "50240", "50250", "50260", "50270", "50310", "50350", // เชียงใหม่
+                "57180", "57310", // เชียงราย
+                "55220", "55130", "55160", // น่าน
+                "51160", // เพชรบูรณ์
+                "63160", "63150", "63140", "63110", "63000", // ตาก
+                "71180", "71240", "71220", // กาญจนบุรี
+                "20120", "20250", // ชลบุรี (เกาะ)
+                "21130", // ระยอง (เกาะ)
+                "23120", "23170", // ตราด (เกาะ)
+                "81150", "81000", // กระบี่ (เกาะ)
+                "82160", // พังงา (เกาะ)
+                "84280", "84360", "84140", // สุราษฎร์ธานี (เกาะ)
+                "85000", // ระนอง (เกาะ)
+                "91000", // สตูล (เกาะ)
+                "92120", // ตรัง (เกาะ)
+                "90160", "90210", "90220", "90310" // สงขลา
+            ];
+            const remotePrefixes = ["58", "94", "95", "96"]; // แม่ฮ่องสอน, ปัตตานี, ยะลา, นราธิวาส
+            
+            return remoteCodes.includes(zipcode) || remotePrefixes.some(p => zipcode.startsWith(p));
+        }
+
         async function processQuery(query) {
             const term = query.toLowerCase().trim();
+            
+            // --- Feature: คำนวณค่าส่ง ---
+            // ตรวจสอบว่ามีตัวเลขน้ำหนักหรือไม่ (เช่น 1kg, 500g, 2 กิโล)
+            const weightPattern = /(\d+(\.\d+)?)\s*(kg|g|k|กก\.?|กิโล|กรัม)/i;
+            const calcKeywords = ["ค่าส่ง", "ราคา", "เท่าไหร่", "กี่บาท", "คำนวณ"];
+            
+            if (calcKeywords.some(k => term.includes(k)) && weightPattern.test(term)) {
+                const match = term.match(weightPattern);
+                let weight = parseFloat(match[1]);
+                const unit = match[3].toLowerCase();
+                
+                if (unit === 'g' || unit === 'กรัม') weight = weight / 1000;
+                
+                const result = calculateShipping(weight);
+                addBotMessage(result);
+                return;
+            }
+            // ---------------------------
+            
+            // --- Feature: Check Remote Area ---
+            const zipPattern = /\b\d{5}\b/;
+            if (zipPattern.test(term)) {
+                const zipcode = term.match(zipPattern)[0];
+                const isRemote = checkRemoteArea(zipcode);
+                
+                if (isRemote) {
+                    addBotMessage(`
+                        <strong>🏔️ พื้นที่ห่างไกล/พื้นที่พิเศษ (${zipcode})</strong><br><br>
+                        รหัสไปรษณีย์นี้อยู่ในพื้นที่ห่างไกล (Remote Area) หรือพื้นที่ท่องเที่ยวพิเศษ<br>
+                        ⚠️ <strong>อาจมีค่าธรรมเนียมเพิ่ม 50 บาท</strong> สำหรับบางขนส่ง (เช่น Flash, J&T)<br>
+                        ✅ <strong>แนะนำ:</strong> ส่ง Kerry Express (KEX) หรือ ไปรษณีย์ไทย มักไม่มีบวกเพิ่มครับ
+                    `);
+                } else {
+                    addBotMessage(`
+                        <strong>✅ พื้นที่ปกติ (${zipcode})</strong><br><br>
+                        รหัสไปรษณีย์นี้ <strong>ไม่อยู่</strong> ในพื้นที่ห่างไกลครับ<br>
+                        สามารถจัดส่งได้ตามราคาปกติทุกขนส่งเลยครับ
+                    `);
+                }
+                return;
+            }
+            // ---------------------------
             
             // แก้ไขฟังก์ชันค้นหาให้ใช้ keywords จากข้อมูลในโค้ด
             const matches = faqData.filter(item => {
@@ -646,7 +981,22 @@
                     /(https?:\/\/[^\s]+)/g, 
                     '<a href="$1" target="_blank" class="text-blue-600 hover:underline break-all">$1</a>'
                 );
-                addBotMessage(`<strong>${item.question}</strong><br><br>${formattedAnswer.replace(/\n/g, '<br>')}`);
+                
+                let responseHtml = `<strong>${item.question}</strong><br><br>${formattedAnswer.replace(/\n/g, '<br>')}`;
+                
+                if (item.image) {
+                    responseHtml += `<div class="mt-3"><img src="${item.image}" alt="รูปประกอบ" class="rounded-lg shadow-md max-w-full h-auto hover:opacity-90 transition-opacity cursor-pointer" onclick="window.open(this.src, '_blank')"></div>`;
+                }
+
+                if (item.sticker) {
+                    if (item.sticker.startsWith('http')) {
+                         responseHtml += `<div class="mt-2"><img src="${item.sticker}" class="sticker-img" alt="sticker"></div>`;
+                    } else {
+                         responseHtml += `<div class="mt-2 text-center"><span class="sticker-emoji">${item.sticker}</span></div>`;
+                    }
+                }
+                
+                addBotMessage(responseHtml);
             } else {
                 // Multiple matches
                 let html = `ผมพบ ${matches.length} หัวข้อที่เกี่ยวข้องครับ:<br>`;
