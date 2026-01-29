@@ -437,8 +437,8 @@
                     <button type="button" id="darkModeToggle" class="text-dynamic-secondary p-3 rounded-full hover:text-dynamic-primary transition-colors" title="สลับโหมดมืด/สว่าง"><span class="material-icons" id="darkModeIcon">dark_mode</span></button>
                     <button type="button" id="imageUploadBtn" class="text-dynamic-secondary p-3 rounded-full hover:text-red-500 transition-colors" title="ค้นหาด้วยรูปภาพ"><span class="material-icons">image</span></button>
                     <button type="button" id="voiceSearchBtn" class="text-dynamic-secondary p-3 rounded-full hover:text-red-500 transition-colors" title="ค้นหาด้วยเสียง"><span class="material-icons">mic</span></button>
-                    <input type="text" id="chatInput" placeholder="พิมพ์คำถามของคุณที่นี่..." class="flex-1 py-3 px-5 rounded-full bg-dynamic-secondary text-dynamic-primary placeholder-dynamic-secondary border-transparent focus:bg-dynamic-primary focus:border-dynamic focus:ring-0 transition-all outline-none" autocomplete="off" disabled>
-                    <button type="submit" id="sendBtn" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled><span class="material-icons">send</span></button>
+                    <input type="text" id="chatInput" placeholder="พิมพ์คำถามของคุณที่นี่..." class="flex-1 py-3 px-5 rounded-full bg-dynamic-secondary text-dynamic-primary placeholder-dynamic-secondary border-transparent focus:bg-dynamic-primary focus:border-dynamic focus:ring-0 transition-all outline-none" autocomplete="off">
+                    <button type="submit" id="sendBtn" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors"><span class="material-icons">send</span></button>
                 </form>
                 <input type="file" id="imageInput" accept="image/*" class="hidden" aria-label="อัปโหลดรูปภาพ">
             </div>
@@ -798,9 +798,20 @@
         ];
         
         function setupEventListeners() {
-            elements.chatForm.addEventListener('submit', (e) => { e.preventDefault(); const text = elements.chatInput.value.trim(); if (!text) return; addUserMessage(text); elements.chatInput.value = ''; processQuery(text); });
+            elements.chatForm.addEventListener('submit', (e) => { 
+                e.preventDefault(); 
+                const text = elements.chatInput.value.trim(); 
+                if (!text) return; 
+                addUserMessage(text); 
+                elements.chatInput.value = ''; 
+                processQuery(text); 
+            });
             elements.clearBtn.addEventListener('click', clearChat);
-            elements.refreshQuestionsBtn.addEventListener('click', () => { displayRandomQuestions(); elements.randomQuestionsList.style.opacity = '0'; setTimeout(() => { elements.randomQuestionsList.style.opacity = '1'; }, 100); });
+            elements.refreshQuestionsBtn.addEventListener('click', () => { 
+                displayRandomQuestions(); 
+                elements.randomQuestionsList.style.opacity = '0'; 
+                setTimeout(() => { elements.randomQuestionsList.style.opacity = '1'; }, 100); 
+            });
             elements.notificationToggle.addEventListener('click', toggleNotifications);
             elements.darkModeToggle.addEventListener('click', toggleDarkMode);
             elements.imageUploadBtn.addEventListener('click', () => elements.imageInput.click());
@@ -812,41 +823,319 @@
         }
         
         // ... (ฟังก์ชันอื่นๆ ทั้งหมดเหมือนเดิม) ...
-        function addBotMessage(htmlContent, actions = []) { /* ... */ }
-        function addUserMessage(text) { /* ... */ }
-        function addTypingIndicator() { /* ... */ }
-        function removeTypingIndicator() { /* ... */ }
-        function scrollToBottom() { /* ... */ }
-        function escapeHtml(text) { /* ... */ }
-        async function processQuery(query) { /* ... */ }
-        function displaySingleResult(item) { /* ... */ }
-        function displayMultipleResults(matches) { /* ... */ }
-        function clearChat() { /* ... */ }
-        function toggleNotifications() { /* ... */ }
-        function toggleDarkMode() { /* ... */ }
-        function toggleVoiceSearch() { /* ... */ }
-        function handleImageUpload(e) { /* ... */ }
-        function handleAdminLogin() { /* ... */ }
-        function clearSearchHistory() { /* ... */ }
-        function shareHistory() { /* ... */ }
-        function showNotification(message) { /* ... */ }
-        function loadSettings() { /* ... */ }
-        function loadSearchHistory() { /* ... */ }
-        function saveSearchHistory(query) { /* ... */ }
-        function displaySearchHistory() { /* ... */ }
-        function enableChat() { /* ... */ }
-        function checkForNewData() { /* ... */ }
-        function requestNotificationPermission() { /* ... */ }
-        window.handleSuggestion = function(question) { /* ... */ };
-        window.searchFromHistory = function(query) { /* ... */ };
-        window.rateAnswer = function(id, rating) { /* ... */ };
-        window.copyToClipboard = function(text) { /* ... */ };
-        function displayRandomQuestions() { /* ... */ }
-        function getRandomQuestions(count = 10) { /* ... */ }
-        window.handleRandomQuestion = function (question) { /* ... */ };
-        function flattenFaqData(nestedData) { /* ... */ }
-        function parseCSV(csvText) { /* ... */ }
-        function initializeFuse() { /* ... */ }
+        function addBotMessage(htmlContent, actions = []) { 
+            const msgDiv = document.createElement('div'); 
+            msgDiv.className = 'msg-row'; 
+            let actionsHtml = ''; 
+            if (actions.length > 0) { 
+                actionsHtml = '<div class="rating-container mt-2">'; 
+                actions.forEach(action => { actionsHtml += `<button class="rating-btn" onclick="${action.onClick}">${action.label}</button>`; }); 
+                actionsHtml += '</div>'; 
+            } 
+            msgDiv.innerHTML = `<div class="msg-bubble msg-bot">${htmlContent}${actionsHtml}</div>`; 
+            elements.chatContainer.appendChild(msgDiv); 
+            scrollToBottom(); 
+        }
+        function addUserMessage(text) { 
+            const msgDiv = document.createElement('div'); 
+            msgDiv.className = 'msg-row'; 
+            msgDiv.innerHTML = `<div class="msg-bubble msg-user">${escapeHtml(text)}</div>`; 
+            elements.chatContainer.appendChild(msgDiv); 
+            scrollToBottom(); 
+        }
+        function addTypingIndicator() { 
+            const msgDiv = document.createElement('div'); 
+            msgDiv.className = 'msg-row'; 
+            msgDiv.innerHTML = `<div class="msg-bubble msg-bot"><div class="typing-indicator" aria-label="กำลังพิมพ์"><span></span><span></span><span></span></div></div>`; 
+            msgDiv.id = 'typing-indicator'; 
+            elements.chatContainer.appendChild(msgDiv); 
+            scrollToBottom(); 
+        }
+        function removeTypingIndicator() { 
+            const indicator = document.getElementById('typing-indicator'); 
+            if (indicator) indicator.remove(); 
+        }
+        function scrollToBottom() { 
+            elements.chatContainer.scrollTop = elements.chatContainer.scrollHeight; 
+        }
+        function escapeHtml(text) { 
+            const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'}; 
+            return text.replace(/[&<>"']/g, m => map[m]); 
+        }
+        async function processQuery(query) { 
+            if (state.isProcessing) return; 
+            state.isProcessing = true; 
+            const term = query.toLowerCase().trim(); 
+            saveSearchHistory(query); 
+            addTypingIndicator(); 
+            const results = state.fuse.search(term).map(result => result.item); 
+            setTimeout(() => { 
+                removeTypingIndicator(); 
+                state.isProcessing = false; 
+                if (results.length === 0) { 
+                    addBotMessage("ขออภัยครับ ผมไม่พบข้อมูลที่ตรงกับคำถามของคุณ ลองใช้คำค้นอื่นดูนะครับ"); 
+                } else if (results.length === 1) { 
+                    displaySingleResult(results[0]); 
+                } else { 
+                    displayMultipleResults(results); 
+                } 
+            }, 1000); 
+        }
+        function displaySingleResult(item) { 
+            const formattedAnswer = item.answer.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-600 hover:underline break-all">$1</a>'); 
+            const actions = [ 
+                { label: 'คัดลอกคำตอบ', onClick: `copyToClipboard('${escapeHtml(item.answer)}')` }, 
+                { label: 'มีประโยชน์', onClick: `rateAnswer(${item.id}, 'helpful')` }, 
+                { label: 'ไม่มีประโยชน์', onClick: `rateAnswer(${item.id}, 'not-helpful')` } 
+            ]; 
+            addBotMessage(`<strong>${escapeHtml(item.question)}</strong><br><br>${formattedAnswer.replace(/\n/g, '<br>')}`, actions); 
+            showNotification('พบคำตอบสำหรับคำถามของคุณ'); 
+        }
+        function displayMultipleResults(matches) { 
+            let html = `ผมพบ ${matches.length} หัวข้อที่เกี่ยวข้องครับ:<br>`; 
+            matches.slice(0, 5).forEach(item => { 
+                const q = escapeHtml(item.question).replace(/"/g, '&quot;'); 
+                html += `<button class="suggestion-btn" onclick="handleSuggestion('${q}')">${item.question}</button>`; 
+            }); 
+            addBotMessage(html); 
+            showNotification(`พบ ${matches.length} คำตอบที่เกี่ยวข้อง`); 
+        }
+        function clearChat() { 
+            elements.chatContainer.innerHTML = ''; 
+            addBotMessage("สวัสดีครับ! ผมคือ Paypoint Bot 🤖<br>มีอะไรให้ผมช่วยไหมครับ? ลองพิมพ์คำถามมาได้เลย"); 
+            elements.chatInput.focus(); 
+        }
+        function toggleNotifications() { 
+            state.notificationsEnabled = !state.notificationsEnabled; 
+            localStorage.setItem('notificationsEnabled', state.notificationsEnabled); 
+            elements.notificationIcon.textContent = state.notificationsEnabled ? 'notifications' : 'notifications_off'; 
+            showNotification(state.notificationsEnabled ? 'เปิดการแจ้งเตือนแล้ว' : 'ปิดการแจ้งเตือนแล้ว'); 
+        }
+        function toggleDarkMode() { 
+            state.darkMode = !state.darkMode; 
+            document.body.classList.toggle('dark'); 
+            localStorage.setItem('darkMode', state.darkMode); 
+            elements.darkModeIcon.textContent = state.darkMode ? 'light_mode' : 'dark_mode'; 
+        }
+        function toggleVoiceSearch() { /* Voice search implementation */ }
+        function handleImageUpload(e) { /* Image upload implementation */ }
+        function handleAdminLogin() { 
+            const password = prompt('กรุณากรอกรหัสผ่านแอดมิน:'); 
+            if (password === CONFIG.ADMIN_PASSWORD) { 
+                window.open('https://tuikub.github.io/tracking/chatbot_paypoint_admin.html', '_blank'); 
+            } else if (password !== null) { 
+                showNotification('รหัสผ่านไม่ถูกต้อง'); 
+            } 
+        }
+        function clearSearchHistory() { 
+            if (confirm('คุณต้องการล้างประวัติการค้นหาทั้งหมดหรือไม่?')) { 
+                state.searchHistory = []; 
+                localStorage.removeItem('searchHistory'); 
+                displaySearchHistory(); 
+                showNotification('ล้างประวัติการค้นหาเรียบร้อยแล้ว'); 
+            } 
+        }
+        function shareHistory() { 
+            if (state.searchHistory.length === 0) { 
+                showNotification('ไม่มีประวัติการค้นหาที่จะแชร์'); 
+                return; 
+            } 
+            const historyText = state.searchHistory.map(item => `- ${item.query}`).join('\n'); 
+            if (navigator.share) { 
+                navigator.share({ 
+                    title: 'Paypoint Help Center - ประวัติการค้นหา', 
+                    text: historyText 
+                }).catch(err => console.log('Error sharing:', err)); 
+            } else { 
+                navigator.clipboard.writeText(historyText).then(() => { 
+                    showNotification('คัดลอกประวัติการค้นหาไปยังคลิปบอร์ดแล้ว'); 
+                }); 
+            } 
+        }
+        function showNotification(message) { 
+            if (!state.notificationsEnabled) return; 
+            elements.notificationText.textContent = message; 
+            elements.notification.classList.add('show'); 
+            setTimeout(() => elements.notification.classList.remove('show'), 3000); 
+        }
+        function loadSettings() { 
+            state.notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false'; 
+            state.darkMode = localStorage.getItem('darkMode') === 'true'; 
+            if (state.darkMode) { 
+                document.body.classList.add('dark'); 
+                elements.darkModeIcon.textContent = 'light_mode'; 
+            } 
+            if (!state.notificationsEnabled) { 
+                elements.notificationIcon.textContent = 'notifications_off'; 
+            } 
+        }
+        function loadSearchHistory() { 
+            const history = localStorage.getItem('searchHistory'); 
+            if (history) { 
+                state.searchHistory = JSON.parse(history); 
+                displaySearchHistory(); 
+            } 
+        }
+        function saveSearchHistory(query) { 
+            state.searchHistory = state.searchHistory.filter(item => item.query !== query); 
+            state.searchHistory.unshift({ query, timestamp: new Date().toISOString() }); 
+            state.searchHistory = state.searchHistory.slice(0, 10); 
+            localStorage.setItem('searchHistory', JSON.stringify(state.searchHistory)); 
+            displaySearchHistory(); 
+        }
+        function displaySearchHistory() { 
+            if (state.searchHistory.length === 0) { 
+                elements.historyList.innerHTML = '<p class="text-sm">ไม่มีประวัติการค้นหา</p>'; 
+                return; 
+            } 
+            let html = ''; 
+            state.searchHistory.forEach(item => { 
+                const date = new Date(item.timestamp); 
+                const timeString = date.toLocaleDateString('th-TH') + ' ' + date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }); 
+                html += `<div class="history-item" onclick="searchFromHistory('${escapeHtml(item.query).replace(/'/g, "\\'")}')"><div class="text-dynamic-primary">${item.query}</div><div class="history-time">${timeString}</div></div>`; 
+            }); 
+            elements.historyList.innerHTML = html; 
+        }
+        function enableChat() { 
+            // ตรวจสอบให้แน่ใจว่า chatInput และ sendBtn ถูกเปิดใช้งาน
+            if (elements.chatInput) {
+                elements.chatInput.disabled = false;
+                elements.chatInput.focus();
+            }
+            if (elements.sendBtn) {
+                elements.sendBtn.disabled = false;
+            }
+        }
+        function checkForNewData() { 
+            const lastFetchTime = localStorage.getItem('lastFetchTime'); 
+            const currentTime = new Date().toISOString(); 
+            if (!lastFetchTime || new Date(currentTime) - new Date(lastFetchTime) > 86400000) { 
+                showNotification('มีข้อมูล FAQ ใหม่!'); 
+                localStorage.setItem('lastFetchTime', currentTime); 
+            } 
+        }
+        function requestNotificationPermission() { 
+            if ('Notification' in window && Notification.permission === 'default') { 
+                Notification.requestPermission(); 
+            } 
+        }
+
+        // --- GLOBAL FUNCTIONS FOR INLINE ONCLICK ---
+        window.handleSuggestion = function(question) { 
+            addUserMessage(question); 
+            setTimeout(() => processQuery(question), 500); 
+        };
+        window.searchFromHistory = function(query) { 
+            elements.chatInput.value = query; 
+            processQuery(query); 
+        };
+        window.rateAnswer = function(id, rating) { 
+            console.log(`Rated answer ${id} as ${rating}`); 
+            showNotification('ขอบคุณสำหรับคะแนนของคุณ'); 
+        };
+        window.copyToClipboard = function(text) { 
+            navigator.clipboard.writeText(text).then(() => { 
+                showNotification('คัดลอกคำตอบไปยังคลิปบอร์ดแล้ว'); 
+            }).catch(err => { 
+                console.error('Failed to copy: ', err); 
+            }); 
+        };
+
+        // --- CORE DISPLAY & HELPERS ---
+        function displayRandomQuestions() { 
+            const listElement = document.getElementById('randomQuestionsList'); 
+            if (!state.faqData || state.faqData.length === 0) { 
+                listElement.innerHTML = `<div class="text-center text-white"><div class="loader-small mx-auto mb-2"></div><p class="text-sm">กำลังโหลดคำถาม...</p></div>`; 
+                if (!document.getElementById('loader-style')) { 
+                    const style = document.createElement('style'); 
+                    style.id = 'loader-style'; 
+                    style.innerHTML = `.loader-small { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top: 2px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; }`; 
+                    document.head.appendChild(style); 
+                } 
+                return; 
+            } 
+            const randomQuestions = getRandomQuestions(10); 
+            let html = ''; 
+            randomQuestions.forEach((item, index) => { 
+                const q = item.question.replace(/"/g, '&quot;'); 
+                html += `<div class="question-item" onclick="handleRandomQuestion('${q}')"><span class="question-number">${index + 1}</span><span>${item.question}</span></div>`; 
+            }); 
+            listElement.innerHTML = html; 
+        }
+        function getRandomQuestions(count = 10) { 
+            const shuffled = [...state.faqData].sort(() => 0.5 - Math.random()); 
+            return shuffled.slice(0, Math.min(count, state.faqData.length)); 
+        }
+        window.handleRandomQuestion = function (question) { 
+            document.getElementById('chatContainer').scrollIntoView({ behavior: 'smooth' }); 
+            setTimeout(() => { 
+                addUserMessage(question); 
+                setTimeout(() => processQuery(question), 500); 
+            }, 500); 
+        };
+        function flattenFaqData(nestedData) { 
+            const flat = []; 
+            let idCounter = 1; 
+            nestedData.forEach(group => { 
+                group.items.forEach(item => { 
+                    if (!item.question) return; 
+                    let combinedAnswer = item.answer; 
+                    if (item.link) { combinedAnswer += `\n${item.link}`; } 
+                    flat.push({ 
+                        id: idCounter++, 
+                        category: group.category, 
+                        question: item.question, 
+                        answer: combinedAnswer, 
+                        keywords: item.keywords || [] 
+                    }); 
+                }); 
+            }); 
+            return flat; 
+        }
+        function parseCSV(csvText) { 
+            const lines = csvText.split(/\r?\n/); 
+            const result = []; 
+            if (lines.length === 0) return result; 
+            const hasTimestamp = lines[0].toLowerCase().includes('timestamp') || lines[0].toLowerCase().includes('ประทับเวลา'); 
+            const offset = hasTimestamp ? 1 : 0; 
+            for (let i = 1; i < lines.length; i++) { 
+                if (!lines[i].trim()) continue; 
+                const row = []; 
+                let inQuote = false; 
+                let current = ''; 
+                for (let j = 0; j < lines[i].length; j++) { 
+                    const char = lines[i][j]; 
+                    if (char === '"') inQuote = !inQuote; 
+                    else if (char === ',' && !inQuote) { row.push(current); current = ''; } 
+                    else current += char; 
+                } 
+                row.push(current); 
+                const clean = (str) => { 
+                    str = (str || '').trim(); 
+                    if (str.startsWith('"') && str.endsWith('"')) str = str.substring(1, str.length - 1); 
+                    return str.replace(/""/g, '"'); 
+                }; 
+                if (row.length >= 3 + offset) { 
+                    result.push({ 
+                        id: i, 
+                        category: clean(row[0 + offset]), 
+                        question: clean(row[1 + offset]), 
+                        answer: clean(row[2 + offset]), 
+                        keywords: row.length > 3 + offset ? clean(row[3 + offset]).split(',').map(k => k.trim()).filter(k => k) : [], 
+                        link: row.length > 4 + offset ? clean(row[4 + offset]) : '' 
+                    }); 
+                } 
+            } 
+            return result; 
+        }
+        function initializeFuse() { 
+            const options = { 
+                keys: ['question', 'answer', 'category', 'keywords'], 
+                threshold: 0.4, 
+                includeScore: true, 
+            }; 
+            state.fuse = new Fuse(state.faqData, options); 
+        }
     </script>
 </body>
 </html>
